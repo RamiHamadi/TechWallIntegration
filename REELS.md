@@ -10,6 +10,8 @@
 - VIDEO: a file path (e.g. videos/wifi-qr.mp4) OR a public https URL.
 - CAPTION: given in the task, or write one (see step 4).
 - MODE: PUBLISHED (default) or DRAFT.
+- COVER: the cover image. For Tech Wall episodes it is out/cover_<id>.jpg (made by build.sh from the
+  finished title card). For any other video, grab a frame: ffmpeg -y -ss 5 -i /tmp/reel.mp4 -frames:v 1 /tmp/cover.jpg
 
 ## Step 1 - Prepare the video (file input only)
 1. If VIDEO is a URL, download it: curl -sL -o /tmp/input.mp4 "<url>"
@@ -50,6 +52,13 @@ curl -s "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID?fields=status"
 - Done when status.video_status is "ready" (or publishing_phase.status is "complete").
 - If any phase shows "error", report the full status object.
 
-## Step 7 - Report
-- video_id, final status, mode (PUBLISHED/DRAFT), the caption, and
+## Step 7 - Set the cover (always)
+Our videos start on an empty frame, so Facebook would show a blank thumbnail. Upload the cover:
+curl -s -F "source=@<COVER>" -F "is_preferred=true" "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID/thumbnails"
+-> Expect {"success":true}. Then check it is the preferred thumbnail:
+curl -s "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID/thumbnails?fields=is_preferred,width,height"
+-> One entry must have "is_preferred":true. If not, retry once, then stop and report.
+
+## Step 8 - Report
+- video_id, final status, mode (PUBLISHED/DRAFT), cover set (yes/no), the caption, and
   the link https://www.facebook.com/reel/<video_id>

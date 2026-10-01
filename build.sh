@@ -12,4 +12,6 @@ python3 "$EP.py"
 "$FF" -y -loglevel error -framerate 12 -i "out/frames_$EP/%05d.png" -i "out/audio_$EP.wav" \
   -vf "fps=24,format=yuv420p" -c:v libx264 -crf 19 -preset medium -c:a aac -b:a 160k \
   -shortest -movflags +faststart "out/$EP.mp4"
-echo "done -> out/$EP.mp4"
+# Reel cover: frame 0 is an empty blueprint, so save the finished title card (frame COVER_FRAME, default 70)
+python3 -c "from PIL import Image; Image.open('out/frames_$EP/%05d.png' % ${COVER_FRAME:-70}).convert('RGB').save('out/cover_$EP.jpg', quality=92)"
+echo "done -> out/$EP.mp4  (cover -> out/cover_$EP.jpg)"

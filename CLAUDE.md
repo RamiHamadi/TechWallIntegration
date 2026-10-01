@@ -16,7 +16,7 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 4. **Screens:** only those on the path; row ids for everything tapped; fictional data only (network "Home", password "SunnyDays2024", contacts Mom/Sam, example.com).
 5. **Timeline:** title (`fx (title, 0, 86)` + `hold(92)`, so the finished title stays readable ~4 s) → phone in → problem caption + mini scene → one caption per step (hold 8–12 f before each tap) → result caption (hold ≥ 24 f) → field-test demo → bonus → `cap_off()`, phone out, end card `hold(72)`. 12 fps, 35–50 s.
 6. **Captions** must wrap to ≤ 2 lines: `python3 -c "import themes as th; from lib import wrap; print(wrap('text', th.JB(800,54), 820))"`.
-7. **Preview** 8–10 frames, make a contact sheet and actually look at it: captions not truncated, the hand isn't covering key UI (move it away before overlays), screens correct. Then `./build.sh <id>` and spot-check frames from the MP4.
+7. **Preview** 8–10 frames, make a contact sheet and actually look at it: captions not truncated, the hand isn't covering key UI (move it away before overlays), screens correct. Then `./build.sh <id>` and spot-check frames from the MP4 and `out/cover_<id>.jpg`.
 
 ## Rules
 - The look must stay **identical** to earlier episodes: navy grid + chalk dims, paper cut-outs with jitter, navy-sleeve hand, yellow dashed tap rings, taped spec captions, stencil titles, synthesized music + SFX.
@@ -28,14 +28,14 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 Only one row is in progress at a time, so the 30-minute timer only matters *between* ideas. There are **no recurring timers**: the timer is a durable one-shot (`send_later`, server-side, survives session restarts and closed windows).
 1. **Timer fires** ("Tech Wall: send the next video idea"): `git pull`. If a row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, stop (reply one line). Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + push, and send the user the idea with a storyboard table.
 2. **Idea approved** → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. **Rejected** → `❌ Rejected` (or `⏭️ Skipped` if postponed), then go to step 4.
-3. **Video approved** → post it as a Reel on the Tech Wall page by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, rebuilt with `./build.sh <id>` if the session restarted; CAPTION = the approved README §6 caption; MODE = PUBLISHED), fill in **Date published**, set `✅ Published`, commit + push. Changes requested → fix, re-send, stay in `👀`.
+3. **Video approved** → post it as a Reel on the Tech Wall page by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, COVER = `out/cover_<id>.jpg`, rebuilt with `./build.sh <id>` if the session restarted; CAPTION = the approved README §6 caption; MODE = PUBLISHED), fill in **Date published**, set `✅ Published`, commit + push. Changes requested → fix, re-send, stay in `👀`.
 4. **Row finished** (✅ / ❌ / ⏭️) → schedule the next idea with `send_later` (`delay_minutes: 30`, name "Tech Wall: next video idea", message "Tech Wall: send the next video idea (see CLAUDE.md, Video Library approval loop)"). If the user asks for the next idea sooner, send it now and skip the timer.
 Never post without both approvals. Act on the user's replies immediately; don't wait for a timer.
 Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification`.
 
 ## Publishing a Reel
 Whenever a video has to be posted to the Tech Wall Facebook page, follow **`REELS.md`** step by step (prepare → start session → upload → publish → confirm → report). Use MODE = DRAFT for any test. Only publish after the user has approved the video.
-**Cover (always, right after publishing):** frame 0 of our videos is an empty blueprint, so set the finished title card as the Reel cover: `python3 <id>.py 70`, save `out/frames_<id>/00070.png` as `out/cover_<id>.jpg`, then `curl -s -F "source=@out/cover_<id>.jpg" -F "is_preferred=true" "https://graph.facebook.com/$FB_API_VERSION/<video_id>/thumbnails"` and check `<video_id>/thumbnails?fields=is_preferred` shows it.
+**Cover:** `build.sh` saves the finished title card as `out/cover_<id>.jpg`; `REELS.md` step 7 uploads it as the Reel cover and checks it. Never skip it: frame 0 of our videos is an empty blueprint, which Facebook would use as a blank thumbnail. Look at the cover JPG when spot-checking the build.
 
 ## Deliver
 - Send the MP4 with a short scene-by-scene summary.
