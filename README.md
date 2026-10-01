@@ -110,7 +110,7 @@ Each episode file has the same 5 parts: **(1) custom screens**, **(2) `build()` 
 1. **Pick & verify the tip.** Check the exact menu path on the vendor's official support page (Apple / Google / Samsung / Microsoft) plus one recent guide. Note OS version limits and brand differences (put the Samsung path on the end card).
 2. **Copy the closest episode:** iPhone → `wifi.py`; Android → `sharewifi.py` (or `android.py`); PC → `winv.py`. Rename (e.g. `circle.py`); the output auto-names to `out/frames_circle`, `out/audio_circle.wav`.
 3. **Screens:** build only the screens on the path; row ids for everything the hand taps. Use fictional data (network "Home", password "SunnyDays2024", contacts "Mom"/"Sam", domain example.com).
-4. **Timeline (`build()`):** title (56 f) → phone in → *problem* caption + mini-scene → steps (one caption per step, `hold(8–12)` before each tap) → result caption (hold ≥ 24 f) → *field test* demo → bonus → `cap_off()`, phone out, end card `hold(72)`.
+4. **Timeline (`build()`):** title (`fx (title, 0, 86)` + `hold(92)`: the full title stays readable ~4 s; older episodes used 56 f, which proved too fast) → phone in → *problem* caption + mini-scene → steps (one caption per step, `hold(8–12)` before each tap) → result caption (hold ≥ 24 f) → *field test* demo → bonus → `cap_off()`, phone out, end card `hold(72)`.
 5. **Captions:** test wrapping before rendering:
    `python3 -c "import themes as th; from lib import wrap; print(wrap('Your caption here', th.JB(800,54), 820))"` → must be ≤ 2 lines.
 6. **Title/end card** in `init_props()`: `P['tiles']` (stencil letters), `t_label t_s1 t_s1b t_s2 t_phone t_burst`, `e_chips` (4 path labels, last `hot=True`), `e_s1 e_s2 e_s3`. Keep path labels ≤ ~20 chars.

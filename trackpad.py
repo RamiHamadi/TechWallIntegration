@@ -254,7 +254,7 @@ def release(t):
 def build():
     t = m.TL()
     t.ph['spec'] = spec('notes', ov={'lines': tuple(LINES), 'cur': (3, 18)})
-    t.fx.append(('title', 0, 50)); t.hold(56)
+    t.fx.append(('title', 0, 86)); t.hold(92)
     t.phone_to(m.PHY, 6, keys=-40); t.hold(2)
     sp = t.ph['spec']
     # ---- the problem: tapping on a typo lands in the wrong place
