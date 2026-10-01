@@ -23,6 +23,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `wifi.py` | See your saved Wi-Fi password | iPhone | 37 s |
 | `android.py` | Notification history | Android | 42 s |
 | `sharewifi.py` | Share Wi-Fi with a QR code | Android | 43 s |
+| `trackpad.py` | Keyboard trackpad: hold the spacebar to move the cursor | iPhone | 43 s |
 | `movie.py` | Back Tap in the *original* kraft-paper style (not used for posting) | iPhone | 47 s |
 | `themes.py` | Style frames for the 3 tech themes (A Circuit, **B Blueprint**, C Neon) | n/a | stills |
 | `brand.py` | Facebook cover 1640×624 + profile 720×720 | n/a | stills |
@@ -146,7 +147,7 @@ Post as a **Reel** (Meta Business Suite → Create reel), optionally cross-post 
 
 ## 7. Episode log & idea backlog
 
-**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android)
+**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01)
 
 **Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
 
