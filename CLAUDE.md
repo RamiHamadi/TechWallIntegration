@@ -23,6 +23,14 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 - No brand logos or trademark artwork (the Windows key is labelled WIN, controllers are generic, app screens are generic look-alikes). No real personal data.
 - Don't commit rendered output (`out/` is git-ignored). Commit new episode `.py` files.
 
+## Video Library approval loop (`VIDEO_LIBRARY.md`)
+A scheduled check runs every 30 minutes. On each run:
+1. `git pull`. If any row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, do nothing new.
+2. Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + push, and send the user the idea with a storyboard table.
+3. Idea approved → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. Rejected → `❌ Rejected` (or `⏭️ Skipped` if postponed).
+4. Video approved → post it as a Reel on the Tech Wall page (README §6 caption), fill in **Date published**, set `✅ Published`. Changes requested → fix, re-send, stay in `👀`.
+Never post without both approvals. One row in progress at a time.
+
 ## Deliver
 - Send the MP4 with a short scene-by-scene summary.
 - Give a ready-to-paste Reel caption (README §6 template), list the sources used, and suggest the next idea.
