@@ -12,7 +12,7 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 ## Making a new episode
 1. **Idea:** if no topic is given, propose 3–4 ideas (rotate devices) with one-line hooks. When the user says "idea first", present the idea + a storyboard table and wait for approval.
 2. **Verify** the exact menu path on the official support page (Apple / Google / Samsung / Microsoft / Sony) plus one recent guide. Note OS-version limits and brand differences (the Samsung path goes on the end card). Hooks must be honest.
-3. **Copy the closest episode** as the template: iPhone → `wifi.py`, Android → `sharewifi.py` / `android.py`, PC → `winv.py`. File name = episode id (outputs go to `out/frames_<id>/`, `out/audio_<id>.wav`).
+3. **Copy the closest episode** as the template: iPhone → `wifi.py`, Android → `sharewifi.py` / `android.py`, PC → `emoji.py` (or `winv.py`). File name = episode id (outputs go to `out/frames_<id>/`, `out/audio_<id>.wav`).
 4. **Screens:** only those on the path; row ids for everything tapped; fictional data only (network "Home", password "SunnyDays2024", contacts Mom/Sam, example.com).
 5. **Timeline:** title (`fx (title, 0, 86)` + `hold(92)`, so the finished title stays readable ~4 s) → phone in → problem caption + mini scene → one caption per step (hold 8–12 f before each tap) → result caption (hold ≥ 24 f) → field-test demo → bonus → `cap_off()`, phone out, end card `hold(72)`. 12 fps, 35–50 s.
 6. **Captions** must wrap to ≤ 2 lines: `python3 -c "import themes as th; from lib import wrap; print(wrap('text', th.JB(800,54), 820))"`.
@@ -20,7 +20,7 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 
 ## Rules
 - The look must stay **identical** to earlier episodes: navy grid + chalk dims, paper cut-outs with jitter, navy-sleeve hand, yellow dashed tap rings, taped spec captions, stencil titles, synthesized music + SFX.
-- **Ownership mark (standard since ep. 6):** the Blueprint background carries a chalk `TECH WALL` annotation on the left edge plus `TECH WALL` in the drawing box (`themes.bg_blue`), and the end card ends with a yellow `FOLLOW TECH WALL` strip (`movie_blue.draw_end`, add a pop at `a + 36`). `winv.py` has its own `draw_end`: add the strip there on the next PC episode.
+- **Ownership mark (standard since ep. 6):** the Blueprint background carries a chalk `TECH WALL` annotation on the left edge plus `TECH WALL` in the drawing box (`themes.bg_blue`), and the end card ends with a yellow `FOLLOW TECH WALL` strip (`movie_blue.draw_end`, add a pop at `a + 36`). PC episodes: copy `emoji.py` (it reuses the `winv.py` rig and already has the strip, period key, typing hand and taped bursts).
 - No brand logos or trademark artwork (the Windows key is labelled WIN, controllers are generic, app screens are generic look-alikes). No real personal data.
 - Don't commit rendered output (`out/` is git-ignored). Commit new episode `.py` files.
 

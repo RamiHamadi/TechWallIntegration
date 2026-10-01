@@ -24,6 +24,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `android.py` | Notification history | Android | 42 s |
 | `sharewifi.py` | Share Wi-Fi with a QR code | Android | 43 s |
 | `trackpad.py` | Keyboard trackpad: hold the spacebar to move the cursor | iPhone | 43 s |
+| `emoji.py` | Emoji panel (WIN + .): emoji, GIFs, kaomoji, symbols. Needs the system font Noto Color Emoji (`fonts-noto-color-emoji`) | Windows PC | 46 s |
 | `movie.py` | Back Tap in the *original* kraft-paper style (not used for posting) | iPhone | 47 s |
 | `themes.py` | Style frames for the 3 tech themes (A Circuit, **B Blueprint**, C Neon) | n/a | stills |
 | `brand.py` | Facebook cover 1640×624 + profile 720×720 | n/a | stills |
