@@ -28,9 +28,12 @@ A scheduled check runs every 30 minutes. On each run:
 1. `git pull`. If any row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, do nothing new.
 2. Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + push, and send the user the idea with a storyboard table.
 3. Idea approved → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. Rejected → `❌ Rejected` (or `⏭️ Skipped` if postponed).
-4. Video approved → post it as a Reel on the Tech Wall page (README §6 caption), fill in **Date published**, set `✅ Published`. Changes requested → fix, re-send, stay in `👀`.
+4. Video approved → post it as a Reel on the Tech Wall page by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, CAPTION = the approved README §6 caption, MODE = PUBLISHED), fill in **Date published**, set `✅ Published`. Changes requested → fix, re-send, stay in `👀`.
 Never post without both approvals. One row in progress at a time.
 Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification` so they see it even with the window closed. "Still waiting" checks stay silent.
+
+## Publishing a Reel
+Whenever a video has to be posted to the Tech Wall Facebook page, follow **`REELS.md`** step by step (prepare → start session → upload → publish → confirm → report). Use MODE = DRAFT for any test. Only publish after the user has approved the video.
 
 ## Deliver
 - Send the MP4 with a short scene-by-scene summary.
