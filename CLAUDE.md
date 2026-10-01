@@ -30,6 +30,7 @@ A scheduled check runs every 30 minutes. On each run:
 3. Idea approved → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. Rejected → `❌ Rejected` (or `⏭️ Skipped` if postponed).
 4. Video approved → post it as a Reel on the Tech Wall page (README §6 caption), fill in **Date published**, set `✅ Published`. Changes requested → fix, re-send, stay in `👀`.
 Never post without both approvals. One row in progress at a time.
+Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification` so they see it even with the window closed. "Still waiting" checks stay silent.
 
 ## Deliver
 - Send the MP4 with a short scene-by-scene summary.
