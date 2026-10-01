@@ -148,7 +148,8 @@ Post as a **Reel** (Meta Business Suite → Create reel), optionally cross-post 
 
 **Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android)
 
-**Backlog:**
+**Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
+
 | Device | Idea | Hook |
 |---|---|---|
 | Android | Developer options → animation scales 0.5x | "Make your Android *feel* 2× faster" |
