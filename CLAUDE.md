@@ -35,6 +35,7 @@ Whenever something needs the user (new idea sent, MP4 ready, post published or f
 
 ## Publishing a Reel
 Whenever a video has to be posted to the Tech Wall Facebook page, follow **`REELS.md`** step by step (prepare → start session → upload → publish → confirm → report). Use MODE = DRAFT for any test. Only publish after the user has approved the video.
+**Cover (always, right after publishing):** frame 0 of our videos is an empty blueprint, so set the finished title card as the Reel cover: `python3 <id>.py 70`, save `out/frames_<id>/00070.png` as `out/cover_<id>.jpg`, then `curl -s -F "source=@out/cover_<id>.jpg" -F "is_preferred=true" "https://graph.facebook.com/$FB_API_VERSION/<video_id>/thumbnails"` and check `<video_id>/thumbnails?fields=is_preferred` shows it.
 
 ## Deliver
 - Send the MP4 with a short scene-by-scene summary.
