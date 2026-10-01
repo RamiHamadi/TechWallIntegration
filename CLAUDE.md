@@ -20,6 +20,7 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 
 ## Rules
 - The look must stay **identical** to earlier episodes: navy grid + chalk dims, paper cut-outs with jitter, navy-sleeve hand, yellow dashed tap rings, taped spec captions, stencil titles, synthesized music + SFX.
+- **Ownership mark (standard since ep. 6):** the Blueprint background carries a chalk `TECH WALL` annotation on the left edge plus `TECH WALL` in the drawing box (`themes.bg_blue`), and the end card ends with a yellow `FOLLOW TECH WALL` strip (`movie_blue.draw_end`, add a pop at `a + 36`). `winv.py` has its own `draw_end`: add the strip there on the next PC episode.
 - No brand logos or trademark artwork (the Windows key is labelled WIN, controllers are generic, app screens are generic look-alikes). No real personal data.
 - Don't commit rendered output (`out/` is git-ignored). Commit new episode `.py` files.
 

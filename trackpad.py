@@ -407,7 +407,7 @@ def add_sounds(t):
             t.snd.append((e[2] + 1, 'whoosh'))
         if e[0] == 'end':
             a = e[1]
-            for ap in [a + 2] + [a + 6 + 4 * i for i in range(4)] + [a + 24, a + 28, a + 32]:
+            for ap in [a + 2] + [a + 6 + 4 * i for i in range(4)] + [a + 24, a + 28, a + 32, a + 36]:
                 t.snd.append((ap, 'pop'))
         if e[0] == 'burst':
             t.snd.append((e[1], 'pop'))

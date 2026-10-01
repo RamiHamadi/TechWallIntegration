@@ -268,13 +268,23 @@ def bg_blue(with_dims=True):
     # title block bottom-left
     bx, by = 24, 1700
     d.rectangle((bx, by, bx + 190, by + 196), outline=CHALK, width=3)
-    for i, t in enumerate(['DWG BT-01', 'REV  A', 'SCALE 1:1', 'SHEET 4/6']):
+    for i, t in enumerate(['TECH WALL', 'REV  A', 'SCALE 1:1', 'SHEET 4/6']):
         d.line([(bx, by + 49 * (i + 1)), (bx + 190, by + 49 * (i + 1))], fill=CHALK, width=2)
         d.text((bx + 12, by + 25 + 49 * i), t, font=JB(600, 21), fill=CHALK, anchor='lm')
     # registration marks
     for cx, cy in [(70, 70), (1010, 70), (1010, 1850)]:
         d.ellipse((cx - 26, cy - 26, cx + 26, cy + 26), outline=CHALK, width=3)
         d.line([(cx - 40, cy), (cx + 40, cy)], fill=CHALK, width=2); d.line([(cx, cy - 40), (cx, cy + 40)], fill=CHALK, width=2)
+    # ownership mark: chalk 'TECH WALL' annotation along the left edge (drawn like a dimension)
+    x = 64
+    d.line([(x, 720), (x, 1500)], fill=CHALK, width=3)
+    for yy, s in [(720, 1), (1500, -1)]:
+        d.line([(x - 22, yy), (x + 22, yy)], fill=CHALK, width=3)
+    t = Image.new('RGBA', (330, 56), (0, 0, 0, 0))
+    ImageDraw.Draw(t).rounded_rectangle((0, 0, 329, 55), 6, fill=(26, 62, 128, 255))
+    ImageDraw.Draw(t).text((165, 28), 'TECH WALL', font=JB(800, 38), fill=CHALK, anchor='mm')
+    t = t.rotate(90, expand=True)
+    blit(cv, t, x - 28, 1110 - 165)
     if with_dims:
         # vertical dimension along phone right
         x = 910

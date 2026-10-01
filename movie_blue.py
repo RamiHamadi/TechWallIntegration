@@ -126,6 +126,7 @@ def init_props():
     P['e_s1'] = center_label('DOUBLE TAP = SCREENSHOT', th.JB(800, 46), bg=YEL, rot=-1.5)
     P['e_s2'] = center_label('TRIPLE TAP = FLASHLIGHT', th.JB(800, 46), rot=1.5)
     P['e_s3'] = center_label('works on iPhone 8+ · iOS 14+', th.JB(600, 34), fg=MID, rot=-1, pady=18)
+    P['e_follow'] = center_label('FOLLOW  TECH WALL', th.JB(800, 40), bg=YEL, rot=1, pady=18)
     P['bursts'] = [label('TAP!', th.JB(800, 76), tape=True, rot=-12, padx=34, pady=14),
                    label('TAP!', th.JB(800, 76), bg=YEL, tape=True, rot=10, padx=34, pady=14)]
 
@@ -154,6 +155,20 @@ def draw_caps(cv, f, caps):
 
 
 m.draw_caps = draw_caps
+
+_draw_end = m.draw_end
+
+
+def draw_end(cv, f, a):
+    """standard end card + the 'FOLLOW TECH WALL' strip (ownership mark)"""
+    _draw_end(cv, f, a)
+    if 'e_follow' in m.P:
+        yy = m.drop_y(f, a + 36, 1770)
+        if yy is not None:
+            m.put(cv, m.P['e_follow'], 600, yy, f, 'e_follow')
+
+
+m.draw_end = draw_end
 
 
 def render(f):
