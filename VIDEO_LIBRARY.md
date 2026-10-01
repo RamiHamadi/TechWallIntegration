@@ -1,6 +1,6 @@
 # 📌 Tech Wall: Video Library
 
-The ordered list of Tech Wall video ideas. Every 30 minutes a scheduled check takes the **first row with status `💡 Idea`** and sends it for approval.
+The ordered list of Tech Wall video ideas. 30 minutes after a row is finished (published, rejected or skipped), a one-time timer takes the **first row with status `💡 Idea`** and sends it for approval.
 
 **Status flow:** `💡 Idea` → `⏳ Awaiting idea approval` → `🎬 In production` → `👀 Awaiting video review` → `✅ Published` (or `❌ Rejected` / `⏭️ Skipped`)
 

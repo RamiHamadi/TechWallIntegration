@@ -24,13 +24,13 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 - Don't commit rendered output (`out/` is git-ignored). Commit new episode `.py` files.
 
 ## Video Library approval loop (`VIDEO_LIBRARY.md`)
-A scheduled check runs every 30 minutes. On each run:
-1. `git pull`. If any row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, do nothing new.
-2. Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + push, and send the user the idea with a storyboard table.
-3. Idea approved → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. Rejected → `❌ Rejected` (or `⏭️ Skipped` if postponed).
-4. Video approved → post it as a Reel on the Tech Wall page by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, CAPTION = the approved README §6 caption, MODE = PUBLISHED), fill in **Date published**, set `✅ Published`. Changes requested → fix, re-send, stay in `👀`.
-Never post without both approvals. One row in progress at a time.
-Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification` so they see it even with the window closed. "Still waiting" checks stay silent.
+Only one row is in progress at a time, so the 30-minute timer only matters *between* ideas. There are **no recurring timers**: the timer is a durable one-shot (`send_later`, server-side, survives session restarts and closed windows).
+1. **Timer fires** ("Tech Wall: send the next video idea"): `git pull`. If a row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, stop (reply one line). Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + push, and send the user the idea with a storyboard table.
+2. **Idea approved** → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. **Rejected** → `❌ Rejected` (or `⏭️ Skipped` if postponed), then go to step 4.
+3. **Video approved** → post it as a Reel on the Tech Wall page by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, rebuilt with `./build.sh <id>` if the session restarted; CAPTION = the approved README §6 caption; MODE = PUBLISHED), fill in **Date published**, set `✅ Published`, commit + push. Changes requested → fix, re-send, stay in `👀`.
+4. **Row finished** (✅ / ❌ / ⏭️) → schedule the next idea with `send_later` (`delay_minutes: 30`, name "Tech Wall: next video idea", message "Tech Wall: send the next video idea (see CLAUDE.md, Video Library approval loop)"). If the user asks for the next idea sooner, send it now and skip the timer.
+Never post without both approvals. Act on the user's replies immediately; don't wait for a timer.
+Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification`.
 
 ## Publishing a Reel
 Whenever a video has to be posted to the Tech Wall Facebook page, follow **`REELS.md`** step by step (prepare → start session → upload → publish → confirm → report). Use MODE = DRAFT for any test. Only publish after the user has approved the video.
