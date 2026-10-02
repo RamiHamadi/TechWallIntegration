@@ -149,7 +149,7 @@ Post as a **Reel** (Meta Business Suite → Create reel), optionally cross-post 
 
 ## 7. Episode log & idea backlog
 
-**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01)
+**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram)
 
 **Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
 
