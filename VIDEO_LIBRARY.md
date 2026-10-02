@@ -4,6 +4,8 @@ The ordered list of Tech Wall video ideas. 30 minutes after a row is finished (p
 
 **Status flow:** `💡 Idea` → `⏳ Awaiting idea approval` → `🎬 In production` → `👀 Awaiting video review` → `✅ Published` (or `❌ Rejected` / `⏭️ Skipped`)
 
+Published = posted as a Reel on the Tech Wall Facebook page and Instagram (@techwalll). `main` is updated automatically after every change.
+
 Rules: only one row may be in progress at a time (`⏳`, `🎬` or `👀`), and nothing is posted without two approvals: first the idea, then the finished video.
 
 Already made before this library: Back Tap (iPhone) · Win + V clipboard history (Windows) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android).

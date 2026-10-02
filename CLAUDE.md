@@ -26,16 +26,16 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 
 ## Video Library approval loop (`VIDEO_LIBRARY.md`)
 Only one row is in progress at a time, so the 30-minute timer only matters *between* ideas. There are **no recurring timers**: the timer is a durable one-shot (`send_later`, server-side, survives session restarts and closed windows).
-1. **Timer fires** ("Tech Wall: send the next video idea"): `git pull`. If a row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, stop (reply one line). Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + push, and send the user the idea with a storyboard table.
+1. **Timer fires** ("Tech Wall: send the next video idea"): `git pull`. If a row is `⏳ Awaiting idea approval`, `🎬 In production` or `👀 Awaiting video review`, stop (reply one line). Otherwise take the **first** `💡 Idea` row, verify the path (step 2 above), set it to `⏳ Awaiting idea approval`, commit + `./sync_main.sh`, and send the user the idea with a storyboard table.
 2. **Idea approved** → `🎬 In production`, build the episode (steps 3–7), send the MP4 and set `👀 Awaiting video review`. **Rejected** → `❌ Rejected` (or `⏭️ Skipped` if postponed), then go to step 5.
-3. **Video approved** → post it as a Reel on the Tech Wall page by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, COVER = `out/cover_<id>.jpg`, rebuilt with `./build.sh <id>` if the session restarted; CAPTION = the approved README §6 caption; MODE = PUBLISHED), fill in **Date published**, set `✅ Published`, commit + push. Changes requested → fix, re-send, stay in `👀`.
-4. **Keep `main` current:** after every published video, open a pull request from the working branch to `main` and merge it (`main` is what a new chat starts from). Then restart the working branch from the new `main` before the next change.
+3. **Video approved** → post it as a Reel on the Tech Wall **Facebook page and Instagram (@techwalll)** by following **`REELS.md`** (VIDEO = `out/<id>.mp4`, COVER = `out/cover_<id>.jpg`, rebuilt with `./build.sh <id>` if the session restarted; CAPTION = the approved README §6 caption; MODE = PUBLISHED), fill in **Date published**, set `✅ Published`, commit + `./sync_main.sh`. Report both links. Changes requested → fix, re-send, stay in `👀`.
+4. **Keep `main` current (automatic, never ask):** after *every* commit that touches the library or the repo, run `./sync_main.sh`. It pushes the working branch and fast-forwards `main` to it, so `main` always shows the current library. If `main` is protected and the push is refused, open a pull request and merge it with the GitHub tools instead.
 5. **Row finished** (✅ / ❌ / ⏭️) → schedule the next idea with `send_later` (`delay_minutes: 30`, name "Tech Wall: next video idea", message "Tech Wall: send the next video idea (see CLAUDE.md, Video Library approval loop)"). If the user asks for the next idea sooner, send it now and skip the timer.
 Never post without both approvals. Act on the user's replies immediately; don't wait for a timer.
 Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification`.
 
 ## Publishing a Reel
-Whenever a video has to be posted to the Tech Wall Facebook page, follow **`REELS.md`** step by step (prepare → start session → upload → publish → confirm → report). Use MODE = DRAFT for any test. Only publish after the user has approved the video.
+Whenever a video has to be posted, follow **`REELS.md`** step by step: Facebook (prepare → start session → upload → publish → confirm → cover), then Instagram (container → upload → wait → publish), then report both links. Use MODE = DRAFT for any test. Only publish after the user has approved the video.
 **Cover:** `build.sh` saves the finished title card as `out/cover_<id>.jpg`; `REELS.md` step 7 uploads it as the Reel cover and checks it. Never skip it: frame 0 of our videos is an empty blueprint, which Facebook would use as a blank thumbnail. Look at the cover JPG when spot-checking the build.
 
 ## Deliver

@@ -1,7 +1,10 @@
-# Upload a video as a Facebook Reel to Tech Wall
+# Upload a video as a Reel to Tech Wall (Facebook + Instagram)
+
+Every Reel is posted to the Facebook page first (steps 1-7), then to the linked Instagram account @techwalll (step 8).
 
 ## Rules
-- FB_PAGE_ID and FB_API_VERSION are set. Auth is added automatically by the proxy for
+- FB_PAGE_ID and FB_API_VERSION are set. IG_USER_ID (Instagram @techwalll) = 17841414742744549
+  (look it up with: curl -sg "https://graph.facebook.com/$FB_API_VERSION/$FB_PAGE_ID?fields=instagram_business_account"). Auth is added automatically by the proxy for
   graph.facebook.com and rupload.facebook.com. Never request, print, or store tokens.
 - Do not modify the repository unless asked.
 - Never publish publicly when the task says DRAFT or TEST.
@@ -59,6 +62,26 @@ curl -s -F "source=@<COVER>" -F "is_preferred=true" "https://graph.facebook.com/
 curl -s "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID/thumbnails?fields=is_preferred,width,height"
 -> One entry must have "is_preferred":true. If not, retry once, then stop and report.
 
-## Step 8 - Report
-- video_id, final status, mode (PUBLISHED/DRAFT), cover set (yes/no), the caption, and
+## Step 8 - Instagram (always, after Facebook)
+Instagram has no drafts: in DRAFT or TEST mode do 8.1-8.3 only (the container expires unpublished after 24 h).
+8.1 Create the container (thumb_offset = cover time in ms; Tech Wall episodes: 5833 = title card at frame 70):
+curl -s -X POST "https://graph.facebook.com/$FB_API_VERSION/$IG_USER_ID/media" -d "media_type=REELS" \
+  -d "upload_type=resumable" -d "share_to_feed=true" -d "thumb_offset=5833" --data-urlencode "caption@/tmp/caption.txt"
+-> Save "id" as CONTAINER_ID.
+8.2 Upload the file:
+curl -s -X POST "https://rupload.facebook.com/ig-api-upload/$FB_API_VERSION/$CONTAINER_ID" \
+  -H "offset: 0" -H "file_size: $SIZE" --data-binary "@/tmp/reel.mp4"
+-> Expect {"success":true}. "upstream request failed" is a proxy glitch: retry (up to 3 times).
+8.3 Every 15 seconds, up to 5 minutes:
+curl -s "https://graph.facebook.com/$FB_API_VERSION/$CONTAINER_ID?fields=status_code,status"
+-> Wait for status_code FINISHED. On ERROR or EXPIRED, report the full status.
+8.4 Publish (PUBLISHED mode only):
+curl -s -X POST "https://graph.facebook.com/$FB_API_VERSION/$IG_USER_ID/media_publish" -d "creation_id=$CONTAINER_ID"
+-> Save "id" as IG_MEDIA_ID, then get the link:
+curl -s "https://graph.facebook.com/$FB_API_VERSION/$IG_MEDIA_ID?fields=permalink"
+If Instagram fails after Facebook succeeded, do not repost to Facebook: retry Instagram alone, then report.
+
+## Step 9 - Report
+- Facebook: video_id, final status, mode (PUBLISHED/DRAFT), cover set (yes/no), the caption, and
   the link https://www.facebook.com/reel/<video_id>
+- Instagram: IG_MEDIA_ID and the permalink (or why it was not published)
