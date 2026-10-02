@@ -335,6 +335,27 @@ def youtube_preview(ban):
     return p.resize((1280, 720), Image.LANCZOS)
 
 
+def youtube_watermark(S=150):
+    """small subscribe watermark: bold TW monogram on a navy blueprint tile, transparent corners"""
+    B = 600
+    tile = grid_paper(B, B, seed=13, minor=60)
+    mask = Image.new('L', (B, B), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((8, 8, B - 8, B - 8), 120, fill=255)
+    cv = Image.new('RGBA', (B, B), (0, 0, 0, 0))
+    cv.paste(tile, (0, 0), mask)
+    d = ImageDraw.Draw(cv)
+    d.rounded_rectangle((8, 8, B - 8, B - 8), 120, outline=CHALK, width=14)
+    f = th.STN(340)
+    bt, bw = f.getbbox('T'), f.getbbox('W')
+    wt, ww, gap = bt[2] - bt[0], bw[2] - bw[0], -40
+    x = B / 2 - (wt + gap + ww) / 2
+    top = min(bt[1], bw[1]); bot = max(bt[3], bw[3])
+    y = B / 2 - (top + bot) / 2
+    d.text((x - bt[0], y), 'T', font=f, fill=PAPER)
+    d.text((x + wt + gap - bw[0], y), 'W', font=f, fill=YEL)
+    return cv.resize((S, S), Image.LANCZOS)
+
+
 if __name__ == '__main__':
     import os
     os.makedirs(OUT, exist_ok=True)
@@ -346,4 +367,5 @@ if __name__ == '__main__':
     yb.convert('RGB').save(f'{OUT}/TechWall_youtube_banner_2560x1440.jpg', quality=92, optimize=True)
     youtube_profile().convert('RGB').save(f'{OUT}/TechWall_youtube_profile_800.png')
     youtube_preview(yb).save(f'{OUT}/TechWall_youtube_banner_GUIDE.jpg', quality=88)
+    youtube_watermark().save(f'{OUT}/TechWall_youtube_watermark_150.png', optimize=True)
     print('ok')
