@@ -2,3 +2,4 @@ out/*
 !out/.keep
 __pycache__/
 *.pyc
+.tiktok_tokens.json
