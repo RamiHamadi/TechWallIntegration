@@ -29,6 +29,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `movie.py` | Back Tap in the *original* kraft-paper style (not used for posting) | iPhone | 47 s |
 | `themes.py` | Style frames for the 3 tech themes (A Circuit, **B Blueprint**, C Neon) | n/a | stills |
 | `brand.py` | Facebook cover 1640×624 + profile 720×720 | n/a | stills |
+| `tiktok.py` | TikTok upload (drafts / direct post) via the Content Posting API, see `TIKTOK.md` | n/a | tool |
 
 ---
 
@@ -38,6 +39,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 - **Scope:** phones, tablets, PCs, consoles, games, general tech. **Not** only hidden features.
 - **Bio (96 chars):** `📌 Everything tech, pinned to one wall. Tips, tricks & how-tos for phones, PCs, consoles & games.`
 - **Category:** Digital creator · Handle: @techwall (fallback @techwall.tips)
+- **Accounts:** Facebook page Tech Wall · Instagram **@techwalll** · TikTok **@techwallz**. Credentials and how to add another page/brand: `SETUP.md`.
 - Brand images are in `brand/` (use the **TW monogram** profile; skip the phone-only alt).
 - Rotate devices week to week (phone → PC → console → tablet) so the page reads as "all tech".
 
@@ -143,7 +145,7 @@ Caption template:
 
 #TechWall #<Device>Tips #<Topic> #TechTips
 ```
-Post as a **Reel** (Meta Business Suite → Create reel), optionally cross-post to Instagram. Metricool can schedule posts if connected.
+Posting is automated after the video is approved: **Facebook + Instagram** Reels via `REELS.md` (caption and cover set by the API), then **TikTok** via `TIKTOK.md`. Until TikTok audits the app, TikTok gets a **draft without caption**: the user pastes this same caption in the TikTok app, picks the title card as cover and taps Post. Setup of all three platforms, tokens and the cloud environment: `SETUP.md` + `TIKTOK.md` (Parts A–C).
 
 ---
 
