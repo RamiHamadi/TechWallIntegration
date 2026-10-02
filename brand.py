@@ -273,6 +273,89 @@ def mock(cov, prof):
     return m
 
 
+# ======================================================================= YOUTUBE banner 2560x1440 + profile 800
+YT_W, YT_H = 2560, 1440
+YT_SAFE = (507, 508, 2053, 931)        # 1546x423: visible on every device (text/logo must stay inside)
+
+
+def youtube_banner():
+    W, H = YT_W, YT_H
+    cv = wall(W, H, seed=7)
+    # sheets: desktop strip (y 508-931) outside the safe width, plus extra ones above/below for TV
+    sheets = [
+        ('phone', 'TW-01', 'PHONE', 300, 400, 290, 700, -6, 1),
+        ('tablet', 'TW-02', 'TABLET', 270, 320, 120, 330, 6, 2),
+        ('headset', 'TW-05', 'GEAR', 250, 300, 160, 1130, -8, 4),
+        ('gamepad', 'TW-03', 'GAMES', 330, 290, 2270, 690, 5, 3),
+        ('laptop', 'TW-04', 'PC', 320, 280, 2420, 330, -4, 5),
+        ('screen', 'TW-06', 'HIDDEN', 250, 360, 2400, 1120, 7, 6),
+        ('wifi', 'TW-07', 'Wi-Fi', 270, 250, 820, 230, -5, 7),
+        ('battery', 'TW-08', 'BATTERY', 290, 250, 1760, 220, 4, 8),
+        ('gear', 'TW-09', 'SETTINGS', 270, 270, 900, 1220, 6, 9),
+        ('gamepad', 'TW-10', 'CONSOLE', 330, 290, 1700, 1230, -5, 10),
+    ]
+    for kind, code, title, w, h, x, y, rot, seed in sheets:
+        sh, body = sheet(w, h, kind, code, title, seed, rot)
+        body = body.copy()
+        if seed % 2:
+            tape(body, body.width / 2, (body.height - h) / 2 + 22, rot * .5 - 3)
+        place(cv, (sh, body), x, y)
+        if seed % 2 == 0:
+            pin(cv, int(x + math.sin(math.radians(rot)) * h * .42), int(y - h * .42), YEL)
+    # title inside the safe area
+    letters = 'TECH WALL'
+    size = 205
+    sps = [None if c == ' ' else stencil(c, size, PAPER if i < 4 else YEL) for i, c in enumerate(letters)]
+    adv = [size * .32 if c == ' ' else th.STN(size).getlength(c) + 12 for c in letters]
+    x = W / 2 - sum(adv) / 2
+    r = random.Random(4)
+    for c, sp, a in zip(letters, sps, adv):
+        if sp:
+            place(cv, rotate_sprite(sp, r.uniform(-3, 3)), x + a / 2, 640 + r.uniform(-6, 6))
+        x += a
+    place(cv, strip('Everything tech, pinned to one wall', th.JB(800, 48), PAPER, NAVY, -1.5, padx=40, pady=16), W / 2, 805)
+    place(cv, strip('PHONES · TABLETS · PCs · CONSOLES · GAMES', th.JB(800, 30), YEL, NAVY, 1.5, padx=26, pady=10), W / 2 + 70, 885)
+    return cv
+
+
+def youtube_profile():
+    return profile().resize((800, 800), Image.LANCZOS)
+
+
+def youtube_preview(ban):
+    """banner with the TV / desktop / mobile-safe guides drawn on (reference only, don't upload)"""
+    p = ban.convert('RGB').copy()
+    d = ImageDraw.Draw(p)
+    x0, y0, x1, y1 = YT_SAFE
+    d.rectangle((0, y0, YT_W - 1, y1), outline=(90, 220, 255), width=6)
+    d.text((20, y0 - 14), 'DESKTOP (2560x423)', font=th.JB(800, 34), fill=(90, 220, 255), anchor='ls')
+    d.rectangle((x0, y0, x1, y1), outline=(255, 90, 120), width=6)
+    d.text((x0 + 14, y1 + 44), 'SAFE AREA - ALL DEVICES (1546x423)', font=th.JB(800, 34), fill=(255, 90, 120), anchor='ls')
+    d.text((20, 50), 'TV = FULL IMAGE', font=th.JB(800, 34), fill=(255, 255, 255), anchor='ls')
+    return p.resize((1280, 720), Image.LANCZOS)
+
+
+def youtube_watermark(S=150):
+    """small subscribe watermark: bold TW monogram on a navy blueprint tile, transparent corners"""
+    B = 600
+    tile = grid_paper(B, B, seed=13, minor=60)
+    mask = Image.new('L', (B, B), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((8, 8, B - 8, B - 8), 120, fill=255)
+    cv = Image.new('RGBA', (B, B), (0, 0, 0, 0))
+    cv.paste(tile, (0, 0), mask)
+    d = ImageDraw.Draw(cv)
+    d.rounded_rectangle((8, 8, B - 8, B - 8), 120, outline=CHALK, width=14)
+    f = th.STN(340)
+    bt, bw = f.getbbox('T'), f.getbbox('W')
+    wt, ww, gap = bt[2] - bt[0], bw[2] - bw[0], -40
+    x = B / 2 - (wt + gap + ww) / 2
+    top = min(bt[1], bw[1]); bot = max(bt[3], bw[3])
+    y = B / 2 - (top + bot) / 2
+    d.text((x - bt[0], y), 'T', font=f, fill=PAPER)
+    d.text((x + wt + gap - bw[0], y), 'W', font=f, fill=YEL)
+    return cv.resize((S, S), Image.LANCZOS)
+
+
 if __name__ == '__main__':
     import os
     os.makedirs(OUT, exist_ok=True)
@@ -280,4 +363,9 @@ if __name__ == '__main__':
     pr = profile(); pr.convert('RGB').save(f'{OUT}/TechWall_profile_720.png')
     pa = profile_alt(); pa.convert('RGB').save(f'{OUT}/TechWall_profile_alt_720.png')
     mock(cov, pr).save(f'{OUT}/TechWall_page_preview.png')
+    yb = youtube_banner()
+    yb.convert('RGB').save(f'{OUT}/TechWall_youtube_banner_2560x1440.jpg', quality=92, optimize=True)
+    youtube_profile().convert('RGB').save(f'{OUT}/TechWall_youtube_profile_800.png')
+    youtube_preview(yb).save(f'{OUT}/TechWall_youtube_banner_GUIDE.jpg', quality=88)
+    youtube_watermark().save(f'{OUT}/TechWall_youtube_watermark_150.png', optimize=True)
     print('ok')
