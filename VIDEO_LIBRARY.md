@@ -1,6 +1,6 @@
 # 📌 Tech Wall: Video Library
 
-The ordered list of Tech Wall video ideas. Every 30 minutes a scheduled check takes the **first row with status `💡 Idea`** and sends it for approval.
+The ordered list of Tech Wall video ideas. 30 minutes after a row is finished (published, rejected or skipped), a one-time timer takes the **first row with status `💡 Idea`** and sends it for approval.
 
 **Status flow:** `💡 Idea` → `⏳ Awaiting idea approval` → `🎬 In production` → `👀 Awaiting video review` → `✅ Published` (or `❌ Rejected` / `⏭️ Skipped`)
 
@@ -10,9 +10,9 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 
 | # | Idea | Platform | Description | Date published | Status |
 |---|---|---|---|---|---|
-| 1 | Keyboard trackpad | iPhone | "Stop tapping to fix typos": touch & hold the spacebar and slide to move the cursor. | | ⏳ Awaiting idea approval |
-| 2 | Emoji panel (Win + .) | Windows | "Emojis on your PC": press WIN + . in any text box. Also has GIFs, symbols & kaomoji. | | 💡 Idea |
-| 3 | Charge controllers in Rest Mode | PS5 | "Charge controllers while the PS5 sleeps": Settings › System › Power Saving › Features Available in Rest Mode › Supply Power to USB Ports. | | 💡 Idea |
+| 1 | Keyboard trackpad | iPhone | "Stop tapping to fix typos": touch & hold the spacebar and slide to move the cursor. | 2026-10-01 | ✅ Published |
+| 2 | Emoji panel (Win + .) | Windows | "Emojis on your PC": press WIN + . in any text box. Also has GIFs, symbols & kaomoji. | 2026-10-01 | ✅ Published |
+| 3 | Charge controllers in Rest Mode | PS5 | "Charge controllers while the PS5 sleeps": Settings › System › Power Saving › Features Available in Rest Mode › Supply Power to USB Ports. | | ⏳ Awaiting idea approval |
 | 4 | Animation scale 0.5x | Android | "Make your Android *feel* 2x faster": Developer options › Window / Transition / Animator scale › 0.5x. | | 💡 Idea |
 | 5 | Quick Note from the corner | iPad | "Fastest way to take notes": swipe up from the bottom-right corner with finger or Pencil. | | 💡 Idea |
 | 6 | Copy text from any photo (Live Text) | iPhone | "Your camera can copy text": point the camera or open a photo, tap the Live Text icon, then Copy. iOS 15+. | | 💡 Idea |
