@@ -84,7 +84,7 @@ On `cannot reach` the network does not allow `*.tiktokapis.com`: tell the user (
 `python3 tiktok.py draft out/<id>.mp4` -> expect `SEND_TO_USER_INBOX`.
 **Drafts carry no caption, hashtags or cover** (the inbox endpoint only accepts the video). So also send the user
 the caption, ready to copy, and tell them: open TikTok on @techwallz, tap the "ready to edit" notification
-(or the inbox), paste the caption, choose the title card as cover, tap Post.
+(or the inbox), paste the caption, choose the first frame (the hook) as cover, tap Post.
 
 ### Step 2b - PUBLISHED (only after TikTok has audited the app)
 `python3 tiktok.py post out/<id>.mp4 --caption-file /tmp/caption.txt --privacy PUBLIC_TO_EVERYONE --cover-ms 5833`

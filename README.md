@@ -58,7 +58,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | Fonts | Titles: **Allerta Stencil** (white + yellow letters, each a separate cut-out, random ±4° tilt). Labels/captions: **JetBrains Mono** 700/800. Phone UI: **Fredoka** |
 | Captions | Taped white spec label at top (y≈300): header `FIG. 0n  /  STEP n OF N` (or `FIG. 00 / THE PROBLEM`, `RESULT / OK`, `FIG. 0x / FIELD TEST`, `APPENDIX / BONUS`) + **max 2 lines** of JetBrains Mono 800 54 px (≈25 chars per line). Drops in with an overshoot, flies out upward |
 | Hand | Paper hand, navy sleeve with white stripes; hover vs press shadows; dashed **yellow target ring** on every tap |
-| Title card | `SPEC // <device> tip` label → stencil title tiles → two white strips (the hook) → yellow strip (feature name) → tracing-paper chalk sketch → small taped label (OS version) |
+| Opening (result-first) | No title card: frame 0 already shows the payoff screen/mini-scene with the hook on a taped spec caption (`TECH WALL / <DEVICE> TIP`); frame 0 is also the Reel cover. (Old title card: `SPEC // <device> tip` label → stencil tiles → strips → chalk sketch; episodes 1–10 only.) |
 | End card | `SAVE THIS TIP` + 4 numbered path labels joined by dashed chalk arrows (last one yellow) + yellow result strip + white strip + small "works on…" strip |
 | Audio | Synthesized: pluck-chord music loop + SFX `tap pop whoosh paper swish knock shutter ding`. All original, safe to post |
 
@@ -89,7 +89,7 @@ Same Blueprint look (navy grid, chalk dims, paper cut-outs, taped captions, pape
 - Custom screens: register `fn(ov, hl) -> (img 560xH, rows)` in `mgfx.SCREEN_FN` (see `battery.py` `card()` helper for iOS cards with icons, toggles, checks, subtitles).
 - Custom graphics: append `fn(cv, t, mg)` to `mg.layers` (under the phone) or `mg.top_layers` (above).
 - `G.run(mg, '<id>', cover_t=…)` renders, writes `out/meta_<id>` (FR=30, cover frame) and the soundtrack; `./build.sh <id>` reads that file and encodes at 30 fps.
-- Hook rule (tested with `wifi_short.py`): the payoff/graphic must be on screen at **frame 0**, no separate title card; aim for 20–35 s.
+- Hook rule (tested with `wifi_short.py`, standard for every engine since `rf_demo.py`): the payoff/graphic must be on screen at **frame 0**, no separate title card; aim for 20–35 s.
 
 Each episode file has the same 5 parts: **(1) custom screens**, **(2) `build()` timeline**, **(3) `fig_head()` caption headers**, **(4) `init_props()` title + end-card sprites**, **(5) `draw_title()`**, plus the standard `__main__` (renders with a 2-process pool, then `make_audio`).
 
@@ -126,14 +126,14 @@ Each episode file has the same 5 parts: **(1) custom screens**, **(2) `build()` 
 ## 5. Recipe: new episode
 
 1. **Pick & verify the tip.** Check the exact menu path on the vendor's official support page (Apple / Google / Samsung / Microsoft) plus one recent guide. Note OS version limits and brand differences (put the Samsung path on the end card).
-2. **Copy the closest episode:** iPhone → `wifi.py`; Android → `sharewifi.py` (or `android.py`); PC → `winv.py`. Rename (e.g. `circle.py`); the output auto-names to `out/frames_circle`, `out/audio_circle.wav`.
+2. **Copy the closest episode:** result-first templates: iPhone → `rf_demo.py` / `wifi_short.py`, motion graphics → `battery.py`. Screens/props: Android → `sharewifi.py` (or `android.py`); PC → `emoji.py`; console → `restmode.py` (give them the result-first opening when copying). Rename (e.g. `circle.py`); the output auto-names to `out/frames_circle`, `out/audio_circle.wav`.
 3. **Screens:** build only the screens on the path; row ids for everything the hand taps. Use fictional data (network "Home", password "SunnyDays2024", contacts "Mom"/"Sam", domain example.com).
-4. **Timeline (`build()`):** title (`fx (title, 0, 86)` + `hold(92)`: the full title stays readable ~4 s; older episodes used 56 f, which proved too fast) → phone in → *problem* caption + mini-scene → steps (one caption per step, `hold(8–12)` before each tap) → result caption (hold ≥ 24 f) → *field test* demo → bonus → `cap_off()`, phone out, end card `hold(72)`.
+4. **Timeline (`build()`), result-first (standard since `rf_demo.py`):** the payoff is on screen at **frame 0**: `mb.result_first(t, spec(<result screen>), 'H', '<HOOK>')` (phone already in place, hook caption settled, pop; no title card, no home screen, no "Open Settings" tap) → mini-scene that proves it (≤ 2 s) → `hold(~14–20)` → "Here's how" caption + `t.navigate(spec(<first screen>), back=True)` → one caption per step (`hold(3–5)` before each tap, `n_move=4–5`) → result caption (hold ≥ 18 f) → bonus → `mb.end_card(t)` (phone out + fast end card, everything in within ~1.4 s, `hold(40)`). 12 fps, **20–35 s**. Caption headers come from `fig_head()` (`'H'` → `TECH WALL / iPHONE TIP`, steps → `HERE'S HOW / STEP n OF N`). The `__main__` is just `mb.finish(t, EP, init_props)` (renders, soundtrack, and writes `out/meta_<id>` with `CF=0` so `build.sh` takes frame 0 as the Reel cover). Old opening (title card `fx (title, 0, 86)` + `hold(92)` → phone in → problem caption) is kept in `wifi.py`, `sharewifi.py`, `emoji.py`, `restmode.py` for reference only.
 5. **Captions:** test wrapping before rendering:
    `python3 -c "import themes as th; from lib import wrap; print(wrap('Your caption here', th.JB(800,54), 820))"` → must be ≤ 2 lines.
-6. **Title/end card** in `init_props()`: `P['tiles']` (stencil letters), `t_label t_s1 t_s1b t_s2 t_phone t_burst`, `e_chips` (4 path labels, last `hot=True`), `e_s1 e_s2 e_s3`. Keep path labels ≤ ~20 chars.
+6. **End card** in `init_props()`: `e_head`, `e_chips` (4 path labels, last `hot=True`), `e_arrows`, `e_s1 e_s2 e_s3`, `e_follow`. Keep path labels ≤ ~20 chars. (Title props `tiles t_label t_s1 …` are only needed by the old title-card opening.)
 7. **Preview** 8–10 frames (`python3 ep.py 40 90 150 …`), make a contact sheet, check: caption not truncated, hand not covering the key UI (move hand away before overlays), screens correct.
-8. **Build:** `./build.sh ep` → `out/ep.mp4`.
+8. **Build:** `./build.sh ep` → `out/ep.mp4` + `out/cover_ep.jpg` (frame 0 = the hook; look at it).
 
 ### Content rules
 - Facts must match official docs; hooks honest (e.g. animation-speed trick "*feels* faster").
@@ -164,7 +164,7 @@ Posting is automated after the video is approved: **Facebook + Instagram** Reels
 
 ## 7. Episode log & idea backlog
 
-**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram) · Battery drain / Background App Refresh (iPhone, `battery.py`, first **motion-graphics** episode, 31.7 s @ 30 fps, built 2026-10-04, awaiting review) · Wi-Fi password short cut (iPhone, `wifi_short.py`, 18 s result-first test)
+**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram) · Battery drain / Background App Refresh (iPhone, `battery.py`, first **motion-graphics** episode, 31.7 s @ 30 fps, built 2026-10-04, awaiting review) · Wi-Fi password short cut (iPhone, `wifi_short.py`, 18 s result-first test) · Result-first opening test (`rf_demo.py`, dummy Back Tap topic, 21 s, 2026-10-03, awaiting review: if approved it is the standard opening)
 
 **Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
 

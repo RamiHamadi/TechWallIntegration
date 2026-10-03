@@ -171,6 +171,90 @@ def draw_end(cv, f, a):
 m.draw_end = draw_end
 
 
+# =============================================================== result-first opening (standard since ep. 11)
+# The payoff is on screen at frame 0: phone already in place, hook caption settled, no title card and no
+# home-screen tap (tested with wifi_short.py). Frame 0 doubles as the Reel cover (finish() writes CF=0).
+FAST_END = [('e_head', 540, 300, 1)] + \
+    [(('chip', i), [470, 600, 470, 600][i], 560 + 185 * i, 3 + 2 * i) for i in range(4)] + \
+    [(('arrow', i), (190, 950, 190)[i], 652 + 185 * i, 4 + 2 * i) for i in range(3)] + \
+    [('e_s1', 540, 1340, 12), ('e_s2', 540, 1470, 14), ('e_s3', 540, 1640, 16), ('e_follow', 600, 1770, 20)]
+_result_first = {'on': False}
+
+
+def result_first(t, spec, badge, text, col=m.YELLOW, snd='pop'):
+    """open the timeline on the result: phone at home position showing `spec`, caption already settled.
+    Also switches this timeline to the short-cut pacing (no automatic +0.5 s hold per caption) and the
+    fast end card. Follow with t.hold(~20), a "here's how" caption and t.navigate(first_screen, back=True)."""
+    import types
+    t.cap = types.MethodType(_cap, t)       # no _slow_cap on this timeline
+    t.ph['y'] = m.PHY
+    t.ph['spec'] = spec
+    t.cap(badge, text, col)
+    t.caps[-1]['inn'] = -4                  # settled on frame 0
+    t.snd = [(0, snd)]
+    _result_first['on'] = True
+
+
+def end_card(t, hold=40):
+    """phone out, fast end card (everything in within ~1.4 s), hold; adds the pops"""
+    t.cap_off()
+    t.phone_to(2700, 4)
+    a = t.f
+    t.fx.append(('end', a))
+    for key, x, y, off in FAST_END:
+        if not (isinstance(key, tuple) and key[0] == 'arrow'):
+            t.snd.append((a + off, 'pop'))
+    t.hold(hold)
+
+
+def _draw_fast_end(cv, f, a):
+    P = m.P
+    for key, x, y, off in FAST_END:
+        yy = m.drop_y(f, a + off, y)
+        if yy is None or (not isinstance(key, tuple) and key not in P):
+            continue
+        sp = (P['e_chips'][key[1]] if key[0] == 'chip' else P['e_arrows'][key[1]]) if isinstance(key, tuple) else P[key]
+        m.put(cv, sp, x, yy, f, key)
+
+
+def _draw_end_dispatch(cv, f, a):
+    (_draw_fast_end if _result_first['on'] else draw_end)(cv, f, a)
+
+
+m.draw_end = _draw_end_dispatch
+
+
+def write_meta(ep, cover_frame=0, fps=FPS):
+    """tell build.sh which frame is the Reel cover (frame 0 for result-first episodes)"""
+    with open(__import__('lib').out(f'meta_{ep}'), 'w') as fh:
+        fh.write(f'FR={fps}\nCF={cover_frame}\n')
+
+
+def finish(t, ep, init_props, render_fn=None, cover_frame=0):
+    """standard __main__ for a result-first episode: print the caption sheet, render all frames
+    (or only the frame numbers on the command line), write the soundtrack and the cover-frame meta"""
+    render_fn = render_fn or render
+    m.TLD = dict(frames=t.frames, fx=t.fx, caps=t.caps, snd=t.snd)
+    n = len(t.frames)
+    print('frames', n, 'seconds', round(n / FPS, 2), flush=True)
+    for c in t.caps:
+        print(f"{max(0, c['inn']) / FPS:5.1f}s  {c['text']}")
+    os.makedirs(OUT, exist_ok=True)
+    init_props()
+    write_meta(ep, cover_frame)
+    only = [int(a) for a in sys.argv[1:]]
+    if only:
+        for f in only:
+            if f < n:
+                render_fn(f)
+        return
+    with Pool(2) as pool:
+        for i, _ in enumerate(pool.imap(render_fn, range(n), chunksize=8)):
+            if i % 100 == 0:
+                print('rendered', i, flush=True)
+    m.make_audio(m.TLD, n, __import__('lib').out(f'audio_{ep}.wav'))
+
+
 def render(f):
     tl = m.TLD
     st = tl['frames'][f]
