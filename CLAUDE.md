@@ -19,6 +19,7 @@ python3 sharewifi.py 40 200 345        # sanity check: preview frames -> out/fra
 7. **Preview** 8–10 frames, make a contact sheet and actually look at it: captions not truncated, the hand isn't covering key UI (move it away before overlays), screens correct. Then `./build.sh <id>` and spot-check frames from the MP4 and `out/cover_<id>.jpg`.
 
 ## Rules
+- **Opening (approved 2026-10-03, every future video):** result-first, as in `rf_demo.py`. Frame 0 already shows the payoff with the hook caption; never a blank blueprint, title card or home-screen tap. Target 20–35 s.
 - The look must stay **identical** to earlier episodes: navy grid + chalk dims, paper cut-outs with jitter, navy-sleeve hand, yellow dashed tap rings, taped spec captions, stencil titles, synthesized music + SFX.
 - **Ownership mark (standard since ep. 6):** the Blueprint background carries a chalk `TECH WALL` annotation on the left edge plus `TECH WALL` in the drawing box (`themes.bg_blue`), and the end card ends with a yellow `FOLLOW TECH WALL` strip (`movie_blue.draw_end`, add a pop at `a + 36`). PC episodes: copy `emoji.py` (it reuses the `winv.py` rig and already has the strip, period key, typing hand and taped bursts).
 - No brand logos or trademark artwork (the Windows key is labelled WIN, controllers are generic, app screens are generic look-alikes). No real personal data.
