@@ -2,3 +2,4 @@ pillow>=10
 numpy>=1.24
 qrcode>=7.4
 imageio-ffmpeg>=0.4   # fallback ffmpeg binary if the system has none
+playwright>=1.40     # only for HTML-canvas episodes (camera18.py); Chromium is preinstalled in the cloud env

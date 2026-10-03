@@ -1,0 +1,356 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url(../fonts/inter-latin-400-normal.woff2);font-weight:400}
+@font-face{font-family:Inter;src:url(../fonts/inter-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:Inter;src:url(../fonts/inter-latin-600-normal.woff2);font-weight:600}
+@font-face{font-family:Inter;src:url(../fonts/inter-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:Inter;src:url(../fonts/inter-latin-800-normal.woff2);font-weight:800}
+@font-face{font-family:JB;src:url(../fonts/jetbrains-mono-latin-500-normal.woff);font-weight:500}
+@font-face{font-family:JB;src:url(../fonts/jetbrains-mono-latin-700-normal.woff);font-weight:700}
+@font-face{font-family:JB;src:url(../fonts/jetbrains-mono-latin-800-normal.woff);font-weight:800}
+html,body{margin:0;background:#000}
+canvas{display:block}
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+/* Tech Wall — iPhone 18 Pro variable aperture (motion graphics, 30 fps).
+   Facts (Apple Newsroom 2026-09): 48MP Fusion Main, variable aperture f/1.48–f/4, four positions,
+   six laser-cut blades (thinner than a human hair), rotor mechanism, automatic or manual (any of the four
+   settings in the Camera app), developer API. Middle f-numbers are NOT published -> never labelled. */
+const W=1080,H=1920,c=document.getElementById('c'),x=c.getContext('2d');
+const NAVY='#1A3E80',YEL='#FFC446',CHALK='#E2ECFC',INK='#0A1020';
+// ---------- easing / timing
+const cl=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const seg=(t,a,b)=>cl((t-a)/(b-a));
+const E={lin:p=>p,io:p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2,o:p=>1-Math.pow(1-p,3),o5:p=>1-Math.pow(1-p,5),
+  i:p=>p*p*p,back:p=>1+2.6*Math.pow(p-1,3)+1.6*Math.pow(p-1,2)};
+const lerp=(a,b,p)=>a+(b-a)*p;
+function kf(t,K){ // [[t,v,ease?],...]
+  if(t<=K[0][0])return K[0][1];
+  for(let i=1;i<K.length;i++){if(t<K[i][0]){const a=K[i-1],b=K[i];return lerp(a[1],b[1],E[b[2]||'io'](seg(t,a[0],b[0])))}}
+  return K[K.length-1][1];
+}
+function vis(t,a,b,fi=.5,fo=.45){return {i:E.o5(seg(t,a,a+fi)),o:E.i(seg(t,b-fo,b)),on:t>=a&&t<b}}
+const EV=[];const ev=(t,k)=>EV.push([t,k]);
+// ---------- scenes (seconds)
+const S={hook:[0,3.8],what:[3.8,9.8],how:[9.8,17.6],low:[17.6,22.6],mode:[22.6,27.8],more:[27.8,32.2],end:[32.2,37]};
+const END=37;
+// ---------- background (precomputed)
+const bg=document.createElement('canvas');bg.width=W;bg.height=H;
+(function(){const g=bg.getContext('2d');
+  let gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#081022');gr.addColorStop(.5,'#0B1A3A');gr.addColorStop(1,'#060B18');
+  g.fillStyle=gr;g.fillRect(0,0,W,H);
+  g.strokeStyle='rgba(140,180,255,0.06)';g.lineWidth=1;
+  for(let i=0;i<=W;i+=40){g.beginPath();g.moveTo(i+.5,0);g.lineTo(i+.5,H);g.stroke()}
+  for(let j=0;j<=H;j+=40){g.beginPath();g.moveTo(0,j+.5);g.lineTo(W,j+.5);g.stroke()}
+  g.strokeStyle='rgba(140,180,255,0.11)';
+  for(let i=0;i<=W;i+=200){g.beginPath();g.moveTo(i+.5,0);g.lineTo(i+.5,H);g.stroke()}
+  for(let j=0;j<=H;j+=200){g.beginPath();g.moveTo(0,j+.5);g.lineTo(W,j+.5);g.stroke()}
+  let v=g.createRadialGradient(W/2,H*.45,200,W/2,H*.45,1250);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.72)');
+  g.fillStyle=v;g.fillRect(0,0,W,H);
+  // grain
+  const id=g.getImageData(0,0,W,H),d=id.data;let s=7;
+  for(let k=0;k<d.length;k+=4){s=(s*16807)%2147483647;const n=(s/2147483647-.5)*10;d[k]+=n;d[k+1]+=n;d[k+2]+=n}
+  g.putImageData(id,0,0);
+})();
+// ---------- text helpers
+function font(w,s,f='Inter'){x.font=`${w} ${s}px ${f}`}
+function wrapLines(txt,maxW){const ws=txt.split(' ');const L=[];let cur='';for(const w of ws){const tt=cur?cur+' '+w:w;if(x.measureText(tt).width>maxW&&cur){L.push(cur);cur=w}else cur=tt}L.push(cur);return L}
+function headline(t,a,b,kick,txt,y=250){
+  const v=vis(t,a,b,.7,.4);if(!v.on)return;
+  x.save();x.globalAlpha=1-v.o;
+  font(700,30,'JB');x.fillStyle=YEL;x.textAlign='center';x.textBaseline='alphabetic';
+  const kp=E.o(seg(t,a,a+.5));x.globalAlpha=(1-v.o)*kp;
+  x.save();x.translate(0,(1-kp)*20);
+  const kw=x.measureText(kick).width;
+  x.fillText(kick,W/2,y);x.fillStyle=YEL;x.fillRect(W/2-kw/2,y+14,kw*E.io(seg(t,a+.1,a+.6)),3);x.restore();
+  font(800,82);x.fillStyle='#F4F7FF';
+  const L=wrapLines(txt,930);
+  L.forEach((ln,i)=>{const p=E.o5(seg(t,a+.08+i*.09,a+.68+i*.09));x.globalAlpha=(1-v.o)*p;
+    x.save();x.beginPath();x.rect(0,y+30+i*96,W,104);x.clip();x.fillText(ln,W/2,y+112+i*96+(1-p)*90-v.o*40);x.restore()});
+  x.restore();
+}
+function label(txt,X,Y,al,size=30,col=CHALK,align='center',w=600){x.save();x.globalAlpha=al;font(w,size,'Inter');x.fillStyle=col;x.textAlign=align;x.fillText(txt,X,Y);x.restore()}
+function mono(txt,X,Y,al,size=28,col=CHALK,align='center',w=700){x.save();x.globalAlpha=al;font(w,size,'JB');x.fillStyle=col;x.textAlign=align;x.fillText(txt,X,Y);x.restore()}
+function pill(txt,X,Y,al,bgc=YEL,fg=INK,size=30,padx=26,h=60,w=800,fam='JB'){
+  x.save();x.globalAlpha=al;font(w,size,fam);const tw=x.measureText(txt).width;
+  rr(X-tw/2-padx,Y-h/2,tw+2*padx,h,h/2);x.fillStyle=bgc;x.fill();x.fillStyle=fg;x.textAlign='center';x.textBaseline='middle';x.fillText(txt,X,Y+1);x.restore()}
+function rr(X,Y,w,h,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath()}
+// ---------- the lens + 6-blade iris
+function rayHit(px,py,dx,dy,R){const a=dx*dx+dy*dy,b=2*(px*dx+py*dy),cc=px*px+py*py-R*R;const t=(-b+Math.sqrt(b*b-4*a*cc))/(2*a);return [px+dx*t,py+dy*t]}
+function lens(cx,cy,R,N,t,al=1,glow=0){
+  if(al<=0||R<2)return;
+  x.save();x.globalAlpha=al;x.translate(cx,cy);
+  // glow
+  if(glow>0){let g=x.createRadialGradient(0,0,R*.4,0,0,R*2.1);g.addColorStop(0,`rgba(255,196,70,${.22*glow})`);g.addColorStop(.5,`rgba(76,125,255,${.12*glow})`);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.beginPath();x.arc(0,0,R*2.1,0,7);x.fill()}
+  // drop shadow
+  x.save();x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=R*.25;x.shadowOffsetY=R*.06;x.beginPath();x.arc(0,0,R*1.22,0,7);x.fillStyle='#11151d';x.fill();x.restore();
+  // outer metal ring (conic)
+  let cg=x.createConicGradient(-0.6,0,0);
+  [[0,'#5b6474'],[.12,'#d9dee8'],[.25,'#6d7686'],[.42,'#2c323d'],[.58,'#a7afbd'],[.72,'#3a414d'],[.86,'#e8ecf3'],[1,'#5b6474']].forEach(s=>cg.addColorStop(s[0],s[1]));
+  x.beginPath();x.arc(0,0,R*1.22,0,7);x.fillStyle=cg;x.fill();
+  x.beginPath();x.arc(0,0,R*1.13,0,7);x.fillStyle='#07090d';x.fill();
+  x.beginPath();x.arc(0,0,R*1.09,0,7);x.strokeStyle='rgba(255,255,255,.10)';x.lineWidth=2;x.stroke();
+  // knurled ring ticks
+  x.save();x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=2;for(let i=0;i<120;i++){const a=i*Math.PI/60;x.beginPath();x.moveTo(Math.cos(a)*R*1.035,Math.sin(a)*R*1.035);x.lineTo(Math.cos(a)*R*1.075,Math.sin(a)*R*1.075);x.stroke()}x.restore();
+  // glass behind iris
+  let gg=x.createRadialGradient(-R*.15,-R*.2,R*.05,0,0,R);gg.addColorStop(0,'#3a5bd9');gg.addColorStop(.35,'#1b2a6b');gg.addColorStop(.7,'#0b1030');gg.addColorStop(1,'#04060f');
+  x.beginPath();x.arc(0,0,R,0,7);x.fillStyle=gg;x.fill();
+  // inner element rings
+  for(const [k,a] of [[.82,.10],[.6,.08],[.4,.12]]){x.beginPath();x.arc(0,0,R*k,0,7);x.strokeStyle=`rgba(160,190,255,${a})`;x.lineWidth=3;x.stroke()}
+  // iris blades
+  const rMax=R*.64, r=rMax*(1.48/N), rot=0.35+(1-r/rMax)*1.05;
+  const V=[];for(let i=0;i<6;i++){const a=rot+i*Math.PI/3;V.push([Math.cos(a)*r,Math.sin(a)*r])}
+  const Rb=R*.985;
+  const Hh=[];for(let i=0;i<6;i++){const p=V[i],q=V[(i+5)%6];Hh.push(rayHit(p[0],p[1],p[0]-q[0],p[1]-q[1],Rb))}
+  for(let i=0;i<6;i++){
+    const a=V[i],b=V[(i+1)%6],h0=Hh[i],h1=Hh[(i+1)%6];
+    x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.lineTo(h1[0],h1[1]);
+    let a1=Math.atan2(h1[1],h1[0]),a0=Math.atan2(h0[1],h0[0]);x.arc(0,0,Rb,a1,a0,true);x.closePath();
+    const mid=Math.atan2((a[1]+b[1])/2,(a[0]+b[0])/2);
+    let bgd=x.createLinearGradient(Math.cos(mid)*r,Math.sin(mid)*r,Math.cos(mid)*Rb,Math.sin(mid)*Rb);
+    const sh=i%2?0:12;bgd.addColorStop(0,`rgb(${44+sh},${48+sh},${58+sh})`);bgd.addColorStop(1,`rgb(${18+sh},${20+sh},${26+sh})`);
+    x.fillStyle=bgd;x.fill();x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=2;x.stroke();
+  }
+  // opening sheen
+  x.save();x.beginPath();x.moveTo(V[0][0],V[0][1]);for(let i=1;i<6;i++)x.lineTo(V[i][0],V[i][1]);x.closePath();x.clip();
+  let og=x.createRadialGradient(-r*.3,-r*.3,0,0,0,r*1.1);og.addColorStop(0,'rgba(140,170,255,.55)');og.addColorStop(.6,'rgba(40,60,160,.2)');og.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=og;x.fillRect(-r,-r,2*r,2*r);x.restore();
+  // coating reflections
+  x.save();x.beginPath();x.arc(0,0,R,0,7);x.clip();
+  x.globalCompositeOperation='screen';
+  let rf=x.createLinearGradient(-R,-R,R*.2,R*.2);rf.addColorStop(0,'rgba(255,255,255,.0)');rf.addColorStop(.45,'rgba(255,255,255,.10)');rf.addColorStop(.5,'rgba(255,255,255,.0)');
+  x.fillStyle=rf;x.fillRect(-R,-R,2*R,2*R);
+  x.beginPath();x.ellipse(-R*.38,-R*.42,R*.32,R*.12,-.7,0,7);x.fillStyle='rgba(255,255,255,.10)';x.fill();
+  x.beginPath();x.arc(R*.3,R*.34,R*.07,0,7);x.fillStyle='rgba(120,255,200,.18)';x.fill();
+  x.beginPath();x.arc(R*.18,R*.22,R*.035,0,7);x.fillStyle='rgba(255,140,220,.22)';x.fill();
+  x.restore();
+  x.restore();
+  return {r,rot};
+}
+// ---------- depth-of-field demo scene (procedural, fictional)
+const LIGHTS=[];(function(){let s=11;const R=()=>(s=(s*16807)%2147483647)/2147483647;
+  const cols=['255,196,70','255,120,90','120,180,255','255,230,170','180,140,255'];
+  for(let i=0;i<34;i++)LIGHTS.push({x:R(),y:.08+R()*.55,c:cols[i%5],s:.6+R()*.9})})();
+function demo(X,Y,w,h,blur,night,al,expo=1){
+  if(al<=0)return;
+  x.save();x.globalAlpha=al;
+  x.save();x.shadowColor='rgba(0,0,0,.55)';x.shadowBlur=40;x.shadowOffsetY=16;rr(X,Y,w,h,34);x.fillStyle='#000';x.fill();x.restore();
+  rr(X,Y,w,h,34);x.save();x.clip();
+  // sky
+  let sk=x.createLinearGradient(0,Y,0,Y+h);
+  if(night){sk.addColorStop(0,'#05081a');sk.addColorStop(.6,'#141a3c');sk.addColorStop(1,'#0c0f22')}
+  else{sk.addColorStop(0,'#2b3a7a');sk.addColorStop(.45,'#c4607a');sk.addColorStop(.75,'#f2a65a');sk.addColorStop(1,'#3a2a3a')}
+  x.fillStyle=sk;x.fillRect(X,Y,w,h);
+  // skyline (blurred with background blur)
+  x.save();x.filter=`blur(${blur*7}px)`;x.fillStyle=night?'#0a0d1d':'#3a2440';
+  const bw=[90,60,120,70,100,80,130,60,90];let bx=X-20;bw.forEach((b,i)=>{const bh=h*(.22+((i*37)%5)*.06);x.fillRect(bx,Y+h*.62-bh,b-8,bh+h*.4);bx+=b});
+  // windows
+  x.fillStyle=night?'rgba(255,210,120,.8)':'rgba(255,230,180,.5)';
+  {let q=5;const rn=()=>(q=(q*16807)%2147483647)/2147483647;for(let i=0;i<70;i++){const wx=X+rn()*w,wy=Y+h*.36+rn()*h*.3;x.fillRect(wx,wy,6,9)}}
+  x.restore();
+  // bokeh lights
+  for(const L of LIGHTS){const lx=X+L.x*w,ly=Y+L.y*h*.95;const rad=3+blur*26*L.s;const a=cl(.95-blur*.45)*(night?1:.75);
+    let g=x.createRadialGradient(lx,ly,0,lx,ly,rad);g.addColorStop(0,`rgba(${L.c},${a})`);g.addColorStop(blur>.3?.82:.4,`rgba(${L.c},${a*(blur>.3?.75:.4)})`);g.addColorStop(1,`rgba(${L.c},0)`);
+    x.fillStyle=g;x.beginPath();x.arc(lx,ly,rad,0,7);x.fill()}
+  // table
+  let tb=x.createLinearGradient(0,Y+h*.72,0,Y+h);tb.addColorStop(0,night?'#1b1410':'#5a3a28');tb.addColorStop(1,night?'#0c0806':'#2a1a12');
+  x.fillStyle=tb;x.fillRect(X,Y+h*.74,w,h*.26);
+  // subject: a cup with a plant (always sharp — the focus point)
+  const cx=X+w*.5,cy=Y+h*.74;
+  x.fillStyle='#e9e4dc';rr(cx-70,cy-120,140,130,22);x.fill();
+  x.fillStyle='#d4cec4';x.fillRect(cx-70,cy-120,140,18);
+  x.strokeStyle='#e9e4dc';x.lineWidth=16;x.beginPath();x.arc(cx+78,cy-62,30,-1.3,1.3);x.stroke();
+  x.fillStyle=YEL;x.font='800 34px JB';x.textAlign='center';x.textBaseline='middle';x.fillText('TW',cx,cy-52);
+  x.strokeStyle='#3c8a4a';x.lineWidth=7;x.lineCap='round';
+  [[-.5,-170],[0,-200],[.45,-165]].forEach(([dx,dy],i)=>{x.beginPath();x.moveTo(cx,cy-118);x.quadraticCurveTo(cx+dx*60,cy-150,cx+dx*120,cy+dy*.9);x.stroke();
+    x.fillStyle=i%2?'#5cbf5f':'#3fa24a';x.beginPath();x.ellipse(cx+dx*120,cy+dy*.9,34,16,dx*1.2-.4,0,7);x.fill()});
+  // exposure (low light)
+  if(expo<1){x.fillStyle=`rgba(0,0,0,${1-expo})`;x.fillRect(X,Y,w,h)}
+  x.restore();
+  rr(X,Y,w,h,34);x.strokeStyle='rgba(226,236,252,.22)';x.lineWidth=3;x.stroke();
+  x.restore();
+}
+// ---------- chalk callout line
+function callout(x1,y1,x2,y2,p,al){if(p<=0||al<=0)return;x.save();x.globalAlpha=al;x.strokeStyle=CHALK;x.lineWidth=3;x.setLineDash([10,8]);
+  x.beginPath();x.moveTo(x1,y1);x.lineTo(lerp(x1,x2,p),lerp(y1,y2,p));x.stroke();x.setLineDash([]);
+  x.fillStyle=YEL;x.beginPath();x.arc(x1,y1,9*E.back(cl(p*3)),0,7);x.fill();x.restore()}
+// ---------- icons for cards
+function icon(kind,X,Y,s,col){x.save();x.translate(X,Y);x.strokeStyle=col;x.fillStyle=col;x.lineWidth=s*.08;x.lineCap='round';x.lineJoin='round';
+  if(kind==='film'){rr(-s*.42,-s*.3,s*.84,s*.6,s*.08);x.stroke();for(let i=-2;i<=2;i++){x.fillRect(i*s*.16-s*.04,-s*.26,s*.08,s*.08);x.fillRect(i*s*.16-s*.04,s*.18,s*.08,s*.08)}
+    x.beginPath();x.moveTo(-s*.08,-s*.1);x.lineTo(s*.14,0);x.lineTo(-s*.08,s*.1);x.closePath();x.fill()}
+  else if(kind==='timer'){x.beginPath();x.arc(0,s*.04,s*.34,0,7);x.stroke();x.beginPath();x.moveTo(0,s*.04);x.lineTo(0,-s*.16);x.moveTo(0,s*.04);x.lineTo(s*.14,s*.12);x.stroke();x.fillRect(-s*.1,-s*.42,s*.2,s*.07)}
+  else if(kind==='grain'){x.beginPath();x.arc(0,0,s*.36,0,7);x.stroke();let q=3;for(let i=0;i<26;i++){q=(q*16807)%2147483647;const a=q/2147483647*6.28;q=(q*16807)%2147483647;const d=Math.sqrt(q/2147483647)*s*.3;x.beginPath();x.arc(Math.cos(a)*d,Math.sin(a)*d,s*.025,0,7);x.fill()}}
+  else if(kind==='auto'){x.beginPath();x.arc(0,0,s*.36,0,7);x.stroke();x.font=`800 ${s*.34}px JB`;x.textAlign='center';x.textBaseline='middle';x.fillText('A',0,2)}
+  else if(kind==='hand'){x.beginPath();x.arc(0,0,s*.36,0,7);x.stroke();x.beginPath();x.arc(0,0,s*.12,0,7);x.fill()}
+  x.restore()}
+function card(X,Y,w,h,al,ic,title,sub,dy=0){if(al<=0)return;x.save();x.globalAlpha=al;x.translate(0,dy);
+  rr(X,Y,w,h,30);let g=x.createLinearGradient(0,Y,0,Y+h);g.addColorStop(0,'rgba(36,58,110,.92)');g.addColorStop(1,'rgba(16,26,56,.92)');x.fillStyle=g;x.fill();
+  x.strokeStyle='rgba(226,236,252,.18)';x.lineWidth=2;x.stroke();
+  x.fillStyle='rgba(255,196,70,.14)';x.beginPath();x.arc(X+86,Y+h/2,52,0,7);x.fill();icon(ic,X+86,Y+h/2,96,YEL);
+  font(800,42);x.fillStyle='#F4F7FF';x.textAlign='left';x.textBaseline='alphabetic';x.fillText(title,X+170,Y+h/2-6);
+  font(500,28);x.fillStyle='rgba(226,236,252,.75)';x.fillText(sub,X+170,Y+h/2+36);x.restore()}
+// ---------- persistent chrome
+function chrome(t){
+  const a=1-E.i(seg(t,S.end[0]-.2,S.end[0]+.3));if(a<=0)return;
+  x.save();x.globalAlpha=a;
+  rr(54,60,64,64,16);x.fillStyle=NAVY;x.fill();x.strokeStyle=CHALK;x.lineWidth=3;x.stroke();
+  font(800,30,'JB');x.textAlign='center';x.textBaseline='middle';x.fillStyle=CHALK;x.fillText('T',76,93);x.fillStyle=YEL;x.fillText('W',97,93);
+  font(700,26,'JB');x.textAlign='left';x.fillStyle=CHALK;x.fillText('TECH WALL',134,93);
+  pill('iPHONE 18 PRO',900,92,1,'rgba(226,236,252,.10)',CHALK,24,22,50,700);
+  // progress segments
+  const sc=['hook','what','how','low','mode','more'];const sw=(W-120-5*12)/6;
+  sc.forEach((k,i)=>{const X=60+i*(sw+12);rr(X,1840,sw,8,4);x.fillStyle='rgba(226,236,252,.14)';x.fill();
+    const p=seg(t,S[k][0],S[k][1]);if(p>0){rr(X,1840,sw*p,8,4);x.fillStyle=YEL;x.fill()}});
+  x.restore()}
+// ---------- light rays into the lens
+function rays(cx,cy,R,amt,t){if(amt<=0)return;x.save();x.globalCompositeOperation='screen';
+  for(let i=0;i<9;i++){const a=-Math.PI/2+(i-4)*.17+Math.sin(t*1.3+i)*.02;const L=820;const sx=cx+Math.cos(a)*L,sy=cy+Math.sin(a)*L;
+    let g=x.createLinearGradient(sx,sy,cx,cy);g.addColorStop(0,'rgba(255,214,120,0)');g.addColorStop(1,`rgba(255,214,120,${.20*amt})`);
+    x.fillStyle=g;x.beginPath();x.moveTo(sx-26,sy);x.lineTo(sx+26,sy);x.lineTo(cx+R*.18,cy);x.lineTo(cx-R*.18,cy);x.closePath();x.fill()}
+  x.restore()}
+
+// ================== TIMELINE ==================
+// aperture f-number over time (internal values between the published ends are only used for motion, never shown)
+const NK=[[0,1.48],[.35,1.48],[1.25,4,'io'],[2.1,4],[2.9,1.48,'io'],
+  [5.2,1.48],[5.9,4,'io'],[6.7,4],[7.4,1.48,'io'],
+  // how-it-works: knob snaps through the 4 positions
+  [10.8,1.48],[11.25,2.1,'io'],[11.75,2.1],[12.2,2.9,'io'],[12.7,2.9],[13.15,4,'io'],[14.4,4],[15.6,1.48,'io'],
+  // low light: starts stopped down, opens wide
+  [18.4,4],[19.5,1.48,'io'],
+  // auto/manual demo
+  [23.6,1.48],[24.1,4,'io'],[24.8,4],[25.3,1.48,'io'],[26.2,1.48],[26.5,2.1,'io'],[26.9,2.1],[27.2,2.9,'io'],
+  [28.0,2.9],[28.6,1.48,'io'],
+  [33.0,1.48],[33.8,4,'io'],[34.6,1.48,'io']];
+const knobIdx=t=>{const n=kf(t,NK);return n} ;
+// lens position/size per scene
+const LX=t=>kf(t,[[0,540],[3.6,540],[4.3,540,'io'],[9.6,540],[10.3,540,'io'],[22.4,540],[23.0,300,'io'],[27.6,300],[28.2,540,'io']]);
+const LY=t=>kf(t,[[0,1010],[3.6,1010],[4.3,880,'io'],[9.6,880],[10.3,640,'io'],[17.4,640],[18.0,700,'io'],[22.4,700],[23.0,880,'io'],[27.6,880],[28.2,700,'io'],[32.0,700],[32.6,860,'io']]);
+const LR=t=>kf(t,[[0,330],[3.6,330],[4.3,260,'io'],[9.6,260],[10.3,170,'io'],[17.4,170],[18.0,210,'io'],[22.4,210],[23.0,150,'io'],[27.6,150],[28.2,0,'io'],[32.2,0],[32.8,230,'o5']]);
+
+// sound events
+[[.0,'hit'],[1.25,'iris'],[2.9,'iris'],[3.8,'whoosh'],[5.9,'iris'],[7.4,'iris'],[9.8,'whoosh'],[11.25,'click'],[12.2,'click'],[13.15,'click'],
+ [15.6,'iris'],[17.6,'whoosh'],[19.5,'iris'],[20.2,'ding'],[22.6,'whoosh'],[24.1,'iris'],[25.3,'iris'],[26.5,'click'],[27.2,'click'],
+ [27.8,'whoosh'],[28.4,'pop'],[28.75,'pop'],[29.1,'pop'],[31.4,'riser'],[32.2,'hit'],[33.8,'iris'],[34.6,'iris'],[34.9,'pop'],[35.2,'pop']].forEach(e=>ev(e[0],e[1]));
+
+function render(t){
+  x.setTransform(1,0,0,1,0,0);x.globalAlpha=1;x.globalCompositeOperation='source-over';x.filter='none';
+  x.drawImage(bg,0,0);
+  const N=kf(t,NK),cx=LX(t),cy=LY(t),R=LR(t);
+
+  // ---------- S1 HOOK
+  if(t<S.hook[1]+.2){
+    headline(t,-1,S.hook[1],'TECH WALL  ·  iPHONE 18 PRO','Your iPhone camera just got an iris.');
+    const v=vis(t,-1,S.hook[1]+.2,.5,.5);
+    rays(cx,cy,R,(1.48/N)*.8*(1-v.o),t);
+    // f-number readout under lens (only the published ends)
+    const fa=(1-v.o)*cl(1-Math.abs(N-1.48)*8)+(1-v.o)*cl(1-Math.abs(N-4)*8);
+    const txt=N<2?'f/1.48':'f/4';mono(txt,540,1490,fa,64,YEL);
+    label('variable aperture',540,1545,(1-v.o)*.8,30,CHALK,'center',500);
+  }
+  lens(cx,cy,R,N,t,1,1);
+  // ---------- S2 WHAT CHANGED
+  if(t>=S.what[0]-.1&&t<S.what[1]+.3){
+    const [a,b]=S.what;headline(t,a,b,"WHAT'S NEW",'A real, moving aperture');
+    const o=1-E.i(seg(t,b-.4,b));
+    const items=[[cx+R*.50,cy-R*.30,'6 laser-cut blades','each thinner than a human hair',a+.6],
+                 [cx-R*1.16,cy+R*.05,'Rotor mechanism','moves them smoothly',a+1.3],
+                 [cx+R*.80,cy+R*.92,'48MP Fusion Main','f/1.48 to f/4',a+2.0]];
+    items.forEach(([mx,my,t1,t2,s],i)=>{
+      const k=E.back(seg(t,s,s+.4));
+      if(k>0){x.save();x.globalAlpha=o;x.translate(mx,my);x.scale(k,k);
+        x.beginPath();x.arc(0,0,30,0,7);x.fillStyle=YEL;x.fill();x.lineWidth=5;x.strokeStyle=INK;x.stroke();
+        font(800,30,'JB');x.fillStyle=INK;x.textAlign='center';x.textBaseline='middle';x.fillText(String(i+1),0,2);x.restore()}
+      const q=E.o5(seg(t,s+.15,s+.7)),Y=1290+i*150;
+      if(q>0){x.save();x.globalAlpha=q*o;x.translate((1-q)*60,0);
+        rr(110,Y-58,860,124,28);x.fillStyle='rgba(36,58,110,.75)';x.fill();x.strokeStyle='rgba(226,236,252,.16)';x.lineWidth=2;x.stroke();
+        x.beginPath();x.arc(180,Y+4,30,0,7);x.fillStyle=YEL;x.fill();
+        font(800,30,'JB');x.fillStyle=INK;x.textAlign='center';x.textBaseline='middle';x.fillText(String(i+1),180,Y+6);
+        font(800,40);x.fillStyle='#F4F7FF';x.textAlign='left';x.textBaseline='alphabetic';x.fillText(t1,240,Y-2);
+        font(500,27);x.fillStyle='rgba(226,236,252,.78)';x.fillText(t2,240,Y+38);x.restore()}
+    });
+    pill('BEFORE: FIXED OPENING  →  NOW: 4 POSITIONS',540,1745,E.o(seg(t,a+2.8,a+3.3))*o,'rgba(255,196,70,.16)',YEL,26,24,58,700);
+  }
+  // ---------- S3 HOW IT WORKS
+  if(t>=S.how[0]-.1&&t<S.how[1]+.3){
+    const [a,b]=S.how;headline(t,a,b,'HOW IT WORKS','Light vs. depth');
+    const o=1-E.i(seg(t,b-.4,b)),ip=E.o5(seg(t,a+.5,a+1.1));
+    // slider
+    const sx0=200,sx1=880,sy=900;
+    x.save();x.globalAlpha=ip*o;
+    x.strokeStyle='rgba(226,236,252,.35)';x.lineWidth=6;x.lineCap='round';x.beginPath();x.moveTo(sx0,sy);x.lineTo(sx1,sy);x.stroke();
+    const pos=[1.48,2.1,2.9,4];const px=n=>lerp(sx0,sx1,(n-1.48)/(4-1.48));
+    pos.forEach(n=>{x.beginPath();x.arc(px(n),sy,13,0,7);x.fillStyle='rgba(226,236,252,.55)';x.fill()});
+    x.beginPath();x.arc(px(N),sy,28,0,7);x.fillStyle=YEL;x.fill();x.lineWidth=6;x.strokeStyle=INK;x.stroke();
+    x.restore();
+    mono('f/1.48',sx0,sy+70,ip*o,36,N<1.6?YEL:CHALK);mono('f/4',sx1,sy+70,ip*o,36,N>3.8?YEL:CHALK);
+    mono('4 POSITIONS',540,sy+70,ip*o*.7,24,CHALK);
+    // DOF demo
+    const blur=cl((4-N)/(4-1.48));
+    demo(90,1010,900,620,blur,false,ip*o);
+    const L1=cl(1-Math.abs(N-1.48)*6),L2=cl(1-Math.abs(N-4)*6);
+    pill('MORE LIGHT  ·  SOFTER BACKGROUND',540,1700,L1*o*ip,YEL,INK,26,24,58);
+    pill('LESS LIGHT  ·  MORE IN FOCUS',540,1700,L2*o*ip,CHALK,INK,26,24,58);
+  }
+  // ---------- S4 LOW LIGHT
+  if(t>=S.low[0]-.1&&t<S.low[1]+.3){
+    const [a,b]=S.low;headline(t,a,b,'LOW LIGHT','Wide open at f/1.48');
+    const o=1-E.i(seg(t,b-.4,b)),ip=E.o5(seg(t,a+.3,a+.9));
+    rays(cx,cy,R,(1.48/N)*o*ip,t);
+    const expo=lerp(.28,1,cl((4-N)/(4-1.48)));
+    demo(90,1010,900,560,.15,true,ip*o,expo);
+    const sp=E.back(seg(t,a+2.3,a+2.8));
+    x.save();x.globalAlpha=o*cl(sp*2);x.translate(540,1660);x.scale(sp,sp);
+    font(800,70);x.fillStyle=YEL;x.textAlign='center';x.fillText('≈45% more light',0,0);x.restore();
+    mono('than f/1.78 on iPhone 17 Pro  ·  (1.78 ÷ 1.48)² ≈ 1.45',540,1720,o*E.o(seg(t,a+2.6,a+3.1)),24,CHALK,'center',500);
+  }
+  // ---------- S5 AUTO OR MANUAL
+  if(t>=S.mode[0]-.1&&t<S.mode[1]+.3){
+    const [a,b]=S.mode;headline(t,a,b,'AUTO OR MANUAL','It decides, or you do');
+    const o=1-E.i(seg(t,b-.4,b));
+    const p1=E.o5(seg(t,a+.4,a+1.0)),p2=E.o5(seg(t,a+2.4,a+3.0));
+    // AUTO: sun/moon chips next to lens
+    card(560,720,460,150,p1*o,'auto','Auto','by light & depth',(1-p1)*40);
+    const sun=t<a+2.2;
+    pill(sun?'☀  BRIGHT → f/4':'☾  DARK → f/1.48',790,930,p1*o*cl(1-Math.abs(t-(a+1.45))*0)*1,'rgba(226,236,252,.10)',CHALK,24,20,50,700);
+    // MANUAL: four settings
+    card(60,1090,960,150,p2*o,'hand','Manual','pick any of the 4 settings in the Camera app',(1-p2)*40);
+    const sel=t<a+3.95?0:t<a+4.6?1:2;
+    for(let i=0;i<4;i++){const X=300+i*160,Y=1330;const on=i===sel&&p2>.5;
+      x.save();x.globalAlpha=p2*o;rr(X-60,Y-38,120,76,38);x.fillStyle=on?YEL:'rgba(226,236,252,.10)';x.fill();
+      x.strokeStyle='rgba(226,236,252,.3)';x.lineWidth=2;x.stroke();
+      font(800,28,'JB');x.fillStyle=on?INK:CHALK;x.textAlign='center';x.textBaseline='middle';
+      x.fillText(i===0?'f/1.48':i===3?'f/4':'●',X,Y+1);x.restore()}
+    label('Pro camera apps get the full range through a new API',540,1470,p2*o*E.o(seg(t,a+3.2,a+3.7))*.85,28,CHALK,'center',500);
+  }
+  // ---------- S6 ALSO NEW
+  if(t>=S.more[0]-.1&&t<S.more[1]+.3){
+    const [a,b]=S.more;headline(t,a,b,'ALSO NEW','More for creators');
+    const o=1-E.i(seg(t,b-.4,b));
+    [['film','Cinematic effects','after capture, up to 60 fps'],['timer','4K Dolby Vision','in Time-lapse'],['grain','Photographic Styles','new texture & grain']]
+      .forEach((c_,i)=>{const p=E.o5(seg(t,a+.5+i*.35,a+1.1+i*.35));card(60,700+i*250,960,200,p*o,c_[0],c_[1],c_[2],(1-p)*80)});
+    mono('+ Audio Mix can now isolate music',540,1520,o*E.o(seg(t,a+1.9,a+2.4)),28,CHALK,'center',500);
+  }
+  // ---------- S7 END
+  if(t>=S.end[0]-.2){
+    const a=S.end[0],p=E.o5(seg(t,a+.3,a+.9));
+    mono('TECH WALL  ·  SAVE THIS',540,260,p,30,YEL);
+    font(800,92);x.save();x.globalAlpha=p;x.fillStyle='#F4F7FF';x.textAlign='center';x.fillText('iPhone 18 Pro',540,400+(1-p)*40);x.restore();
+    label('variable aperture  ·  f/1.48 – f/4',540,470,p*.85,40,CHALK,'center',600);
+    const q=E.o5(seg(t,a+1.0,a+1.6));
+    [['6 blades','laser-cut'],['4 positions','auto or manual'],['f/1.48','widest yet']].forEach((s,i)=>{
+      const X=200+i*340;x.save();x.globalAlpha=q;rr(X-150,1180+(1-q)*40,300,170,26);x.fillStyle='rgba(36,58,110,.85)';x.fill();x.strokeStyle='rgba(226,236,252,.2)';x.lineWidth=2;x.stroke();
+      font(800,44);x.fillStyle=YEL;x.textAlign='center';x.fillText(s[0],X,1255+(1-q)*40);font(500,26);x.fillStyle=CHALK;x.fillText(s[1],X,1305+(1-q)*40);x.restore()});
+    const f=E.back(seg(t,a+1.8,a+2.3));
+    x.save();x.globalAlpha=cl(f*2);x.translate(540,1560);x.scale(f,f);pill('FOLLOW  TECH WALL',0,0,1,YEL,INK,40,40,86);x.restore();
+    // TW monogram
+    const m=E.o5(seg(t,a+2.1,a+2.7));x.save();x.globalAlpha=m;rr(495,1660,90,90,22);x.fillStyle=NAVY;x.fill();x.strokeStyle=CHALK;x.lineWidth=4;x.stroke();
+    font(800,42,'JB');x.textAlign='center';x.textBaseline='middle';x.fillStyle=CHALK;x.fillText('T',526,1707);x.fillStyle=YEL;x.fillText('W',556,1707);x.restore();
+    if(t>END-.5){x.fillStyle=`rgba(0,0,0,${seg(t,END-.5,END)})`;x.fillRect(0,0,W,H)}
+  }
+  chrome(t);
+}
+(async()=>{await Promise.all(['500 30px Inter','600 30px Inter','800 30px Inter','500 30px JB','700 30px JB','800 30px JB'].map(f=>document.fonts.load(f)));
+  window.render=render;window.META={END,EV};window.READY=true;render(0)})();
+</script></body></html>

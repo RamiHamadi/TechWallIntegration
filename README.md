@@ -81,6 +81,10 @@ wifi.py / winv.py / sharewifi.py   episodes (each = screens + timeline + title/e
 mgfx.py        MOTION-GRAPHICS engine (30 fps): eased keyframe tracks (Track/Step), class MG timeline in
                seconds, smooth phone/hand/caption/tap-ring animation, custom draw layers; same Blueprint assets
 battery.py     first motion-graphics episode (template for future ones)
+camera18.py + camera18/scene.html
+               PREMIUM motion graphics: a deterministic render(t) on an HTML canvas (cinematic dark navy,
+               Inter + JetBrains Mono, Tech Wall yellow accents, TW chrome + progress bar), captured at
+               30 fps with Playwright/Chromium, cinematic synthesized score. Use for product/feature explainers.
 ```
 
 ### Motion-graphics episodes (`mgfx.py`)
@@ -89,6 +93,7 @@ Same Blueprint look (navy grid, chalk dims, paper cut-outs, taped captions, pape
 - Custom screens: register `fn(ov, hl) -> (img 560xH, rows)` in `mgfx.SCREEN_FN` (see `battery.py` `card()` helper for iOS cards with icons, toggles, checks, subtitles).
 - Custom graphics: append `fn(cv, t, mg)` to `mg.layers` (under the phone) or `mg.top_layers` (above).
 - `G.run(mg, '<id>', cover_t=…)` renders, writes `out/meta_<id>` (FR=30, cover frame) and the soundtrack; `./build.sh <id>` reads that file and encodes at 30 fps.
+- **Premium HTML style** (`camera18.py`): edit `camera18/scene.html` (`render(t)`, scene table `S`, sound events `EV`); preview with `python3 camera18.py 0 300 600`. Capture takes ~6–8 min for 37 s; it skips frames already on disk, so if a command times out just run `python3 camera18.py` again, then encode as in `build.sh`.
 - Hook rule (tested with `wifi_short.py`, standard for every engine since `rf_demo.py`): the payoff/graphic must be on screen at **frame 0**, no separate title card; aim for 20–35 s.
 
 Each episode file has the same 5 parts: **(1) custom screens**, **(2) `build()` timeline**, **(3) `fig_head()` caption headers**, **(4) `init_props()` title + end-card sprites**, **(5) `draw_title()`**, plus the standard `__main__` (renders with a 2-process pool, then `make_audio`).
@@ -164,7 +169,7 @@ Posting is automated after the video is approved: **Facebook + Instagram** Reels
 
 ## 7. Episode log & idea backlog
 
-**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram) · Battery drain / Background App Refresh (iPhone, `battery.py`, first **motion-graphics** episode, 31.7 s @ 30 fps, built 2026-10-04, awaiting review) · Wi-Fi password short cut (iPhone, `wifi_short.py`, 18 s result-first test) · Result-first opening test (`rf_demo.py`, dummy Back Tap topic, 21 s, approved 2026-10-03: the standard opening for every episode since)
+**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram) · Battery drain / Background App Refresh (iPhone, `battery.py`, first **motion-graphics** episode, 31.7 s @ 30 fps, built 2026-10-04, awaiting review) · Wi-Fi password short cut (iPhone, `wifi_short.py`, 18 s result-first test) · Result-first opening test (`rf_demo.py`, dummy Back Tap topic, 21 s, approved 2026-10-03: the standard opening for every episode since) · iPhone 18 Pro variable aperture explainer (`camera18.py`, premium HTML-canvas motion graphics, 37 s @ 30 fps, built 2026-10-04, awaiting review)
 
 **Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
 
