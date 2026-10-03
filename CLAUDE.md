@@ -35,7 +35,7 @@ Never post without both approvals. Act on the user's replies immediately; don't 
 Whenever something needs the user (new idea sent, MP4 ready, post published or failed), also send a one-line `PushNotification`.
 
 ## Publishing a Reel
-Whenever a video has to be posted, follow **`REELS.md`** step by step: Facebook (prepare → start session → upload → publish → confirm → cover), then Instagram (container → upload → wait → publish), then report both links. Then TikTok with **`TIKTOK.md`** (`python3 tiktok.py draft out/<id>.mp4`; credentials come from the environment, never the repo). Use MODE = DRAFT for any test. Only publish after the user has approved the video.
+Whenever a video has to be posted, follow **`REELS.md`** step by step: Facebook (prepare → start session → upload → publish → confirm → cover), then Instagram (container → upload → wait → publish), then report both links. Then TikTok with **`TIKTOK.md`** (`python3 tiktok.py draft out/<id>.mp4`; credentials come from the environment, never the repo). YouTube Shorts: **`YOUTUBE.md`** (`youtube.py`), being set up, not part of the approval loop yet. Use MODE = DRAFT for any test. Only publish after the user has approved the video.
 **Setup & credentials:** `SETUP.md` (accounts, cloud environment variables + network allowlist, security rules, adding a new page/brand) and `TIKTOK.md` Parts A–C (TikTok developer portal, getting tokens, error table). Never commit or print secrets: the repo is public.
 **Cover:** `build.sh` saves the finished title card as `out/cover_<id>.jpg`; `REELS.md` step 7 uploads it as the Reel cover and checks it. Never skip it: frame 0 of our videos is an empty blueprint, which Facebook would use as a blank thumbnail. Look at the cover JPG when spot-checking the build.
 

@@ -1,7 +1,7 @@
 # Setup: platforms, credentials and the cloud environment
 
-How Tech Wall is wired to Facebook, Instagram and TikTok, and how to repeat it for a new page or brand.
-Posting procedures: `REELS.md` (Facebook + Instagram) and `TIKTOK.md` (TikTok, including its full setup).
+How Tech Wall is wired to Facebook, Instagram, TikTok and YouTube, and how to repeat it for a new page or brand.
+Posting procedures: `REELS.md` (Facebook + Instagram) and `TIKTOK.md` (TikTok, including its full setup), `YOUTUBE.md` (YouTube Shorts, including its full setup).
 
 ## Accounts
 
@@ -10,19 +10,21 @@ Posting procedures: `REELS.md` (Facebook + Instagram) and `TIKTOK.md` (TikTok, i
 | Facebook | Tech Wall page (`FB_PAGE_ID`) | Graph API; the page token is **injected by the environment proxy** for `graph.facebook.com` and `rupload.facebook.com` |
 | Instagram | @techwalll (IG user id 17841414742744549, linked to the page) | same Graph API token |
 | TikTok | Tech Wall (@techwallz) | `tiktok.py` with `TIKTOK_*` environment variables (drafts until the app is audited) |
+| YouTube | Tech Wall channel | `youtube.py` with `YT_*` environment variables (private uploads until the API audit) |
 
 ## Cloud environment (session title bar > environment > Edit)
 
 - **API credentials / proxy injection:** the Facebook/Instagram page token. The session never sees it.
-- **Environment variables:** `FB_PAGE_ID`, `FB_API_VERSION`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REFRESH_TOKEN`.
+- **Environment variables:** `FB_PAGE_ID`, `FB_API_VERSION`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REFRESH_TOKEN`,
+  `YT_CLIENT_ID`, `YT_CLIENT_SECRET`, `YT_REFRESH_TOKEN`.
 - **Network access (Custom):** default package managers + `graph.facebook.com`, `rupload.facebook.com`,
-  `*.tiktokapis.com`. Each host must be allowed on its own; a missing one shows as a proxy 403
+  `*.tiktokapis.com`, `oauth2.googleapis.com`, `www.googleapis.com`. Each host must be allowed on its own; a missing one shows as a proxy 403
   (`CONNECT tunnel failed`).
 - Changes apply to **new sessions** only.
 
 ## Security rules
 - The GitHub repo is **public**: never commit secrets, tokens or keys (bots scrape new ones within minutes and
-  git history keeps them). Scripts read credentials from the environment; caches such as `.tiktok_tokens.json`
+  git history keeps them). Scripts read credentials from the environment; caches such as `.tiktok_tokens.json` / `.youtube_tokens.json`
   are git-ignored.
 - Never paste secrets or tokens into the chat. The one exception is a TikTok login `code`, which is single use,
   expires in minutes and is useless without the secret.

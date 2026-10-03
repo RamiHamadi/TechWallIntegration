@@ -3,3 +3,4 @@ out/*
 __pycache__/
 *.pyc
 .tiktok_tokens.json
+.youtube_tokens.json
