@@ -31,7 +31,7 @@ Posting procedures: `REELS.md` (Facebook + Instagram) and `TIKTOK.md` (TikTok, i
 
 ## Adding a new page / brand
 
-You do **not** need a new developer app on Meta or TikTok. One app can serve several of your own pages and
+You do **not** need a new developer app on Meta, TikTok or Google (YouTube). One app can serve several of your own pages and
 accounts; what is per page is the **token**. Create a new app only if the page belongs to someone else (Meta
 then requires App Review / Advanced Access) or you want the brands fully isolated.
 
@@ -50,9 +50,14 @@ then requires App Review / Advanced Access) or you want the brands fully isolate
 4. Same TikTok app: add the new account under Sandbox > Target users, Apply changes, then do `TIKTOK.md` Part B
    logged in as that account to get its refresh token.
 
+**YouTube**
+5. Same Google Cloud project and OAuth client. Create the channel (a brand channel managed by your Google
+   account is fine), then do `YOUTUBE.md` Part B and pick the **new channel** in the channel picker: that gives
+   its own `YT_REFRESH_TOKEN`. Upload quota and the API audit are per project, so they are shared by all channels.
+
 **Environment + repo**
-5. The proxy injects one Facebook token per environment, so create a **second cloud environment** for the new
+6. The proxy injects one Facebook token per environment, so create a **second cloud environment** for the new
    brand: inject the new page token for `graph.facebook.com` + `rupload.facebook.com`, set its `FB_PAGE_ID`,
-   `FB_API_VERSION` and `TIKTOK_*` values, and the same network allowlist.
-6. Give it its own repo (or a copy of this one) with its own `CLAUDE.md`, `VIDEO_LIBRARY.md`, IG user id in
+   `FB_API_VERSION` and `TIKTOK_*` and `YT_REFRESH_TOKEN` values (same `YT_CLIENT_ID` / `YT_CLIENT_SECRET`), and the same network allowlist.
+7. Give it its own repo (or a copy of this one) with its own `CLAUDE.md`, `VIDEO_LIBRARY.md`, IG user id in
    `REELS.md`, account names in `TIKTOK.md`, and the redirect URI if it differs.
