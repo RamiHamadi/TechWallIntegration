@@ -78,7 +78,18 @@ movie_blue.py  Blueprint skin over movie.py: init_props(), label()/center_label(
                (also patches TL.cap to hold +0.5 s)
 android.py     Android phone + Material-style screens (BUILDERS dict), compose_screen override
 wifi.py / winv.py / sharewifi.py   episodes (each = screens + timeline + title/end-card props)
+mgfx.py        MOTION-GRAPHICS engine (30 fps): eased keyframe tracks (Track/Step), class MG timeline in
+               seconds, smooth phone/hand/caption/tap-ring animation, custom draw layers; same Blueprint assets
+battery.py     first motion-graphics episode (template for future ones)
 ```
+
+### Motion-graphics episodes (`mgfx.py`)
+Same Blueprint look (navy grid, chalk dims, paper cut-outs, taped captions, paper hand, yellow rings, FOLLOW TECH WALL end strip) but **30 fps with smooth easing, no jitter/flicker**: animated chalk graphics, counters, flowing dashed lines, eased screen pushes. Use it when the tip is better *explained* than *clicked through* (e.g. "why your battery drains").
+- Timeline is in **seconds**: `mg.cap(head, text)`, `mg.tap(row_id, nav=spec(...), ov={...}, fx=.62)`, `mg.navigate()`, `mg.phone_to(y=, scale=, dims=)`, `mg.hand_to()/hand_out()`, `mg.wait(s)`, `mg.sound(kind)`; tracks `G.Track(v).to(t0, dur, v, 'io'|'o5'|'back'|…)`.
+- Custom screens: register `fn(ov, hl) -> (img 560xH, rows)` in `mgfx.SCREEN_FN` (see `battery.py` `card()` helper for iOS cards with icons, toggles, checks, subtitles).
+- Custom graphics: append `fn(cv, t, mg)` to `mg.layers` (under the phone) or `mg.top_layers` (above).
+- `G.run(mg, '<id>', cover_t=…)` renders, writes `out/meta_<id>` (FR=30, cover frame) and the soundtrack; `./build.sh <id>` reads that file and encodes at 30 fps.
+- Hook rule (tested with `wifi_short.py`): the payoff/graphic must be on screen at **frame 0**, no separate title card; aim for 20–35 s.
 
 Each episode file has the same 5 parts: **(1) custom screens**, **(2) `build()` timeline**, **(3) `fig_head()` caption headers**, **(4) `init_props()` title + end-card sprites**, **(5) `draw_title()`**, plus the standard `__main__` (renders with a 2-process pool, then `make_audio`).
 
@@ -153,7 +164,7 @@ Posting is automated after the video is approved: **Facebook + Instagram** Reels
 
 ## 7. Episode log & idea backlog
 
-**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram)
+**Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram) · Battery drain / Background App Refresh (iPhone, `battery.py`, first **motion-graphics** episode, 31.7 s @ 30 fps, built 2026-10-04, awaiting review) · Wi-Fi password short cut (iPhone, `wifi_short.py`, 18 s result-first test)
 
 **Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
 
