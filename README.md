@@ -30,6 +30,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `themes.py` | Style frames for the 3 tech themes (A Circuit, **B Blueprint**, C Neon) | n/a | stills |
 | `brand.py` | Facebook cover 1640×624 + profile 720×720 | n/a | stills |
 | `tiktok.py` | TikTok upload (drafts / direct post) via the Content Posting API, see `TIKTOK.md` | n/a | tool |
+| `youtube.py` | YouTube Shorts upload (resumable) via the YouTube Data API v3, see `YOUTUBE.md` | n/a | tool |
 
 ---
 
@@ -39,7 +40,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 - **Scope:** phones, tablets, PCs, consoles, games, general tech. **Not** only hidden features.
 - **Bio (96 chars):** `📌 Everything tech, pinned to one wall. Tips, tricks & how-tos for phones, PCs, consoles & games.`
 - **Category:** Digital creator · Handle: @techwall (fallback @techwall.tips)
-- **Accounts:** Facebook page Tech Wall · Instagram **@techwalll** · TikTok **@techwallz**. Credentials and how to add another page/brand: `SETUP.md`.
+- **Accounts:** Facebook page Tech Wall · Instagram **@techwalll** · TikTok **@techwallz** · YouTube **Tech Wall (@techwall0)**. Credentials and how to add another page/brand: `SETUP.md`.
 - Brand images are in `brand/` (use the **TW monogram** profile; skip the phone-only alt).
 - Rotate devices week to week (phone → PC → console → tablet) so the page reads as "all tech".
 
@@ -145,7 +146,7 @@ Caption template:
 
 #TechWall #<Device>Tips #<Topic> #TechTips
 ```
-Posting is automated after the video is approved: **Facebook + Instagram** Reels via `REELS.md` (caption and cover set by the API), then **TikTok** via `TIKTOK.md`. Until TikTok audits the app, TikTok gets a **draft without caption**: the user pastes this same caption in the TikTok app, picks the title card as cover and taps Post. Setup of all three platforms, tokens and the cloud environment: `SETUP.md` + `TIKTOK.md` (Parts A–C).
+Posting is automated after the video is approved: **Facebook + Instagram** Reels via `REELS.md` (caption and cover set by the API), then **TikTok** via `TIKTOK.md`. Until TikTok audits the app, TikTok gets a **draft without caption**: the user pastes this same caption in the TikTok app, picks the title card as cover and taps Post. Then **YouTube Shorts** via `YOUTUBE.md` Part D: same caption (title = hook + #Shorts, hashtags become tags); until the Google API audit the Short is uploaded **private** and the user switches it to Public in YouTube Studio. Setup of all platforms, tokens and the cloud environment: `SETUP.md` + `TIKTOK.md` (Parts A–C) + `YOUTUBE.md` (Parts A–C).
 
 ---
 

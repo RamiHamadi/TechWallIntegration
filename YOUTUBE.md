@@ -12,7 +12,8 @@ user); Part D is what an agent runs for every approved video. All API calls go t
 | Environment variables | `YT_CLIENT_ID`, `YT_CLIENT_SECRET`, `YT_REFRESH_TOKEN` (optional `YT_REDIRECT_URI`) |
 | Network allowlist | `oauth2.googleapis.com`, `www.googleapis.com` (already reachable in the Tech Wall environment) |
 | Token lifetimes | access token 1 h (refreshed automatically); refresh token does not expire **once the app is published** (7 days while "Testing") |
-| Status | setup in progress (2026-10-03) |
+| Channel | Tech Wall **@techwall0** (`UCjPfPTK-N34rH_8mdNvHYzA`) |
+| Status | working, part of the approval loop (private test upload 2026-10-03); uploads stay private until the API audit |
 
 ---
 
@@ -55,7 +56,7 @@ Session title bar > environment > **Edit**:
 
 ## Part D - Posting an approved video (every episode)
 
-Run after `REELS.md` and `TIKTOK.md`, for the same approved video. Never post without both approvals.
+Step 3 of the Video Library approval loop (`CLAUDE.md`): run after `REELS.md` and `TIKTOK.md`, for the same approved video. Never post without both approvals.
 
 Input: VIDEO = `out/<id>.mp4` (vertical, under 3 min = a Short), CAPTION = the approved README §6 caption in
 `/tmp/caption.txt`, COVER = `out/cover_<id>.jpg`.
@@ -78,7 +79,7 @@ Input: VIDEO = `out/<id>.mp4` (vertical, under 3 min = a Short), CAPTION = the a
   approval `--privacy public` works directly.
 - **Quota:** uploads use their own daily bucket (about 100 a day per project since June 2026); other calls use
   the 10,000 units/day pool. Far beyond our needs.
-- **Thumbnails:** need a phone-verified channel; custom Shorts thumbnails are rolling out to Partner Program
+- **Thumbnails:** need a phone-verified channel (youtube.com/verify; otherwise `403 ... permissions to upload and set custom video thumbnails`); custom Shorts thumbnails are rolling out to Partner Program
   channels first.
 - Titles and descriptions may not contain `<` or `>` (the script strips them).
 - `.youtube_tokens.json` is a git-ignored token cache. Never print, commit or paste the secret or tokens (the
