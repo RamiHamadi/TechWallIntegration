@@ -1,14 +1,14 @@
 # Setup: platforms, credentials and the cloud environment
 
 How Tech Wall is wired to Facebook, Instagram, TikTok and YouTube, and how to repeat it for a new page or brand.
-Posting procedures: `REELS.md` (Facebook + Instagram) and `TIKTOK.md` (TikTok, including its full setup), `YOUTUBE.md` (YouTube Shorts, including its full setup).
+Posting procedures: `REELS.md` (Facebook + Instagram, `reels.py`) and `TIKTOK.md` (TikTok, including its full setup), `YOUTUBE.md` (YouTube Shorts, including its full setup).
 
 ## Accounts
 
 | Platform | Account | How the session posts |
 |---|---|---|
-| Facebook | Tech Wall page (`FB_PAGE_ID`) | Graph API; the page token is **injected by the environment proxy** for `graph.facebook.com` and `rupload.facebook.com` |
-| Instagram | @techwalll (IG user id 17841414742744549, linked to the page) | same Graph API token |
+| Facebook | Tech Wall page (`FB_PAGE_ID`) | `reels.py` (Graph API); the page token is **injected by the environment proxy** for `graph.facebook.com` and `rupload.facebook.com` (on a PC: `FB_PAGE_TOKEN`) |
+| Instagram | @techwalll (IG user id 17841414742744549, linked to the page) | `reels.py`, same page token |
 | TikTok | Tech Wall (@techwallz) | `tiktok.py` with `TIKTOK_*` environment variables (drafts until the app is audited) |
 | YouTube | Tech Wall channel | `youtube.py` with `YT_*` environment variables (private uploads until the API audit) |
 
@@ -16,7 +16,8 @@ Posting procedures: `REELS.md` (Facebook + Instagram) and `TIKTOK.md` (TikTok, i
 
 - **API credentials / proxy injection:** the Facebook/Instagram page token. The session never sees it.
 - **Environment variables:** `FB_PAGE_ID`, `FB_API_VERSION`, `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REFRESH_TOKEN`,
-  `YT_CLIENT_ID`, `YT_CLIENT_SECRET`, `YT_REFRESH_TOKEN`.
+  `YT_CLIENT_ID`, `YT_CLIENT_SECRET`, `YT_REFRESH_TOKEN`. Running the scripts on a PC instead: set the same variables
+  plus `FB_PAGE_TOKEN` (there is no proxy there), e.g. `set FB_PAGE_TOKEN=...` in cmd.
 - **Network access (Custom):** default package managers + `graph.facebook.com`, `rupload.facebook.com`,
   `*.tiktokapis.com`, `oauth2.googleapis.com`, `www.googleapis.com`. Each host must be allowed on its own; a missing one shows as a proxy 403
   (`CONNECT tunnel failed`).

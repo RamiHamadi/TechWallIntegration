@@ -1,22 +1,64 @@
-# Upload a video as a Reel to Tech Wall (Facebook + Instagram)
+# Reels on Tech Wall (Facebook + Instagram)
 
-Every Reel is posted to the Facebook page first (steps 1-7), then to the linked Instagram account @techwalll (step 8).
+How Tech Wall posts Reels to the Facebook page and the linked Instagram account @techwalll with the **Meta Graph
+API**. All calls go through `reels.py` (stdlib Python, runs in the cloud session and on a Windows PC), like
+`tiktok.py` and `youtube.py`. The raw `curl` steps are kept at the end as a manual fallback.
+
+| What | Value |
+|---|---|
+| "App" | a Meta developer app with a **page token** for the Tech Wall page (setup: `SETUP.md`, Facebook + Instagram) |
+| Accounts | Facebook page Tech Wall (`FB_PAGE_ID`), Instagram @techwalll (IG user id 17841414742744549, linked to the page) |
+| Token in the cloud | **injected by the environment proxy** for `graph.facebook.com` + `rupload.facebook.com`; the session never sees it |
+| Token on a PC | `FB_PAGE_TOKEN` environment variable (a page token made from a long-lived user token does not expire) |
+| Environment variables | `FB_PAGE_ID`, `FB_API_VERSION` (optional `IG_USER_ID`, otherwise looked up from the page) |
+| Network allowlist | `graph.facebook.com`, `rupload.facebook.com` |
+| Status | working (script tested 2026-10-03: draft Reel on Facebook + unpublished Instagram container) |
 
 ## Rules
-- FB_PAGE_ID and FB_API_VERSION are set. IG_USER_ID (Instagram @techwalll) = 17841414742744549
-  (look it up with: curl -sg "https://graph.facebook.com/$FB_API_VERSION/$FB_PAGE_ID?fields=instagram_business_account"). Auth is added automatically by the proxy for
-  graph.facebook.com and rupload.facebook.com. Never request, print, or store tokens.
-- Do not modify the repository unless asked.
-- Never publish publicly when the task says DRAFT or TEST.
+- Never request, print or store tokens. Do not modify the repository unless asked.
+- Never publish publicly when the task says DRAFT or TEST: use `--draft`.
+- Facebook first, then Instagram. If Instagram fails after Facebook succeeded, do **not** repost to Facebook:
+  retry Instagram alone (`reels.py instagram ...`), then report.
 
-## Input
-- VIDEO: a file path (e.g. videos/wifi-qr.mp4) OR a public https URL.
-- CAPTION: given in the task, or write one (see step 4).
-- MODE: PUBLISHED (default) or DRAFT.
-- COVER: the cover image. For Tech Wall episodes it is out/cover_<id>.jpg (made by build.sh from the
-  finished title card). For any other video, grab a frame: ffmpeg -y -ss 5 -i /tmp/reel.mp4 -frames:v 1 /tmp/cover.jpg
+## Posting an approved video (every episode)
 
-## Step 1 - Prepare the video (file input only)
+Input: VIDEO = `out/<id>.mp4` (rebuilt with `./build.sh <id>` if the session restarted), CAPTION = the approved
+README §6 caption in `/tmp/caption.txt`, COVER = `out/cover_<id>.jpg`, MODE = PUBLISHED (default) or DRAFT.
+
+1. `python3 reels.py check` > expect `facebook page: Tech Wall` and `instagram: @techwalll`.
+2. `python3 reels.py post out/<id>.mp4 --caption-file /tmp/caption.txt --cover out/cover_<id>.jpg` (add `--draft`
+   for a test). The script runs the steps below in order and stops with a clear message on any error:
+   - format check (H.264 + AAC MP4, 9:16, 3-90 s, 24-60 fps); converts to 1080x1920 / 30 fps if needed, never
+     cuts a video longer than 90 s;
+   - Facebook: start session > upload > finish (PUBLISHED or DRAFT, caption) > wait until ready > upload the
+     cover as the preferred thumbnail and verify it (our frame 0 is an empty blueprint, so never skip the cover);
+   - Instagram: container (REELS, share to feed, cover at 5833 ms = title card) > upload > wait for FINISHED >
+     publish (skipped with `--draft`: Instagram has no drafts, the container expires after 24 h) > permalink.
+3. `python3 reels.py status <video_id>` shows the Facebook processing state later if needed.
+4. Report: Facebook video id, mode, cover set, link `https://www.facebook.com/reel/<video_id>`; Instagram media id
+   and permalink (or why it was not published).
+
+One platform alone: `python3 reels.py facebook ...` or `python3 reels.py instagram ...` (same options).
+
+### Caption (if not given)
+- English, 1 strong hook line + 1-3 short lines explaining the value
+- At most 3 emojis; 3-5 hashtags at the end, always including #TechWall
+- Accurate, no invented facts, no clickbait
+
+### Errors
+| Message | Cause | Fix |
+|---|---|---|
+| `no valid page token ... [code 190]` / `[code 104]` | cloud: proxy injection missing; PC: `FB_PAGE_TOKEN` unset or revoked | `SETUP.md` (Facebook + Instagram): new page token |
+| `cannot reach graph.facebook.com` / proxy 403 | network allowlist | add `graph.facebook.com` + `rupload.facebook.com` |
+| `... upload failed` after 3 tries | upload interrupted | run the same command again (for Instagram only: `reels.py instagram`) |
+| `Instagram container ERROR` | format rejected | check the `video:` line; the script converts anything off-spec |
+| `cover not set` | thumbnail endpoint refused | retry step 7 of the manual fallback for that video id; never repost |
+
+---
+
+## Manual fallback (raw Graph API, same steps as reels.py)
+
+### Step 1 - Prepare the video (file input only)
 1. If VIDEO is a URL, download it: curl -sL -o /tmp/input.mp4 "<url>"
 2. Inspect it: ffprobe -v error -show_entries format=duration:stream=codec_name,width,height,r_frame_rate -of json /tmp/input.mp4
 3. Reel requirements: MP4, H.264 video + AAC audio, vertical 9:16 (1080x1920 recommended),
@@ -27,42 +69,43 @@ Every Reel is posted to the Facebook page first (steps 1-7), then to the linked 
    If longer than 90s, stop and report instead of cutting.
 5. If ffmpeg is missing: apt-get update && apt-get install -y ffmpeg
 
-## Step 2 - Start the upload session
+### Step 2 - Start the upload session
 curl -s -X POST "https://graph.facebook.com/$FB_API_VERSION/$FB_PAGE_ID/video_reels" -d "upload_phase=start"
 -> Save "video_id" from the response. Stop and report if there is an error.
 
-## Step 3 - Upload the file
+### Step 3 - Upload the file
 SIZE=$(stat -c%s /tmp/reel.mp4)
 curl -s -X POST "https://rupload.facebook.com/video-upload/$FB_API_VERSION/$VIDEO_ID" \
   -H "offset: 0" -H "file_size: $SIZE" --data-binary "@/tmp/reel.mp4"
 -> Expect {"success":true}. If it fails, retry once, then stop and report.
 
-## Step 4 - Write the caption (if not given)
+### Step 4 - Write the caption (if not given)
 - English, 1 strong hook line + 1-3 short lines explaining the value
 - At most 3 emojis; 3-5 hashtags at the end, always including #TechWall
 - Accurate, no invented facts, no clickbait
 Save it to /tmp/caption.txt
+IG_USER_ID = 17841414742744549 (or: curl -sg "https://graph.facebook.com/$FB_API_VERSION/$FB_PAGE_ID?fields=instagram_business_account")
 
-## Step 5 - Publish (or save as draft)
+### Step 5 - Publish (or save as draft)
 curl -s -X POST "https://graph.facebook.com/$FB_API_VERSION/$FB_PAGE_ID/video_reels" \
   -d "upload_phase=finish" -d "video_id=$VIDEO_ID" -d "video_state=<PUBLISHED or DRAFT>" \
   --data-urlencode "description@/tmp/caption.txt"
 -> Expect {"success":true}.
 
-## Step 6 - Confirm processing
+### Step 6 - Confirm processing
 Every 15 seconds, up to 5 minutes:
 curl -s "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID?fields=status"
 - Done when status.video_status is "ready" (or publishing_phase.status is "complete").
 - If any phase shows "error", report the full status object.
 
-## Step 7 - Set the cover (always)
+### Step 7 - Set the cover (always)
 Our videos start on an empty frame, so Facebook would show a blank thumbnail. Upload the cover:
 curl -s -F "source=@<COVER>" -F "is_preferred=true" "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID/thumbnails"
 -> Expect {"success":true}. Then check it is the preferred thumbnail:
 curl -s "https://graph.facebook.com/$FB_API_VERSION/$VIDEO_ID/thumbnails?fields=is_preferred,width,height"
 -> One entry must have "is_preferred":true. If not, retry once, then stop and report.
 
-## Step 8 - Instagram (always, after Facebook)
+### Step 8 - Instagram (always, after Facebook)
 Instagram has no drafts: in DRAFT or TEST mode do 8.1-8.3 only (the container expires unpublished after 24 h).
 8.1 Create the container (thumb_offset = cover time in ms; Tech Wall episodes: 5833 = title card at frame 70):
 curl -s -X POST "https://graph.facebook.com/$FB_API_VERSION/$IG_USER_ID/media" -d "media_type=REELS" \
@@ -81,7 +124,7 @@ curl -s -X POST "https://graph.facebook.com/$FB_API_VERSION/$IG_USER_ID/media_pu
 curl -s "https://graph.facebook.com/$FB_API_VERSION/$IG_MEDIA_ID?fields=permalink"
 If Instagram fails after Facebook succeeded, do not repost to Facebook: retry Instagram alone, then report.
 
-## Step 9 - Report
+### Step 9 - Report
 - Facebook: video_id, final status, mode (PUBLISHED/DRAFT), cover set (yes/no), the caption, and
   the link https://www.facebook.com/reel/<video_id>
 - Instagram: IG_MEDIA_ID and the permalink (or why it was not published)

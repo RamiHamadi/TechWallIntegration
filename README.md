@@ -29,6 +29,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `movie.py` | Back Tap in the *original* kraft-paper style (not used for posting) | iPhone | 47 s |
 | `themes.py` | Style frames for the 3 tech themes (A Circuit, **B Blueprint**, C Neon) | n/a | stills |
 | `brand.py` | Facebook cover 1640×624 + profile 720×720 | n/a | stills |
+| `reels.py` | Facebook + Instagram Reels via the Meta Graph API, see `REELS.md` | n/a | tool |
 | `tiktok.py` | TikTok upload (drafts / direct post) via the Content Posting API, see `TIKTOK.md` | n/a | tool |
 | `youtube.py` | YouTube Shorts upload (resumable) via the YouTube Data API v3, see `YOUTUBE.md` | n/a | tool |
 
@@ -146,7 +147,7 @@ Caption template:
 
 #TechWall #<Device>Tips #<Topic> #TechTips
 ```
-Posting is automated after the video is approved: **Facebook + Instagram** Reels via `REELS.md` (caption and cover set by the API), then **TikTok** via `TIKTOK.md`. Until TikTok audits the app, TikTok gets a **draft without caption**: the user pastes this same caption in the TikTok app, picks the title card as cover and taps Post. Then **YouTube Shorts** via `YOUTUBE.md` Part D: same caption (title = hook + #Shorts, hashtags become tags); until the Google API audit the Short is uploaded **private** and the user switches it to Public in YouTube Studio. Setup of all platforms, tokens and the cloud environment: `SETUP.md` + `TIKTOK.md` (Parts A–C) + `YOUTUBE.md` (Parts A–C).
+Posting is automated after the video is approved: **Facebook + Instagram** Reels via `reels.py` / `REELS.md` (caption and cover set by the API), then **TikTok** via `TIKTOK.md`. Until TikTok audits the app, TikTok gets a **draft without caption**: the user pastes this same caption in the TikTok app, picks the title card as cover and taps Post. Then **YouTube Shorts** via `YOUTUBE.md` Part D: same caption (title = hook + #Shorts, hashtags become tags); until the Google API audit the Short is uploaded **private** and the user switches it to Public in YouTube Studio. Setup of all platforms, tokens and the cloud environment: `SETUP.md` + `TIKTOK.md` (Parts A–C) + `YOUTUBE.md` (Parts A–C).
 
 ---
 
