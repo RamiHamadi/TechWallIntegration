@@ -28,6 +28,19 @@ POLL, POLL_MAX = 15, 300          # seconds between status checks, give up after
 THUMB_OFFSET = 5833               # Instagram cover time in ms: Tech Wall title card = frame 70 at 12 fps
 
 
+def cover_offset(video, given=None):
+    """Instagram cover time in ms. Uses out/meta_<id> (CF = cover frame, FR = fps) written by the build, so
+    result-first episodes get frame 0 (the hook); old title-card episodes without a meta file keep 5833 ms."""
+    if given is not None:
+        return given
+    stem = os.path.splitext(os.path.basename(video))[0]
+    meta = os.path.join(os.path.dirname(os.path.abspath(video)), f'meta_{stem}')
+    if os.path.exists(meta):
+        kv = dict(l.strip().split('=', 1) for l in open(meta) if '=' in l)
+        return int(round(int(kv.get('CF', 70)) * 1000 / int(kv.get('FR', 12))))
+    return THUMB_OFFSET
+
+
 def die(msg):
     sys.exit('reels: ' + msg)
 
@@ -281,7 +294,7 @@ def cmd_post(a):
     caption, video = read_caption(a), prepare(a.video)
     facebook(video, caption, a.cover, a.draft)
     try:
-        instagram(video, caption, a.draft, a.thumb_offset)
+        instagram(video, caption, a.draft, cover_offset(a.video, a.thumb_offset))
     except SystemExit as e:
         print(e.code if isinstance(e.code, str) else '', file=sys.stderr)
         die(f'Facebook is done, Instagram failed: retry Instagram alone (do not repost to Facebook):\n'
@@ -293,7 +306,7 @@ def cmd_facebook(a):
 
 
 def cmd_instagram(a):
-    instagram(prepare(a.video), read_caption(a), a.draft, a.thumb_offset)
+    instagram(prepare(a.video), read_caption(a), a.draft, cover_offset(a.video, a.thumb_offset))
 
 
 def cmd_status(a):
@@ -313,7 +326,7 @@ def main():
         if name != 'instagram':
             s.add_argument('--cover', help='out/cover_<id>.jpg')
         if name != 'facebook':
-            s.add_argument('--thumb-offset', type=int, default=THUMB_OFFSET, help='Instagram cover time in ms')
+            s.add_argument('--thumb-offset', type=int, default=None, help='Instagram cover time in ms (default: from out/meta_<id>, else 5833)')
         s.set_defaults(f=f)
     s = sp.add_parser('status'); s.add_argument('video_id'); s.set_defaults(f=cmd_status)
     a = p.parse_args()
