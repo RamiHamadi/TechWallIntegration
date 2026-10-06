@@ -17,7 +17,7 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 3 | Charge controllers in Rest Mode | PS5 | "Charge controllers while the PS5 sleeps": Settings › System › Power Saving › Features Available in Rest Mode › Supply Power to USB Ports. | 2026-10-02 | ✅ Published |
 | 4 | Animation scale 0.5x | Android | "Make your Android *feel* 2x faster": Developer options › Window / Transition / Animator scale › 0.5x. | 2026-10-05 | ✅ Published |
 | 5 | Quick Note from the corner | iPad | "Fastest way to take notes": swipe up from the bottom-right corner (Apple Pencil by default; finger after Settings › Apps › Notes › Corner Gestures). | | ⏭️ Skipped |
-| 6 | Translate anything with your camera (Google Lens) | Any phone | "Read any menu in any language": Google app / Lens › Translate, point the camera, the text is replaced live (Android + iPhone). AI. | | ⏳ Awaiting idea approval |
+| 6 | Translate anything with your camera (Google Lens) | Any phone | "Read any menu in any language": Google app / Lens › Translate, point the camera, the text is replaced live (Android + iPhone). AI. | | 🎬 In production |
 | 7 | Copy text from any photo (Live Text) | iPhone | "Your camera can copy text": point the camera or open a photo, tap the Live Text icon, then Copy. iOS 15+. | | 💡 Idea |
 | 8 | Snip any area (Win + Shift + S) | Windows | "The fastest screenshot on PC": WIN + Shift + S › drag › paste anywhere. | | 💡 Idea |
 | 9 | Quick Resume | Xbox | "Jump back into your games instantly": Xbox Series X\|S keeps several games suspended; pin them in the Quick Resume group. | | 💡 Idea |
