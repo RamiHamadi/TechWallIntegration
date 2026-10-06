@@ -23,6 +23,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `restmode.py` | PS5: charge controllers in Rest Mode (TV + console + generic controller rig, D-pad navigation) | Console | 46 s |
 | `animscale.py` | Android animation scale 0.5x (Developer options), result-first | Android | 26 s |
 | `lens.py` | AI tip: translate anything with your camera (Google Lens), result-first | Any phone (Android rig) | 21 s |
+| `aitrain.py` | AI tip: stop ChatGPT, Claude and Gemini from training on your chats (PC rig, result-first, fast end card) | Laptop | 25 s |
 | `wifi.py` | See your saved Wi-Fi password | iPhone | 37 s |
 | `android.py` | Notification history | Android | 42 s |
 | `sharewifi.py` | Share Wi-Fi with a QR code | Android | 43 s |
