@@ -29,7 +29,7 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 15 | Find a lost Joy-Con | Switch | "Make your Joy-Con buzz": HOME › Controllers › Find Controllers. | | 💡 Idea |
 | 16 | App pinning | Android | "Hand over your phone safely": Settings › Security › App pinning, then pin from Recents. | | 💡 Idea |
 | 17 | Spotlight as a calculator | Mac | "Your Mac's hidden calculator": Cmd + Space, type math or '20 usd in eur'. | | 💡 Idea |
-| 18 | Lock an app with Face ID | iPhone | "Lock any app": touch & hold the app icon › Require Face ID. iOS 18+. | | 👀 Awaiting video review |
+| 18 | Lock an app with Face ID | iPhone | "Lock any app": touch & hold the app icon › Require Face ID. iOS 18+. | 2026-10-07 | ✅ Published |
 | 19 | Snap Layouts | Windows | "Tidy 4 windows in 2 seconds": hover the maximize button or press WIN + Z. | | 💡 Idea |
 | 20 | One-press screenshots | PS5 | "Screenshot with one press": Settings › Captures and Broadcasts › Shortcuts for Create Button › Easy Screenshots. | | 💡 Idea |
 | 21 | Find & ring a lost phone | Android | "Find your phone even on silent": Google Find Hub (Find My Device) › Play sound. | | 💡 Idea |
