@@ -25,6 +25,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `lens.py` | AI tip: translate anything with your camera (Google Lens), result-first | Any phone (Android rig) | 21 s |
 | `aitrain.py` | AI tip: stop ChatGPT, Claude and Gemini from training on your chats (PC rig, result-first, fast end card) | Laptop | 25 s |
 | `aitrain2.py` | Re-cut of #7 with the short-form structure: Hook (claim, switches flip OFF) → Lead → 3 quick points → specific CTA, loops back to frame 0, no end card | Laptop | 15.5 s |
+| `livetext.py` | iPhone Live Text (camera Detect Text, Photos Live Text, tap a number), short-form Hook > 3 tips > CTA, loops | iPhone | 15.3 s |
 | `wifi.py` | See your saved Wi-Fi password | iPhone | 37 s |
 | `android.py` | Notification history | Android | 42 s |
 | `sharewifi.py` | Share Wi-Fi with a QR code | Android | 43 s |
