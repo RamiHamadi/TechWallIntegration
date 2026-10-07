@@ -19,7 +19,7 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 5 | Quick Note from the corner | iPad | "Fastest way to take notes": swipe up from the bottom-right corner (Apple Pencil by default; finger after Settings › Apps › Notes › Corner Gestures). | | ⏭️ Skipped |
 | 6 | Translate anything with your camera (Google Lens) | Any phone | "Read any menu in any language": Google app / Lens › Translate, point the camera, the text is replaced live (Android + iPhone). AI. | | ❌ Rejected |
 | 7 | Stop AI from training on your chats | Laptop (ChatGPT, Claude, Gemini) | "Your chats may train the AI: turn this off": ChatGPT › Settings › Data controls › Improve the model for everyone; Claude › Settings › Privacy › Help improve Claude; Gemini › Settings & help › Activity › Turn off. AI. | 2026-10-06 | ✅ Published |
-| 8 | Copy text from any photo (Live Text) | iPhone | "Your camera can copy text": point the camera or open a photo, tap the Live Text icon, then Copy. iOS 15+. | | 💡 Idea |
+| 8 | Copy text from any photo (Live Text) | iPhone | "Your camera can copy text": point the camera or open a photo, tap the Live Text icon, then Copy. iOS 15+. | | ⏳ Awaiting idea approval |
 | 9 | Snip any area (Win + Shift + S) | Windows | "The fastest screenshot on PC": WIN + Shift + S › drag › paste anywhere. | | 💡 Idea |
 | 10 | Quick Resume | Xbox | "Jump back into your games instantly": Xbox Series X\|S keeps several games suspended; pin them in the Quick Resume group. | | 💡 Idea |
 | 11 | Circle to Search | Android | "Search anything by circling it": long-press the home handle / nav bar, then circle. Newer Pixel & Galaxy phones. | | 💡 Idea |
