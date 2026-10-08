@@ -233,7 +233,9 @@ async def _capture(ep, host, frames):
     from playwright.async_api import async_playwright
     out = _dir(f'frames_{ep}')
     async with async_playwright() as p:
-        br = await p.chromium.launch(args=['--allow-file-access-from-files', '--disable-web-security'])
+        # cloud sessions ship a Chromium at /opt/pw-browsers/chromium that may be older than the installed Playwright
+        exe = os.environ.get('TW_CHROME') or ('/opt/pw-browsers/chromium' if os.path.exists('/opt/pw-browsers/chromium') else None)
+        br = await p.chromium.launch(executable_path=exe, args=['--allow-file-access-from-files', '--disable-web-security'])
         async def page():
             pg = await br.new_page(viewport={'width': 1080, 'height': 1920})
             await pg.add_init_script(f'window.HOST={json.dumps(host)};')

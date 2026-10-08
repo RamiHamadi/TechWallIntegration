@@ -42,7 +42,7 @@ SIGNALS_HTML = f'''
 <div style="position:absolute;left:0;top:140px;width:398px;height:640px;color:#fff">
   <svg viewBox="0 0 398 640" style="position:absolute;inset:0;width:398px;height:640px">
     <g stroke="#ffd60a" stroke-width="4" stroke-dasharray="12 10" fill="none" opacity=".9">
-      <path d="M199 330 L80 150"/><path d="M199 330 L318 150"/><path d="M199 330 L80 520"/><path d="M199 330 L318 520"/>
+      <path d="M199 330 L95 225"/><path d="M199 330 L303 225"/><path d="M199 330 L95 445"/><path d="M199 330 L303 445"/>
     </g>
     <rect x="159" y="270" width="80" height="130" rx="16" fill="#111827" stroke="#fff" stroke-width="4"/>
     <rect x="171" y="286" width="56" height="94" rx="6" fill="#3a2a9c"/>
@@ -93,14 +93,14 @@ SPEC = {
              'footer': 'When off, the app only gets your approximate location.'}]},
     },
     'beats': [
-        {'say': "Your phone scans for Wi-Fi networks even when Wi-Fi is off. That's how apps know where you are.",
+        {'say': "Your phone scans for Wi-Fi even when Wi-Fi is off. That's how apps find you.",
          'cap': 'GPS off ≠ invisible 📍 Your phone scans Wi-Fi even when Wi-Fi is OFF', 'pose': 'front', 'hook': True},
-        {'say': 'GPS is just one signal. Wi-Fi, Bluetooth and cell towers can place you too, even indoors.',
+        {'say': 'GPS is just one signal. Wi-Fi, Bluetooth and cell towers can place you too.',
          'cap': '4 ways your phone finds you: GPS · Wi-Fi · Bluetooth · cell towers', 'pose': 'point',
          'screen': 'signals', 'style': 'zoom'},
         {'say': "On Android, here's the switch most people never see.", 'cap': "Here's how 👉 Android",
          'pose': 'talk', 'screen': 'home'},
-        {'say': 'Step one. Open Settings, and tap Location.', 'cap': 'Step 1: Open Settings → tap Location',
+        {'say': 'Step one. Open Settings, and tap Location.', 'cap': 'Step 1: Settings → Location',
          'pose': 'point', 'step': 1,
          'do': [{'tap': 'settings', 'at': .30, 'nav': 'settings'}, {'tap': 'location', 'at': .78, 'nav': 'location'}]},
         {'say': 'Step two. Tap Location services.', 'cap': 'Step 2: Tap Location services', 'pose': 'point', 'step': 2,
@@ -108,14 +108,14 @@ SPEC = {
         {'say': 'Step three. Turn off Wi-Fi scanning, and Bluetooth scanning.',
          'cap': 'Step 3: Turn OFF Wi-Fi scanning & Bluetooth scanning', 'pose': 'point', 'step': 3,
          'do': [{'tap': 'wifi', 'at': .45}, {'tap': 'bt', 'at': .82}]},
-        {'say': "Done! Now apps can't use nearby networks to find you when Location is off.",
+        {'say': "Done! Apps can't use nearby networks to find you anymore.",
          'cap': "Done! ✅ Apps can't use nearby networks to find you", 'pose': 'welcome',
          'do': [{'nav': 'result', 'at': 0, 'style': 'zoom'}, {'fx': 'confetti', 'at': .12},
                 {'fx': 'thumb', 'at': .04, 'dur': 3.4}]},
-        {'say': 'Bonus. Give weather and shopping apps approximate location, not precise.',
-         'cap': 'Bonus: turn OFF Precise location for weather & shopping apps', 'pose': 'point',
+        {'say': 'Bonus. Give weather apps approximate location, not precise.',
+         'cap': 'Bonus: turn OFF Precise location for weather apps', 'pose': 'point',
          'screen': 'precise', 'style': 'push', 'do': [{'tap': 'precise', 'at': .68}]},
-        {'say': "On iPhone? That's the next video. Follow Tech Wall for more quick tips!",
+        {'say': "iPhone? Next video. Follow Tech Wall for more quick tips!",
          'cap': 'iPhone? Next video 📱 Follow Tech Wall for more quick tips! 🚀', 'pose': 'point', 'end': True},
     ],
 }
