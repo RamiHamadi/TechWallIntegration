@@ -21,7 +21,7 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 7 | Stop AI from training on your chats | Laptop (ChatGPT, Claude, Gemini) | "Your chats may train the AI: turn this off": ChatGPT › Settings › Data controls › Improve the model for everyone; Claude › Settings › Privacy › Help improve Claude; Gemini › Settings & help › Activity › Turn off. AI. | 2026-10-06 | ✅ Published |
 | 8 | Copy text from any photo (Live Text) | iPhone | "Your camera can copy text": point the camera or open a photo, tap the Live Text icon, then Copy. iOS 15+. | | ❌ Rejected |
 | 9 | Snip any area (Win + Shift + S) | Windows | "The fastest screenshot on PC": WIN + Shift + S › drag › paste anywhere. | | ⏭️ Skipped |
-| 10 | Quick Resume | Xbox | "Jump back into your games instantly": Xbox Series X\|S keeps several games suspended; pin them in the Quick Resume group. | | ⏳ Awaiting idea approval |
+| 10 | Quick Resume | Xbox | "Jump back into your games instantly": Xbox Series X\|S keeps several games suspended; pin them in the Quick Resume group. | | 💡 Idea |
 | 11 | Circle to Search | Android | "Search anything by circling it": long-press the home handle / nav bar, then circle. Newer Pixel & Galaxy phones. | | 💡 Idea |
 | 12 | Undo-send in Gmail | Web & Apps | "Unsend an email": Gmail Settings › Undo Send › 30 seconds. | | 💡 Idea |
 | 13 | Lift the subject out of a photo | iPhone | "Instant cut-out sticker": touch & hold the subject in Photos, then Copy / Add Sticker. iOS 16+. | | 💡 Idea |
@@ -114,3 +114,5 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 100 | Tame the adaptive triggers | PS5 | "Longer controller battery": Settings › Accessories › Controllers (General) › Trigger Effect Intensity / Vibration Intensity. | | 💡 Idea |
 | 101 | Emergency information | Android | "First responders can see this": Settings › Safety & emergency › Medical information. | | 💡 Idea |
 | 102 | YouTube double-tap seek | Web & Apps | "Skip 5 s instead of 10": YouTube app › Settings › General › Double-tap to seek. | | 💡 Idea |
+| 103 | Tracked with GPS off (Wi-Fi & Bluetooth scanning) | Android | "GPS off ≠ invisible": your phone scans Wi-Fi even when Wi-Fi is off. Settings › Location › Location services › Wi-Fi scanning / Bluetooth scanning OFF (Pixel & Samsung). Bonus: Precise location off per app. Privacy. | | 🎬 In production |
+| 104 | Give apps your city, not your street | iPhone | "Weather doesn't need your street": Settings › Privacy & Security › Location Services › app › Precise Location OFF; bonus System Services › Significant Locations. iOS 14+. Privacy. Follow-up to #103. | | 💡 Idea |
