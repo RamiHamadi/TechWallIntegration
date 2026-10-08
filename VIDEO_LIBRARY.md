@@ -46,7 +46,7 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 32 | Floating keyboard | iPad | "Make the iPad keyboard tiny": pinch the keyboard with two fingers, drag anywhere. | | 💡 Idea |
 | 33 | Auto-delete verification codes | iPhone | "Your Messages are full of codes": Settings › General › AutoFill & Passwords › Delete After Use. iOS 17+. | | 💡 Idea |
 | 34 | Task Manager in one shortcut | Windows | "Skip Ctrl+Alt+Del": Ctrl + Shift + Esc opens Task Manager directly. | | 💡 Idea |
-| 35 | Remote Play on your phone | PS5 | "Play PS5 on your phone": PS5 Settings › System › Remote Play › Enable Remote Play; free PS Remote Play app (iPhone & Android) › sign in with the same PlayStation account › pick your PS5. Bonus: Power Saving › Features Available in Rest Mode › Stay Connected to the Internet + Enable Turning On PS5 from Network (PS5 must be in Rest Mode, not off). | | ⏳ Awaiting idea approval |
+| 35 | Remote Play on your phone | PS5 | "Play PS5 on your phone": PS5 Settings › System › Remote Play › Enable Remote Play; free PS Remote Play app (iPhone & Android) › sign in with the same PlayStation account › pick your PS5. Bonus: Power Saving › Features Available in Rest Mode › Stay Connected to the Internet + Enable Turning On PS5 from Network (PS5 must be in Rest Mode, not off). | | 🎬 In production |
 | 36 | Bedtime mode | Android | "Your phone goes grey at night": Settings › Digital Wellbeing › Bedtime mode. | | 💡 Idea |
 | 37 | Screen recording (Cmd + Shift + 5) | Mac | "Record your Mac screen": Cmd + Shift + 5 › Record Selected Portion. | | 💡 Idea |
 | 38 | Background Sounds | iPhone | "Free white noise, already on your phone": Settings › Accessibility › Audio & Visual › Background Sounds. | | 💡 Idea |
