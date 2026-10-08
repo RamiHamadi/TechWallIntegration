@@ -87,7 +87,7 @@ CONNECTING = f'''<div style="{DARK}">{SB_DARK}
 
 TV = {'dev': 'tv'}
 SPEC = {
-    'devices': ['phone', 'tv'], 'lang': 'en', 'voice': 'am_puck', 'speed': 1.08,
+    'devices': ['phone', 'tv'], 'lang': 'en', 'voice': 'am_puck', 'speed': 0.92,
     'title': 'Play your PS5 on your phone 🎮', 'tag': 'REMOTE PLAY · PS5 → PHONE', 'tip': 'TIP #03',
     'start': 'play',
     'screens': {
@@ -133,23 +133,23 @@ SPEC = {
         {'say': "Here's how. On your PS5, open Settings.", 'cap': "Here's how: on your PS5, open Settings", 'pose': 'talk',
          'screen': 'home', 'do': [{'focus': 'settings', 'button': 'up', 'at': .55}, {'button': 'a', 'at': .86, 'nav': 'settings'}]},
         {'say': 'Step one. Go to System, then Remote Play.', 'cap': 'Step 1: System › Remote Play', 'pose': 'point', 'step': 1,
-         'do': [{'focus': 'system', 'button': 'down', 'at': .2}, {'button': 'a', 'at': .38, 'nav': 'system'},
-                {'focus': 'remote', 'button': 'down', 'at': .64}, {'button': 'a', 'at': .84, 'nav': 'remote'}]},
+         'do': [{'focus': 'system', 'button': 'down', 'at': .45}, {'button': 'a', 'at': .57, 'nav': 'system'},
+                {'focus': 'remote', 'button': 'down', 'at': .78}, {'button': 'a', 'at': .9, 'nav': 'remote'}]},
         {'say': 'Step two. Turn on, Enable Remote Play.', 'cap': 'Step 2: Turn on Enable Remote Play', 'pose': 'point', 'step': 2,
-         'do': [{'button': 'a', 'at': .5}, {'set': 'enable', 'toggle': True, 'at': .52}]},
+         'do': [{'button': 'a', 'at': .58}, {'set': 'enable', 'toggle': True, 'at': .6}]},
         {'say': 'Step three. On your phone, get the free PS Remote Play app.',
          'cap': 'Step 3: Get the free PS Remote Play app (iPhone & Android)', 'pose': 'talk', 'step': 3, 'screen': 'store',
          'do': [{'tap': 'get', 'at': .7, 'fx': .5}, {'set': 'get', 'value': 'OPEN', 'at': .86}]},
         {'say': 'Step four. Sign in with the same PlayStation account, and pick your PS5.',
          'cap': 'Step 4: Sign in (same account) › pick your PS5', 'pose': 'point', 'step': 4,
-         'do': [{'tap': 'get', 'at': .03, 'fx': .5, 'nav': 'signin'}, {'tap': 'signin', 'at': .42, 'fx': .5, 'nav': 'consoles'},
+         'do': [{'tap': 'get', 'at': .03, 'fx': .5, 'nav': 'signin'}, {'tap': 'signin', 'at': .35, 'fx': .5, 'nav': 'consoles'},
                 {'tap': 'ps5', 'at': .82, 'fx': .5, 'nav': 'connecting'}]},
         {'say': 'And boom! Your PS5 games, now on your phone!', 'cap': 'Done ✅ Your PS5, now on your phone!', 'pose': 'welcome',
          'do': [{'nav': 'play', 'style': 'zoom', 'at': .02}, {'fx': 'thumb', 'at': .1, 'dur': 2.6}, {'fx': 'confetti', 'at': .12}]},
         {'say': 'Bonus! Turn these two on, and leave your PS5 in Rest Mode, not off.',
          'cap': 'Bonus: turn both on, and leave your PS5 in Rest Mode', 'pose': 'point', 'screen': 'rest',
-         'do': [{'focus': 'net', 'button': 'down', 'at': .2}, {'button': 'a', 'at': .3}, {'set': 'net', 'toggle': True, 'at': .32},
-                {'focus': 'wake', 'button': 'down', 'at': .48}, {'button': 'a', 'at': .58}, {'set': 'wake', 'toggle': True, 'at': .6}]},
+         'do': [{'focus': 'net', 'button': 'down', 'at': .21}, {'button': 'a', 'at': .27}, {'set': 'net', 'toggle': True, 'at': .28},
+                {'focus': 'wake', 'button': 'down', 'at': .35}, {'button': 'a', 'at': .41}, {'set': 'wake', 'toggle': True, 'at': .42}]},
         {'say': 'Follow Tech Wall for more quick tips!', 'cap': 'Follow Tech Wall for more quick tips! 🚀', 'pose': 'point', 'end': True},
     ],
 }

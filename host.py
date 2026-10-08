@@ -12,7 +12,7 @@ Pipeline: TTS per beat (English: Kokoro, Arabic: Piper "Kareem") -> silence trim
 -> synthesized SFX mix -> host/scene.html render(t) captured with Playwright/Chromium.
 One-time setup (models + Rhubarb, ~450 MB, cached outside the repo): bash host/setup.sh
 """
-import os, sys, json, hashlib, subprocess, asyncio, shutil
+import os, sys, re, json, hashlib, subprocess, asyncio, shutil
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +24,9 @@ SR = 24000
 MODELS = os.environ.get('TW_HOST_MODELS', os.path.expanduser('~/.cache/techwall-host'))
 SCENE = 'file://' + os.path.join(HERE, 'host', 'scene.html')
 WORKERS = 3
-GAP = 0.45          # silence between beats (s)
+GAP = 0.6           # silence between beats (s)
+PAUSE_COMMA = 0.24  # silence after , ; : inside a line (s)  (spec 'pause_comma')
+PAUSE_STOP = 0.45   # silence after . ! ? … inside a line (s) (spec 'pause_stop')
 LEAD = 0.35         # first word starts here; frame 0 (the cover) is silent with the hook caption on screen
 END_HOLD = 1.8      # end card hold after the last word
 
@@ -48,6 +50,36 @@ def _resample(s, sr_in, sr_out=SR):
         return s.astype(np.float32)
     n = int(round(len(s) * sr_out / sr_in))
     return np.interp(np.linspace(0, len(s) - 1, n), np.arange(len(s)), s).astype(np.float32)
+
+
+_PUNCT = re.compile(r'(?<=[.!?…,;:،؛؟])\s+')
+
+
+def phrases(line):
+    """Split a spoken line after punctuation: [(text, pause_kind)], kind = 'stop' | 'comma' | None (last)."""
+    parts = [p for p in _PUNCT.split(line.strip()) if p.strip()]
+    out = []
+    for i, p in enumerate(parts):
+        kind = None if i == len(parts) - 1 else ('stop' if p.rstrip()[-1] in '.!?…؟' else 'comma')
+        out.append((p.strip(), kind))
+    return out
+
+
+def speak(lines, lang, voice, speed, pause_comma, pause_stop):
+    """TTS phrase by phrase so punctuation gets a real pause. Returns [(clip, [[pause_start, pause_end] s, ...])]."""
+    plan = [phrases(ln) for ln in lines]
+    flat = tts([p for ph in plan for p, _ in ph], lang, voice, speed)
+    out, j = [], 0
+    for ph in plan:
+        pieces, pauses, t = [], [], 0.0
+        for _, kind in ph:
+            c = flat[j]; j += 1
+            pieces.append(c); t += len(c) / SR
+            if kind:
+                d = pause_stop if kind == 'stop' else pause_comma
+                pieces.append(np.zeros(int(d * SR), np.float32)); pauses.append([round(t, 3), round(t + d, 3)]); t += d
+        out.append((np.concatenate(pieces).astype(np.float32), pauses))
+    return out
 
 
 def tts(lines, lang, voice, speed):
@@ -112,25 +144,27 @@ def sfx_chime():
 
 # ----------------------------------------------------------------------------- timeline
 def build(ep, spec):
-    lang, voice, speed = spec.get('lang', 'en'), spec.get('voice', 'am_puck' if spec.get('lang', 'en') == 'en' else 'kareem'), spec.get('speed', 1.08 if spec.get('lang', 'en') == 'en' else 1.3)
+    lang, voice, speed = spec.get('lang', 'en'), spec.get('voice', 'am_puck' if spec.get('lang', 'en') == 'en' else 'kareem'), spec.get('speed', 0.92 if spec.get('lang', 'en') == 'en' else 1.3)
     beats = spec['beats']
     says = [b['say'] for b in beats]
     cache = _dir(f'host_{ep}')
-    key = hashlib.sha1(json.dumps([lang, voice, speed, says]).encode()).hexdigest()[:12]
+    pc, ps = spec.get('pause_comma', PAUSE_COMMA), spec.get('pause_stop', PAUSE_STOP)
+    key = hashlib.sha1(json.dumps([lang, voice, speed, says, 'phrases', pc, ps]).encode()).hexdigest()[:12]
     cpath = f'{cache}/voice_{key}.npz'
     if os.path.exists(cpath):
-        z = np.load(cpath, allow_pickle=True); clips = list(z['clips'])
+        z = np.load(cpath, allow_pickle=True); clips, pauses = list(z['clips']), [list(p) for p in z['pauses']]
     else:
-        print(f'[host] TTS {len(says)} lines ({lang}/{voice}) ...', flush=True)
-        clips = tts(says, lang, voice, speed)
-        np.savez(cpath, clips=np.array(clips, dtype=object))
+        print(f'[host] TTS {len(says)} lines ({lang}/{voice}, speed {speed}) ...', flush=True)
+        res = speak(says, lang, voice, speed, pc, ps); clips, pauses = [r[0] for r in res], [r[1] for r in res]
+        np.savez(cpath, clips=np.array(clips, dtype=object), pauses=np.array(pauses, dtype=object))
     # layout
     t = LEAD; B = []
-    for b, c in zip(beats, clips):
+    for b, c, pz in zip(beats, clips, pauses):
         d = len(c) / SR
         B.append({'start': round(t, 3), 'end': round(t + d, 3), 'cap': b.get('cap', b['say']),
-                  'pose': b.get('pose'), 'hook': bool(b.get('hook')), 'step': b.get('step')})
-        t += d + b.get('gap', GAP)
+                  'pose': b.get('pose'), 'hook': bool(b.get('hook')), 'step': b.get('step'),
+                  'pauses': [[round(t + a, 3), round(t + e, 3)] for a, e in pz]})
+        t += d + b.get('gap', spec.get('gap', GAP))
     total = B[-1]['end'] + END_HOLD
     N = int(np.ceil(total * SR)); voice_track = np.zeros(N, np.float32)
     for bb, c in zip(B, clips):

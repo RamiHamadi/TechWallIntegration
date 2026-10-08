@@ -410,7 +410,10 @@ function renderCaption(t){
     let fs=54; while (box.getBoundingClientRect().height > (H.lang==='ar'?2*54*1.35:2*54*1.18)+56 && fs>44){ fs-=2; box.style.fontSize=fs+'px'; }
     capIdx=idx;
   }
-  const lens=words.map(w=>w.length+2), tot=lens.reduce((a,c)=>a+c,0), p=(t-b.start)/(b.end-b.start);
+  // progress = share of voiced time so far (punctuation pauses hold the karaoke still)
+  const pz=b.pauses||[], silent=(x)=>pz.reduce((a,[p0,p1])=>a+clamp(Math.min(x,p1)-p0,0,p1-p0),0);
+  const lens=words.map(w=>w.length+2), tot=lens.reduce((a,c)=>a+c,0),
+        p=(t-b.start-silent(t))/Math.max(0.01,(b.end-b.start-silent(b.end)));
   let acc=0; [...box.children].forEach((w,i)=>{ const a=acc/tot; acc+=lens[i]; const e=acc/tot;
     w.className='w'+((b.hook&&idx===0) || t>b.end || p>=e ? ' said' : (p>=a?' now':'')); });
   const pin = idx===0 ? 1 : prog(t,b.start-0.15,0.22);
