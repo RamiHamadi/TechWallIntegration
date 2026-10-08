@@ -7,7 +7,7 @@ import host
 
 EP = 'hostlock'
 SPEC = {
-    'lang': 'en', 'voice': 'am_puck', 'speed': 0.92,           # Arabic: 'lang': 'ar', 'voice': 'kareem' (say = text with tashkeel)
+    'lang': 'en', 'voice': 'am_puck', 'speed': 1.0,           # Arabic: 'lang': 'ar', 'voice': 'kareem' (say = text with tashkeel)
     'title': 'How to lock your iPhone 🔒', 'tag': 'SCREEN LOCK · SETUP', 'tip': 'TIP #01',
     'start': 'lock',                                            # result-first: frame 0 shows the payoff
     'screens': {

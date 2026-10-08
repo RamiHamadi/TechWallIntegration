@@ -87,7 +87,7 @@ CONNECTING = f'''<div style="{DARK}">{SB_DARK}
 
 TV = {'dev': 'tv'}
 SPEC = {
-    'devices': ['phone', 'tv'], 'lang': 'en', 'voice': 'am_puck', 'speed': 0.92,
+    'devices': ['phone', 'tv'], 'lang': 'en', 'voice': 'am_puck', 'speed': 1.0,
     'title': 'Play your PS5 on your phone 🎮', 'tag': 'REMOTE PLAY · PS5 → PHONE', 'tip': 'TIP #03',
     'start': 'play',
     'screens': {

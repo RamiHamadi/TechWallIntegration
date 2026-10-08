@@ -10,7 +10,7 @@ OPTS = ('<div style="position:absolute;left:520px;top:150px;width:330px;backgrou
         + ''.join(f'<div class="mrow" data-id="opt-{k}">{v}</div>' for k, v in (('off', "Don't Supply"), ('3h', '3 Hours'), ('always', 'Always')))
         + '</div>')
 SPEC = {
-    'device': 'tv', 'lang': 'en', 'voice': 'am_puck', 'speed': 0.92,
+    'device': 'tv', 'lang': 'en', 'voice': 'am_puck', 'speed': 1.0,
     'title': 'Charge controllers in Rest Mode 🎮', 'tag': 'REST MODE · USB POWER', 'tip': 'TIP #03',
     'start': 'rest',
     'screens': {

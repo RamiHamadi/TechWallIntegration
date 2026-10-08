@@ -15,7 +15,7 @@ PANEL = ('<div style="position:absolute;left:478px;top:62px;width:404px;height:3
          '<span data-id="tab-kao" style="padding:6px 14px">;-)</span><span data-id="tab-sym" style="padding:6px 14px">Ω</span></div>'
          f'<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;font-size:34px">{EMOJI}</div></div>')
 SPEC = {
-    'device': 'laptop', 'lang': 'en', 'voice': 'am_puck', 'speed': 0.92,
+    'device': 'laptop', 'lang': 'en', 'voice': 'am_puck', 'speed': 1.0,
     'title': 'Emojis on your PC 😎', 'tag': 'WIN + . · EMOJI PANEL', 'tip': 'TIP #02',
     'start': 'doc', 'start_pops': ['doc:emoji'],                 # result-first: panel open, emoji typed
     'screens': {'doc': {'type': 'window', 'title': 'Notepad', 'text': 'See you at 7 😎', 'focus': 'tab-emo',
