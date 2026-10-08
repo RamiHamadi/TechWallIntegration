@@ -220,7 +220,7 @@ def build(ep, spec):
     sf.write(lib.out(f'audio_{ep}.wav'), mix, SR)
     with open(lib.out(f'meta_{ep}'), 'w') as f:
         f.write(f'FR={FPS}\nCF=0\n')
-    keep = ('title', 'tag', 'tip', 'endline', 'follow', 'clock', 'start', 'screens', 'device', 'start_pops')
+    keep = ('title', 'tag', 'tip', 'endline', 'follow', 'clock', 'start', 'screens', 'device', 'devices', 'start_pops')
     host = {k: spec[k] for k in keep if k in spec}
     host.update({'fps': FPS, 'total': total, 'lang': lang, 'beats': B, 'events': ev,
                  'env': [round(float(x), 3) for x in env], 'cues': cues})

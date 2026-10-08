@@ -30,10 +30,11 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 #chip{right:56px;top:66px;padding:12px 26px;border:3px dashed rgba(255,255,255,.7);border-radius:40px;font-weight:700;font-size:32px;letter-spacing:2px;opacity:0}
 #chip b{color:#ffd54a}
 /* phone */
-#device{transform-origin:50% 60%}
+#device{left:0;top:0}
+.rig{transform-origin:50% 60%}
 .dev-phone{left:590px;top:260px;width:430px;height:860px;border-radius:66px;background:#111827;padding:16px;
   box-shadow:0 0 0 4px #2b3a55,0 40px 80px rgba(0,0,0,.45),inset 0 0 0 2px #3c4a66}
-.dev-phone #screen{position:relative;width:398px;height:828px;border-radius:52px;overflow:hidden;background:#f2f2f7;color:#111;font-family:Poppins,sans-serif}
+.dev-phone .screen{position:relative;width:398px;height:828px;border-radius:52px;overflow:hidden;background:#f2f2f7;color:#111;font-family:Poppins,sans-serif}
 .dev-laptop{left:62px;top:236px;width:956px}
 .dev-laptop .lid{width:956px;padding:18px;background:#111827;border-radius:26px 26px 6px 6px;box-shadow:0 0 0 4px #2b3a55,0 30px 60px rgba(0,0,0,.45)}
 .dev-laptop .base{width:1010px;margin-left:-27px;height:26px;background:linear-gradient(#d9dfea,#8c96a8);border-radius:0 0 30px 30px;position:relative}
@@ -41,9 +42,9 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 .dev-tv{left:62px;top:236px;width:956px}
 .dev-tv .lid{width:956px;padding:14px;background:#0b0f1a;border-radius:16px;box-shadow:0 0 0 4px #2b3a55,0 30px 60px rgba(0,0,0,.45)}
 .dev-tv .stand{width:240px;height:36px;margin:0 auto;background:linear-gradient(#2b3a55,#141c2e);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%)}
-.dev-laptop #screen,.dev-tv #screen{position:relative;width:920px;height:518px;border-radius:6px;overflow:hidden;background:#000;color:#111;font-family:Poppins,sans-serif}
-.dev-tv #screen{width:928px;height:522px}
-#island{position:absolute;left:50%;top:14px;width:118px;height:34px;margin-left:-59px;background:#000;border-radius:20px;z-index:20}
+.dev-laptop .screen,.dev-tv .screen{position:relative;width:920px;height:518px;border-radius:6px;overflow:hidden;background:#000;color:#111;font-family:Poppins,sans-serif}
+.dev-tv .screen{width:928px;height:522px}
+.island{position:absolute;left:50%;top:14px;width:118px;height:34px;margin-left:-59px;background:#000;border-radius:20px;z-index:20}
 .scr{position:absolute;inset:0;background:#f2f2f7}
 .sb{height:62px;display:flex;justify-content:space-between;align-items:center;padding:8px 34px 0;font-weight:600;font-size:18px}
 .sb .bat{width:30px;height:14px;border:2px solid currentColor;border-radius:4px;position:relative}
@@ -87,8 +88,8 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 .ldate{font-size:22px;font-weight:500;opacity:.9;margin-top:6px}
 .lbadge{position:absolute;left:50%;top:430px;transform:translateX(-50%);background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);padding:14px 26px;border-radius:30px;font-weight:700;font-size:22px;white-space:nowrap}
 .lbtn{position:absolute;bottom:56px;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.22)}
-#tap{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(10,122,255,.25);border:4px solid rgba(255,255,255,.95);box-shadow:0 0 0 3px rgba(10,122,255,.6);z-index:30;opacity:0}
-#ripple{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid #fff;z-index:30;opacity:0}
+.tap{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(10,122,255,.25);border:4px solid rgba(255,255,255,.95);box-shadow:0 0 0 3px rgba(10,122,255,.6);z-index:30;opacity:0}
+.ripple{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid #fff;z-index:30;opacity:0}
 /* PC desktop */
 .desk{color:#111}
 .taskbar{position:absolute;left:0;right:0;bottom:0;height:46px;background:rgba(240,243,250,.92);display:flex;align-items:center;justify-content:center;gap:16px;font-size:15px;color:#333}
@@ -120,7 +121,7 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 .mic{width:34px;height:34px;border-radius:8px;display:grid;place-items:center}.mic svg{width:20px;height:20px}
 .mrow.focus,.tile.focus,.ch-ic.focus{border:3px solid #fff;background:rgba(255,255,255,.14);box-shadow:0 0 0 4px rgba(92,225,255,.35)}
 .tile.focus{transform:scale(1.06)}
-#screen [data-id].focus:not(.mrow):not(.tile):not(.ch-ic){background:#dbe6ff;border-radius:8px;box-shadow:0 0 0 2px #7aa7ff}
+.screen [data-id].focus:not(.mrow):not(.tile):not(.ch-ic){background:#dbe6ff;border-radius:8px;box-shadow:0 0 0 2px #7aa7ff}
 .cm-note{position:absolute;left:40px;right:40px;bottom:22px;font-size:15px;color:#9fb0d6}
 /* keyboard shortcut panel (laptop) + generic controller (tv) */
 #keys{left:600px;top:1010px;width:440px;height:300px;display:flex;align-items:center;justify-content:center;gap:14px;z-index:30;font-family:Poppins,sans-serif}
@@ -128,7 +129,7 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 .kc.down{transform:translateY(8px);box-shadow:0 2px 0 #8e9bb5,0 8px 16px rgba(0,0,0,.35);background:linear-gradient(#fff3c2,#ffd54a)}
 .kplus{font-size:54px;font-weight:800;color:#ffd54a}
 #pad{left:610px;top:1000px;width:430px;height:300px;z-index:30}
-#cursor{position:absolute;width:34px;height:46px;z-index:31;opacity:0;margin:-4px 0 0 -6px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4))}
+.cursor{position:absolute;width:34px;height:46px;z-index:31;opacity:0;margin:-4px 0 0 -6px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4))}
 /* end card */
 #endcard{left:560px;top:330px;width:490px;text-align:center;opacity:0}
 #endlogo{position:relative;width:440px;height:440px;margin:0 auto 6px}
@@ -187,59 +188,90 @@ $('title').textContent = H.title || ''; $('tag').textContent = H.tag || ''; $('t
 if (H.endline) $('endline').textContent = H.endline;
 if (H.follow) $('follow').textContent = H.follow;
 
-/* ---------- device frame: phone (default) | laptop | tv ---------- */
-const DEV = H.device || 'phone';
-const SCREEN_HTML = '<div id="screen">' + (DEV==='phone'?'<div id="island"></div>':'') +
-  '<div id="tap"></div><div id="ripple"></div><svg id="cursor" viewBox="0 0 34 46"><path d="M3 2v36l9-8 6 13 7-3-6-13h12z" fill="#fff" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg></div>';
-$('device').className = 'abs dev-' + DEV;
-$('device').innerHTML = DEV==='phone' ? SCREEN_HTML : DEV==='laptop' ? `<div class="lid">${SCREEN_HTML}</div><div class="base"></div>`
-                                     : `<div class="lid">${SCREEN_HTML}</div><div class="stand"></div>`;
+/* ---------- device frames: phone (default) | laptop | tv. An episode may use several rigs (spec 'devices':
+   ['tv','phone'], each screen names its rig with 'dev'): the rig of the current screen is on stage and a
+   screen on another rig swaps them (old one drops out, new one pops in). ---------- */
+const DEVS = H.devices || [H.device || 'phone'], DEV = DEVS[0];
+const devOf = name => (H.screens[name] && H.screens[name].dev) || DEV;
+const RIG = {};
+for (const d of DEVS){
+  const SH = '<div class="screen">' + (d==='phone'?'<div class="island"></div>':'') +
+    '<div class="tap"></div><div class="ripple"></div><svg class="cursor" viewBox="0 0 34 46"><path d="M3 2v36l9-8 6 13 7-3-6-13h12z" fill="#fff" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg></div>';
+  const el = document.createElement('div'); el.className = 'abs rig dev-' + d;
+  el.innerHTML = d==='phone' ? SH : d==='laptop' ? `<div class="lid">${SH}</div><div class="base"></div>` : `<div class="lid">${SH}</div><div class="stand"></div>`;
+  $('device').appendChild(el);
+  RIG[d] = {el, scr:el.querySelector('.screen'), tap:el.querySelector('.tap'), ripple:el.querySelector('.ripple'), cursor:el.querySelector('.cursor')};
+}
 // generic controller (no brand marks): D-pad, 4 face buttons, home
 const PADB = {up:[118,118],down:[118,178],left:[88,148],right:[148,148],y:[312,112],a:[312,184],x:[276,148],b:[348,148],home:[215,190],menu:[255,112],view:[175,112]};
-if (DEV==='tv') $('pad').innerHTML = `<path d="M70 70 Q215 30 360 70 Q430 90 420 220 Q412 285 360 270 Q320 258 300 225 L130 225 Q110 258 70 270 Q18 285 10 220 Q0 90 70 70Z" fill="#e9edf5" stroke="#9aa6bd" stroke-width="4"/>
+if (DEVS.includes('tv')) $('pad').innerHTML = `<path d="M70 70 Q215 30 360 70 Q430 90 420 220 Q412 285 360 270 Q320 258 300 225 L130 225 Q110 258 70 270 Q18 285 10 220 Q0 90 70 70Z" fill="#e9edf5" stroke="#9aa6bd" stroke-width="4"/>
   <circle cx="130" cy="235" r="34" fill="#c9d1e0"/><circle cx="300" cy="235" r="34" fill="#c9d1e0"/>` +
   Object.entries(PADB).map(([k,[x,y]])=>['up','down','left','right'].includes(k)
     ? `<rect id="pb-${k}" x="${x-17}" y="${y-17}" width="34" height="34" rx="6" fill="#3a4766"/>`
     : `<circle id="pb-${k}" cx="${x}" cy="${y}" r="${['home','menu','view'].includes(k)?11:19}" fill="#3a4766"/>`).join('');
 
 /* ---------- screens ---------- */
-const SCR = HostScreens.build($('screen'), H.screens, H.clock || '10:08');
+const SCR = {};
+for (const d of DEVS) Object.assign(SCR, HostScreens.build(RIG[d].scr,
+  Object.fromEntries(Object.entries(H.screens).filter(([n])=>devOf(n)===d)), H.clock || '10:08'));
 const NAV = [{t:-1, to:H.start, style:'none'}].concat(ev('nav'));      // every screen change
 const TAPS = ev('tap'), KEYS = ev('key'), RESETS = ev('passreset'), FX = ev('fx');
 const CHORDS = ev('keys'), BTNS = ev('button'), FOCUS = ev('focus'), SHOWS = EV.filter(e=>e.k==='show'||e.k==='hide'), TYPES = ev('typetext'), SETS = ev('set');
 const OUT = (ev('phone_out')[0]||{t:1e9}).t;
+// each rig keeps its own screen history (it shows its last screen while another rig is on stage);
+// the first screen after a rig swap appears without an in-rig transition
+const RNAV = {}, SWAPS = [];
+for (let i=1;i<NAV.length;i++){ const a=devOf(NAV[i-1].to), b=devOf(NAV[i].to); if (a!==b) SWAPS.push({t:NAV[i].t, from:a, to:b}); }
+for (const d of DEVS){
+  const L = NAV.filter((n,i)=>devOf(n.to)===d).map(n=>{ const i=NAV.indexOf(n); return (i>0 && devOf(NAV[i-1].to)!==d) ? {...n, style:'none'} : n; });
+  if (!L.length || L[0].t>-1) L.unshift({t:-1, to:L.length?L[0].to:Object.keys(H.screens).find(n=>devOf(n)===d), style:'none'});
+  RNAV[d] = L;
+}
+function rigSwap(d,t){        // on-stage amount of a rig: {o: opacity, tf: transform prefix}
+  let on = devOf(H.start)===d, at = -9;
+  for (const s of SWAPS) if (s.t<=t){ if (s.to===d){ on=true; at=s.t; } else if (s.from===d){ on=false; at=s.t; } }
+  if (on){ const k=prog(t,at+0.12,0.45), b=easeOutBack(k);
+    return {o:ease(clamp(k*1.6)), tf:`translateY(${(1-ease(k))*140}px) scale(${0.72+0.28*b})`}; }
+  const k=prog(t,at,0.3); return {o:1-ease(k), tf:`translateY(${ease(k)*160}px) scale(${1-0.22*ease(k)}) rotate(${ease(k)*-6}deg)`};
+}
 // tap target positions, measured once with every screen at rest
 const POS = {};
 for (const [name, el] of Object.entries(SCR)){
   el.style.display=''; el.style.transform='none';
-  const s=$('screen').getBoundingClientRect();
+  const d=devOf(name), s=RIG[d].scr.getBoundingClientRect();
   el.querySelectorAll('[data-id]').forEach(n=>{ const r=n.getBoundingClientRect();
-    POS[n.dataset.id]=[r.left-s.left+r.width/2, r.top-s.top+r.height/2, r.width, n]; });
+    POS[n.dataset.id]=[r.left-s.left+r.width/2, r.top-s.top+r.height/2, r.width, n, d]; });
   el.style.display='none';
 }
 function renderPhone(t){
-  // current navigation step
-  let i=0; while (i+1<NAV.length && t>=NAV[i+1].t) i++;
-  const cur=NAV[i], prev=i>0?NAV[i-1]:null, k=ease(prog(t,cur.t,0.35));
+  // current navigation step, per rig
   for (const el of Object.values(SCR)){ el.style.display='none'; el.style.transform='none'; el.style.opacity=1; el.style.zIndex=1; }
+  for (const L of Object.values(RNAV)){
+  let i=0; while (i+1<L.length && t>=L[i+1].t) i++;
+  const cur=L[i], prev=i>0?L[i-1]:null, k=ease(prog(t,cur.t,0.35));
   const a=SCR[cur.to];
   a.style.display=''; a.style.zIndex=3;
-  if (prev && k<1){
+  if (prev && k<1 && cur.style!=='none' && prev.to!==cur.to){
     const b=SCR[prev.to]; b.style.display=''; b.style.zIndex=2;
     if (cur.style==='push'){ a.style.transform=`translateX(${(1-k)*100}%)`; b.style.transform=`translateX(${-30*k}%)`; }
     else if (cur.style==='pop'){ a.style.transform=`translateX(${-30*(1-k)}%)`; b.style.transform=`translateX(${100*k}%)`; b.style.zIndex=4; }
     else if (cur.style==='zoom'){ a.style.transform=`scale(${1.15-0.15*k})`; a.style.opacity=k; }
     else { a.style.opacity=k; }
   }
+  }
+  // live bits inside custom mocks (deterministic): data-scroll="vx,vy" pans a background (px/s), data-spin="deg/s", data-bob="px"
+  document.querySelectorAll('.screen [data-scroll]').forEach(n=>{ const [vx,vy]=n.dataset.scroll.split(',').map(Number); n.style.backgroundPosition=`${vx*t}px ${vy*t}px`; });
+  document.querySelectorAll('.screen [data-spin]').forEach(n=>n.style.transform=`rotate(${Number(n.dataset.spin)*t}deg)`);
+  document.querySelectorAll('.screen [data-bob]').forEach(n=>{ const a=Number(n.dataset.bob); n.style.transform=`translate(${Math.sin(t*2.3)*a}px,${Math.sin(t*5.1)*a*0.25}px)`; });
   // row/app highlight + toggles
-  document.querySelectorAll('#screen .flash').forEach(f=>f.style.opacity=0);
-  document.querySelectorAll('#screen .ic').forEach(f=>f.style.transform='scale(1)');
+  document.querySelectorAll('.screen .flash').forEach(f=>f.style.opacity=0);
+  document.querySelectorAll('.screen .ic').forEach(f=>f.style.transform='scale(1)');
   for (const tp of TAPS){
     const P=POS[tp.target]; if(!P) continue;
     const n=P[3], until = tp.t + (tp.hold||0.55);
     if (t>tp.t-0.05 && t<until){ const f=n.querySelector('.flash'); if(f) f.style.opacity=1; const ic=n.querySelector('.ic'); if(ic) ic.style.transform='scale(.9)'; }
   }
-  document.querySelectorAll('#screen [data-toggle]').forEach(n=>{
+  document.querySelectorAll('.screen [data-toggle]').forEach(n=>{
     const id=n.dataset.id; let on=n.dataset.toggle==='1', kk=1;
     const evs=TAPS.filter(e=>e.target===id).concat(SETS.filter(e=>e.target===id&&e.toggle!==undefined)).sort((a,b)=>a.t-b.t);
     for (const e of evs) if (t>=e.t){ on = e.k==='set' ? !!e.toggle : !on; kk = e.k==='set' ? 1 : ease(prog(t,e.t,0.25)); }
@@ -250,24 +282,24 @@ function renderPhone(t){
   // value labels set by {'set': id, 'value': ...}
   for (const e of SETS) if (e.value!==undefined && POS[e.target]){ const v=POS[e.target][3].querySelector('.val');
     if (v){ if (!v.dataset.orig) v.dataset.orig=v.textContent; } }
-  document.querySelectorAll('#screen .val[data-orig]').forEach(v=>v.textContent=v.dataset.orig);
+  document.querySelectorAll('.screen .val[data-orig]').forEach(v=>v.textContent=v.dataset.orig);
   for (const e of SETS) if (e.value!==undefined && t>=e.t && POS[e.target]){ const v=POS[e.target][3].querySelector('.val'); if (v) v.textContent=e.value; }
   // console focus (D-pad navigation): last focus event per screen, else the row flagged in the spec
-  document.querySelectorAll('#screen .focus').forEach(n=>n.classList.remove('focus'));
+  document.querySelectorAll('.screen .focus').forEach(n=>n.classList.remove('focus'));
   for (const name of Object.keys(SCR)){
     let f=null; for (const e of FOCUS) if (e.t<=t && e.target.startsWith(name+':')) f=e;
     const id = f ? f.target : (H.screens[name].focus ? name+':'+H.screens[name].focus : null);
     if (id && POS[id]) POS[id][3].classList.add('focus');
   }
   // overlays (pops): shown/hidden by events; the start screen's pops listed in spec.start_pops are visible at frame 0
-  document.querySelectorAll('#screen [data-pop]').forEach(p=>{
+  document.querySelectorAll('.screen [data-pop]').forEach(p=>{
     const id=p.dataset.pop; let vis=(H.start_pops||[]).includes(id), at=-9;
     for (const e of SHOWS) if (e.el===id && e.t<=t){ vis = e.k==='show'; at=e.t; }
     const k = vis ? easeOutBack(prog(t,at,0.3)) : 1-ease(prog(t,at,0.2));
     p.style.opacity=clamp(k); p.style.transform=`scale(${0.85+0.15*clamp(k,0,1.2)})`;
   });
   // typed text
-  document.querySelectorAll('#screen [data-type]').forEach(n=>{
+  document.querySelectorAll('.screen [data-type]').forEach(n=>{
     if (!n.dataset.orig0) n.dataset.orig0 = n.textContent || ' ';
     let txt = n.dataset.orig0.trim();
     for (const e of TYPES) if (e.el===n.dataset.type && t>=e.t0){
@@ -276,30 +308,29 @@ function renderPhone(t){
     n.textContent = txt;
   });
   // tap cursor + ripple
-  let shown=false;
+  for (const g of Object.values(RIG)){ g.tap.style.opacity=0; g.ripple.style.opacity=0; g.cursor.style.opacity=0; }
   for (const tp of TAPS){
     if (t>tp.t-0.55 && t<tp.t+0.45 && POS[tp.target]){
       let [x,y,w]=POS[tp.target]; if (w>200) x = 30 + w*(tp.fx||0.62);
-      const a2=prog(t,tp.t-0.55,0.3), d=prog(t,tp.t+0.15,0.3);
-      const T=$('tap'); T.style.left=x+'px'; T.style.top=(y+(1-ease(a2))*60)+'px'; T.style.opacity=ease(a2)*(1-d);
+      const a2=prog(t,tp.t-0.55,0.3), d=prog(t,tp.t+0.15,0.3), g=RIG[POS[tp.target][4]];
+      const T=g.tap; T.style.left=x+'px'; T.style.top=(y+(1-ease(a2))*60)+'px'; T.style.opacity=ease(a2)*(1-d);
       T.style.transform=`scale(${(t>tp.t-0.06&&t<tp.t+0.1)?0.8:1})`;
-      const R=$('ripple'), r=prog(t,tp.t,0.45); R.style.left=x+'px'; R.style.top=y+'px';
-      R.style.opacity=(r>0&&r<1)?(1-r):0; R.style.transform=`scale(${1+r*1.8})`; shown=true;
+      const R=g.ripple, r=prog(t,tp.t,0.45); R.style.left=x+'px'; R.style.top=y+'px';
+      R.style.opacity=(r>0&&r<1)?(1-r):0; R.style.transform=`scale(${1+r*1.8})`;
     }
   }
-  if (!shown){ $('tap').style.opacity=0; $('ripple').style.opacity=0; }
-  if (DEV!=='phone'){                     // PC: mouse arrow glides between click targets; no finger ring
-    $('tap').style.opacity=0;
-    const C=$('cursor'); const pts=TAPS.filter(e=>POS[e.target]);
-    if (pts.length && DEV==='laptop'){
+  for (const dv of DEVS) if (dv!=='phone'){   // PC: mouse arrow glides between click targets; no finger ring
+    RIG[dv].tap.style.opacity=0;
+    const C=RIG[dv].cursor; const pts=TAPS.filter(e=>POS[e.target] && POS[e.target][4]===dv);
+    if (pts.length && dv==='laptop'){
       let j=-1; for (let q=0;q<pts.length;q++) if (pts[q].t-0.7<=t) j=q;
       const tgt = j<0 ? pts[0] : pts[j], P=POS[tgt.target], prv = j>0 ? POS[pts[j-1].target] : [P[0]+160,P[1]+120];
       const m = j<0 ? 0 : ease(prog(t,tgt.t-0.7,0.55));
       C.style.left=lerp(prv[0],P[0],m)+'px'; C.style.top=lerp(prv[1],P[1],m)+'px';
       C.style.opacity = clamp((t-(pts[0].t-1.1))/0.3) * (1-prog(t,pts[pts.length-1].t+0.9,0.3));
       C.style.transform=`scale(${(j>=0&&t>tgt.t-0.05&&t<tgt.t+0.1)?0.88:1})`;
-    } else C.style.opacity=0;
-  } else $('cursor').style.opacity=0;
+    }
+  }
   // passcode screens: digits since the last reset
   for (const [name, el] of Object.entries(SCR)){
     if (H.screens[name].type!=='passcode') continue;
@@ -328,10 +359,11 @@ function renderPhone(t){
       bd.style.transform=`translateX(-50%) scale(${bp})`; bd.style.opacity=clamp(bp); }
   }
   // phone body: present from frame 0 (result-first), leaves for the end card
-  const out=prog(t,OUT,0.55), ph=$('device');
-  ph.style.opacity = 1-out;
-  ph.style.transform = DEV==='phone' ? `translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`
-                                     : `translate(${ease(out)*40}px, ${Math.sin(t*1.6)*4 - ease(out)*700}px) scale(${1-0.2*ease(out)})`;
+  const out=prog(t,OUT,0.55), SW={};
+  for (const d of DEVS){ const ph=RIG[d].el, sw=SW[d]=rigSwap(d,t);
+    ph.style.opacity = (1-out)*sw.o;
+    ph.style.transform = (sw.o<1 ? sw.tf+' ' : '') + (d==='phone' ? `translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`
+                                     : `translate(${ease(out)*40}px, ${Math.sin(t*1.6)*4 - ease(out)*700}px) scale(${1-0.2*ease(out)})`); }
   // shortcut keycaps (laptop): pop in 0.35 s before the press, keys go down one after another, hold ~1.6 s
   let ch=null; for (const e of CHORDS) if (t>=e.t-0.35 && t<e.t+(e.hold||1.6)) ch=e;
   const K=$('keys');
@@ -342,8 +374,8 @@ function renderPhone(t){
     [...K.querySelectorAll('.kc')].forEach((kc,i)=>kc.classList.toggle('down', t>=ch.t+i*0.09 && t<ch.t+0.55));
   } else K.style.opacity=0;
   // controller (tv): visible with the TV, buttons light up when pressed
-  const PADV=$('pad'); PADV.style.opacity = DEV==='tv' ? 1-out : 0;
-  if (DEV==='tv'){ PADV.style.transform=`translateY(${Math.sin(t*1.3)*4}px) rotate(${Math.sin(t*0.9)*1.5}deg)`;
+  const PADV=$('pad'); PADV.style.opacity = SW.tv ? (1-out)*SW.tv.o : 0;
+  if (SW.tv){ PADV.style.transform=`translateY(${Math.sin(t*1.3)*4}px) rotate(${Math.sin(t*0.9)*1.5}deg)`;
     for (const k of Object.keys(PADB)){ const el=$('pb-'+k); const on=BTNS.some(e=>e.b===k && t>=e.t-0.02 && t<e.t+0.22);
       el.setAttribute('fill', on ? '#ffd54a' : '#3a4766'); el.setAttribute('transform', on ? `translate(0 3)` : ''); } }
   // end card
