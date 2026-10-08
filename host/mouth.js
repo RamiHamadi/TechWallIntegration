@@ -3,7 +3,7 @@
    Geometry is per pose, in cutout pixel coordinates. */
 (function(){
   const POSE_MOUTH = {
-    front:  {cx:360, cy:278, a:31, ang:0},
+    front:  {cx:360, cy:274, a:28, ang:0},
     talk:   {cx:390, cy:288, a:33, ang:-6},
     point:  {cx:395, cy:296, a:27, ang:-11.5},
     welcome:{cx:462, cy:287, a:38, ang:-2},
