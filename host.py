@@ -175,6 +175,32 @@ def build(ep, spec):
                     ev.append({'k': 'key', 't': float(tt), 'd': d, 'screen': cur}); sfx.append(('key', float(tt), 1))
             elif 'reprompt' in a:
                 ev.append({'k': 'passreset', 't': at(a.get('at', 0.5)), 'screen': cur}); sfx.append(('whoosh', at(a.get('at', 0.5)), 0.7))
+            elif 'keys' in a:                                   # laptop: keyboard shortcut chord
+                tt = at(a.get('at', 0.5)); ev.append({'k': 'keys', 't': tt, 'keys': a['keys'], 'hold': a.get('hold', 1.6)})
+                sfx += [('key', tt + i * 0.09, 1.2) for i in range(len(a['keys']))]
+            elif 'focus' in a:                                  # tv: D-pad moves the highlight
+                tt = at(a.get('at', 0.5)); ev.append({'k': 'focus', 't': tt, 'target': f"{cur}:{a['focus']}"})
+                if a.get('button'): ev.append({'k': 'button', 't': tt, 'b': a['button']})
+                sfx.append(('key', tt, 1))
+            elif 'button' in a:                                 # tv: controller press (+ optional screen change)
+                tt = at(a.get('at', 0.5)); ev.append({'k': 'button', 't': tt, 'b': a['button']}); sfx.append(('tap', tt, 1))
+                if a.get('nav'):
+                    ev.append({'k': 'nav', 't': tt + 0.2, 'to': a['nav'], 'style': 'pop' if a.get('back') else 'push'})
+                    sfx.append(('whoosh', tt + 0.18, 0.6)); cur = a['nav']
+            elif 'show' in a or 'hide' in a:                    # overlays declared in a screen's 'pops'
+                nm = a.get('show') or a.get('hide'); tt = at(a.get('at', 0.5))
+                ev.append({'k': 'show' if 'show' in a else 'hide', 't': tt, 'el': nm if ':' in nm else f'{cur}:{nm}'})
+                sfx.append(('pop', tt, 0.8))
+            elif 'typetext' in a:                               # text appearing in a 'window' screen
+                t0, t1 = at(a.get('from', 0.3)), at(a.get('to', 0.6)); into = a.get('into', 'text')
+                ev.append({'k': 'typetext', 't': t0, 't0': t0, 't1': t1, 'text': a['typetext'],
+                           'el': into if ':' in into else f'{cur}:{into}', 'replace': bool(a.get('replace'))})
+                n = max(1, len(a['typetext'])); sfx += [('key', float(x), 0.8) for x in np.linspace(t0, t1, min(n, 14))]
+            elif 'set' in a:                                    # change a row's value / toggle without a tap
+                tt = at(a.get('at', 0)); e = {'k': 'set', 't': tt, 'target': f"{a.get('screen', cur)}:{a['set']}"}
+                if 'value' in a: e['value'] = a['value']
+                if 'toggle' in a: e['toggle'] = a['toggle']
+                ev.append(e)
             elif 'fx' in a:
                 tt = at(a.get('at', 0)); ev.append({'k': 'fx', 't': tt, 'fx': a['fx'], 'dur': a.get('dur', 3)})
                 if a['fx'] == 'lock_close': sfx.append(('chime', tt, 1))
@@ -194,7 +220,7 @@ def build(ep, spec):
     sf.write(lib.out(f'audio_{ep}.wav'), mix, SR)
     with open(lib.out(f'meta_{ep}'), 'w') as f:
         f.write(f'FR={FPS}\nCF=0\n')
-    keep = ('title', 'tag', 'tip', 'endline', 'follow', 'clock', 'start', 'screens')
+    keep = ('title', 'tag', 'tip', 'endline', 'follow', 'clock', 'start', 'screens', 'device', 'start_pops')
     host = {k: spec[k] for k in keep if k in spec}
     host.update({'fps': FPS, 'total': total, 'lang': lang, 'beats': B, 'events': ev,
                  'env': [round(float(x), 3) for x in env], 'cues': cues})

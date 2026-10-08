@@ -30,9 +30,19 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 #chip{right:56px;top:66px;padding:12px 26px;border:3px dashed rgba(255,255,255,.7);border-radius:40px;font-weight:700;font-size:32px;letter-spacing:2px;opacity:0}
 #chip b{color:#ffd54a}
 /* phone */
-#phone{left:590px;top:260px;width:430px;height:860px;border-radius:66px;background:#111827;padding:16px;
-  box-shadow:0 0 0 4px #2b3a55,0 40px 80px rgba(0,0,0,.45),inset 0 0 0 2px #3c4a66;transform-origin:50% 60%}
-#screen{position:relative;width:398px;height:828px;border-radius:52px;overflow:hidden;background:#f2f2f7;color:#111;font-family:Poppins,sans-serif}
+#device{transform-origin:50% 60%}
+.dev-phone{left:590px;top:260px;width:430px;height:860px;border-radius:66px;background:#111827;padding:16px;
+  box-shadow:0 0 0 4px #2b3a55,0 40px 80px rgba(0,0,0,.45),inset 0 0 0 2px #3c4a66}
+.dev-phone #screen{position:relative;width:398px;height:828px;border-radius:52px;overflow:hidden;background:#f2f2f7;color:#111;font-family:Poppins,sans-serif}
+.dev-laptop{left:62px;top:236px;width:956px}
+.dev-laptop .lid{width:956px;padding:18px;background:#111827;border-radius:26px 26px 6px 6px;box-shadow:0 0 0 4px #2b3a55,0 30px 60px rgba(0,0,0,.45)}
+.dev-laptop .base{width:1010px;margin-left:-27px;height:26px;background:linear-gradient(#d9dfea,#8c96a8);border-radius:0 0 30px 30px;position:relative}
+.dev-laptop .base:after{content:"";position:absolute;left:50%;top:0;width:150px;height:9px;margin-left:-75px;background:#7b8597;border-radius:0 0 10px 10px}
+.dev-tv{left:62px;top:236px;width:956px}
+.dev-tv .lid{width:956px;padding:14px;background:#0b0f1a;border-radius:16px;box-shadow:0 0 0 4px #2b3a55,0 30px 60px rgba(0,0,0,.45)}
+.dev-tv .stand{width:240px;height:36px;margin:0 auto;background:linear-gradient(#2b3a55,#141c2e);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%)}
+.dev-laptop #screen,.dev-tv #screen{position:relative;width:920px;height:518px;border-radius:6px;overflow:hidden;background:#000;color:#111;font-family:Poppins,sans-serif}
+.dev-tv #screen{width:928px;height:522px}
 #island{position:absolute;left:50%;top:14px;width:118px;height:34px;margin-left:-59px;background:#000;border-radius:20px;z-index:20}
 .scr{position:absolute;inset:0;background:#f2f2f7}
 .sb{height:62px;display:flex;justify-content:space-between;align-items:center;padding:8px 34px 0;font-weight:600;font-size:18px}
@@ -79,6 +89,46 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 .lbtn{position:absolute;bottom:56px;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.22)}
 #tap{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(10,122,255,.25);border:4px solid rgba(255,255,255,.95);box-shadow:0 0 0 3px rgba(10,122,255,.6);z-index:30;opacity:0}
 #ripple{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid #fff;z-index:30;opacity:0}
+/* PC desktop */
+.desk{color:#111}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:46px;background:rgba(240,243,250,.92);display:flex;align-items:center;justify-content:center;gap:16px;font-size:15px;color:#333}
+.tb-start{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7fb3ff,#2a62d6)}
+.tb-search{background:#fff;border-radius:16px;padding:4px 40px 4px 14px;color:#888;box-shadow:0 0 0 1px #d6dbe6}
+.tb-ic{width:24px;height:24px;border-radius:6px}.tb-clock{position:absolute;right:16px;font-size:14px}
+.dicon{position:absolute;left:18px;width:84px;text-align:center;color:#fff;font-size:13px}
+.dicon i{display:block;width:48px;height:40px;margin:0 auto 4px;border-radius:6px}
+.win{position:absolute;left:150px;top:46px;width:640px;height:380px;background:#fff;border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,.35);overflow:hidden}
+.win-bar{height:38px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;background:#eef1f7;font-size:15px;font-weight:600}
+.win-btns{letter-spacing:6px;color:#555;font-weight:400}
+.win-menu{font-size:14px;color:#444;padding:6px 16px;border-bottom:1px solid #e3e6ee}
+.win-body{padding:18px 20px;font-size:26px;line-height:1.4;height:300px}
+.caret{display:inline-block;width:2px;height:30px;background:#111;vertical-align:middle;margin-left:2px}
+.pop{position:absolute;inset:0;opacity:0}
+/* console */
+.chome,.cmenu{background:radial-gradient(ellipse at 30% 20%,#23345e 0%,#0d1428 70%);color:#fff}
+.ch-top{position:absolute;right:26px;top:20px;display:flex;gap:14px}
+.ch-ic{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.ch-ic svg{width:30px;height:30px}
+.ch-row{position:absolute;left:40px;top:110px;display:flex;gap:18px}
+.tile{width:150px;height:150px;border-radius:14px;display:flex;align-items:flex-end;padding:10px;font-size:15px;font-weight:700;box-shadow:0 8px 18px rgba(0,0,0,.35)}
+.ch-title{position:absolute;left:40px;top:290px;font-size:34px;font-weight:700}
+.cm-head{padding:26px 40px 10px}.cm-path{display:block;font-size:15px;color:#9fb0d6;letter-spacing:.5px}
+.cm-title{font-size:32px;font-weight:700}
+.cm-list{padding:6px 40px}
+.mrow{display:flex;align-items:center;gap:16px;height:60px;padding:0 18px;border-radius:10px;font-size:24px;position:relative;margin-bottom:4px;border:3px solid transparent}
+.mrow .lbl{flex:1}.mrow .val{color:#9fb0d6}
+.mic{width:34px;height:34px;border-radius:8px;display:grid;place-items:center}.mic svg{width:20px;height:20px}
+.mrow.focus,.tile.focus,.ch-ic.focus{border:3px solid #fff;background:rgba(255,255,255,.14);box-shadow:0 0 0 4px rgba(92,225,255,.35)}
+.tile.focus{transform:scale(1.06)}
+#screen [data-id].focus:not(.mrow):not(.tile):not(.ch-ic){background:#dbe6ff;border-radius:8px;box-shadow:0 0 0 2px #7aa7ff}
+.cm-note{position:absolute;left:40px;right:40px;bottom:22px;font-size:15px;color:#9fb0d6}
+/* keyboard shortcut panel (laptop) + generic controller (tv) */
+#keys{left:600px;top:1010px;width:440px;height:300px;display:flex;align-items:center;justify-content:center;gap:14px;z-index:30;font-family:Poppins,sans-serif}
+.kc{min-width:120px;height:120px;padding:0 22px;border-radius:20px;background:linear-gradient(#ffffff,#dfe5f0);color:#0a2b66;font-weight:800;font-size:46px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 0 #8e9bb5,0 18px 30px rgba(0,0,0,.35)}
+.kc.down{transform:translateY(8px);box-shadow:0 2px 0 #8e9bb5,0 8px 16px rgba(0,0,0,.35);background:linear-gradient(#fff3c2,#ffd54a)}
+.kplus{font-size:54px;font-weight:800;color:#ffd54a}
+#pad{left:610px;top:1000px;width:430px;height:300px;z-index:30}
+#cursor{position:absolute;width:34px;height:46px;z-index:31;opacity:0;margin:-4px 0 0 -6px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4))}
 /* end card */
 #endcard{left:560px;top:330px;width:490px;text-align:center;opacity:0}
 #endlogo{position:relative;width:440px;height:440px;margin:0 auto 6px}
@@ -110,7 +160,9 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
   <div id="logo" class="abs"><img src="assets/brand/tw_badge.png"><div class="word">TECH WALL</div></div>
   <div id="title" class="abs"></div>
   <div id="chip" class="abs">STEP <b id="stepn">1</b> / <span id="stepN">3</span></div>
-  <div id="phone" class="abs"><div id="screen"><div id="island"></div><div id="tap"></div><div id="ripple"></div></div></div>
+  <div id="device" class="abs"></div>
+  <div id="keys" class="abs"></div>
+  <svg id="pad" class="abs" viewBox="0 0 430 300"></svg>
   <div id="endcard" class="abs">
     <div id="endlogo"><img id="endring" src="assets/brand/tw_ring.png"><img id="endmark" src="assets/brand/tw_mark.png"></div>
     <p id="endline">Quick tech tips, every week</p>
@@ -135,10 +187,26 @@ $('title').textContent = H.title || ''; $('tag').textContent = H.tag || ''; $('t
 if (H.endline) $('endline').textContent = H.endline;
 if (H.follow) $('follow').textContent = H.follow;
 
+/* ---------- device frame: phone (default) | laptop | tv ---------- */
+const DEV = H.device || 'phone';
+const SCREEN_HTML = '<div id="screen">' + (DEV==='phone'?'<div id="island"></div>':'') +
+  '<div id="tap"></div><div id="ripple"></div><svg id="cursor" viewBox="0 0 34 46"><path d="M3 2v36l9-8 6 13 7-3-6-13h12z" fill="#fff" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg></div>';
+$('device').className = 'abs dev-' + DEV;
+$('device').innerHTML = DEV==='phone' ? SCREEN_HTML : DEV==='laptop' ? `<div class="lid">${SCREEN_HTML}</div><div class="base"></div>`
+                                     : `<div class="lid">${SCREEN_HTML}</div><div class="stand"></div>`;
+// generic controller (no brand marks): D-pad, 4 face buttons, home
+const PADB = {up:[118,118],down:[118,178],left:[88,148],right:[148,148],y:[312,112],a:[312,184],x:[276,148],b:[348,148],home:[215,190],menu:[255,112],view:[175,112]};
+if (DEV==='tv') $('pad').innerHTML = `<path d="M70 70 Q215 30 360 70 Q430 90 420 220 Q412 285 360 270 Q320 258 300 225 L130 225 Q110 258 70 270 Q18 285 10 220 Q0 90 70 70Z" fill="#e9edf5" stroke="#9aa6bd" stroke-width="4"/>
+  <circle cx="130" cy="235" r="34" fill="#c9d1e0"/><circle cx="300" cy="235" r="34" fill="#c9d1e0"/>` +
+  Object.entries(PADB).map(([k,[x,y]])=>['up','down','left','right'].includes(k)
+    ? `<rect id="pb-${k}" x="${x-17}" y="${y-17}" width="34" height="34" rx="6" fill="#3a4766"/>`
+    : `<circle id="pb-${k}" cx="${x}" cy="${y}" r="${['home','menu','view'].includes(k)?11:19}" fill="#3a4766"/>`).join('');
+
 /* ---------- screens ---------- */
 const SCR = HostScreens.build($('screen'), H.screens, H.clock || '10:08');
 const NAV = [{t:-1, to:H.start, style:'none'}].concat(ev('nav'));      // every screen change
 const TAPS = ev('tap'), KEYS = ev('key'), RESETS = ev('passreset'), FX = ev('fx');
+const CHORDS = ev('keys'), BTNS = ev('button'), FOCUS = ev('focus'), SHOWS = EV.filter(e=>e.k==='show'||e.k==='hide'), TYPES = ev('typetext'), SETS = ev('set');
 const OUT = (ev('phone_out')[0]||{t:1e9}).t;
 // tap target positions, measured once with every screen at rest
 const POS = {};
@@ -173,10 +241,39 @@ function renderPhone(t){
   }
   document.querySelectorAll('#screen [data-toggle]').forEach(n=>{
     const id=n.dataset.id; let on=n.dataset.toggle==='1', kk=1;
-    for (const tp of TAPS) if (tp.target===id && t>=tp.t){ on=!on; kk=ease(prog(t,tp.t,0.25)); }
+    const evs=TAPS.filter(e=>e.target===id).concat(SETS.filter(e=>e.target===id&&e.toggle!==undefined)).sort((a,b)=>a.t-b.t);
+    for (const e of evs) if (t>=e.t){ on = e.k==='set' ? !!e.toggle : !on; kk = e.k==='set' ? 1 : ease(prog(t,e.t,0.25)); }
     const knob=n.querySelector('.tog i'), tog=n.querySelector('.tog');
     const x = on ? 20*kk : 20*(1-kk);
     knob.style.transform=`translateX(${x}px)`; tog.style.background = (x>10) ? '#34c759' : '#e3e3e8';
+  });
+  // value labels set by {'set': id, 'value': ...}
+  for (const e of SETS) if (e.value!==undefined && POS[e.target]){ const v=POS[e.target][3].querySelector('.val');
+    if (v){ if (!v.dataset.orig) v.dataset.orig=v.textContent; } }
+  document.querySelectorAll('#screen .val[data-orig]').forEach(v=>v.textContent=v.dataset.orig);
+  for (const e of SETS) if (e.value!==undefined && t>=e.t && POS[e.target]){ const v=POS[e.target][3].querySelector('.val'); if (v) v.textContent=e.value; }
+  // console focus (D-pad navigation): last focus event per screen, else the row flagged in the spec
+  document.querySelectorAll('#screen .focus').forEach(n=>n.classList.remove('focus'));
+  for (const name of Object.keys(SCR)){
+    let f=null; for (const e of FOCUS) if (e.t<=t && e.target.startsWith(name+':')) f=e;
+    const id = f ? f.target : (H.screens[name].focus ? name+':'+H.screens[name].focus : null);
+    if (id && POS[id]) POS[id][3].classList.add('focus');
+  }
+  // overlays (pops): shown/hidden by events; the start screen's pops listed in spec.start_pops are visible at frame 0
+  document.querySelectorAll('#screen [data-pop]').forEach(p=>{
+    const id=p.dataset.pop; let vis=(H.start_pops||[]).includes(id), at=-9;
+    for (const e of SHOWS) if (e.el===id && e.t<=t){ vis = e.k==='show'; at=e.t; }
+    const k = vis ? easeOutBack(prog(t,at,0.3)) : 1-ease(prog(t,at,0.2));
+    p.style.opacity=clamp(k); p.style.transform=`scale(${0.85+0.15*clamp(k,0,1.2)})`;
+  });
+  // typed text
+  document.querySelectorAll('#screen [data-type]').forEach(n=>{
+    if (!n.dataset.orig0) n.dataset.orig0 = n.textContent || ' ';
+    let txt = n.dataset.orig0.trim();
+    for (const e of TYPES) if (e.el===n.dataset.type && t>=e.t0){
+      const c=[...e.text]; const m=Math.round(c.length*clamp((t-e.t0)/Math.max(0.01,e.t1-e.t0)));
+      txt = (e.replace ? '' : (e.base!==undefined?e.base:txt)) + c.slice(0,m).join(''); }
+    n.textContent = txt;
   });
   // tap cursor + ripple
   let shown=false;
@@ -191,6 +288,18 @@ function renderPhone(t){
     }
   }
   if (!shown){ $('tap').style.opacity=0; $('ripple').style.opacity=0; }
+  if (DEV!=='phone'){                     // PC: mouse arrow glides between click targets; no finger ring
+    $('tap').style.opacity=0;
+    const C=$('cursor'); const pts=TAPS.filter(e=>POS[e.target]);
+    if (pts.length && DEV==='laptop'){
+      let j=-1; for (let q=0;q<pts.length;q++) if (pts[q].t-0.7<=t) j=q;
+      const tgt = j<0 ? pts[0] : pts[j], P=POS[tgt.target], prv = j>0 ? POS[pts[j-1].target] : [P[0]+160,P[1]+120];
+      const m = j<0 ? 0 : ease(prog(t,tgt.t-0.7,0.55));
+      C.style.left=lerp(prv[0],P[0],m)+'px'; C.style.top=lerp(prv[1],P[1],m)+'px';
+      C.style.opacity = clamp((t-(pts[0].t-1.1))/0.3) * (1-prog(t,pts[pts.length-1].t+0.9,0.3));
+      C.style.transform=`scale(${(j>=0&&t>tgt.t-0.05&&t<tgt.t+0.1)?0.88:1})`;
+    } else C.style.opacity=0;
+  } else $('cursor').style.opacity=0;
   // passcode screens: digits since the last reset
   for (const [name, el] of Object.entries(SCR)){
     if (H.screens[name].type!=='passcode') continue;
@@ -219,9 +328,24 @@ function renderPhone(t){
       bd.style.transform=`translateX(-50%) scale(${bp})`; bd.style.opacity=clamp(bp); }
   }
   // phone body: present from frame 0 (result-first), leaves for the end card
-  const out=prog(t,OUT,0.55), ph=$('phone');
+  const out=prog(t,OUT,0.55), ph=$('device');
   ph.style.opacity = 1-out;
-  ph.style.transform=`translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`;
+  ph.style.transform = DEV==='phone' ? `translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`
+                                     : `translate(${ease(out)*40}px, ${Math.sin(t*1.6)*4 - ease(out)*700}px) scale(${1-0.2*ease(out)})`;
+  // shortcut keycaps (laptop): pop in 0.35 s before the press, keys go down one after another, hold ~1.6 s
+  let ch=null; for (const e of CHORDS) if (t>=e.t-0.35 && t<e.t+(e.hold||1.6)) ch=e;
+  const K=$('keys');
+  if (ch){ if (K.dataset.id!==String(ch.t)){ K.dataset.id=String(ch.t);
+      K.innerHTML=ch.keys.map((k,i)=>`${i?'<span class="kplus">+</span>':''}<span class="kc">${k}</span>`).join(''); }
+    const a3=easeOutBack(prog(t,ch.t-0.35,0.3)), d3=prog(t,ch.t+(ch.hold||1.6)-0.25,0.25);
+    K.style.opacity=clamp(a3)*(1-d3); K.style.transform=`scale(${0.8+0.2*a3})`;
+    [...K.querySelectorAll('.kc')].forEach((kc,i)=>kc.classList.toggle('down', t>=ch.t+i*0.09 && t<ch.t+0.55));
+  } else K.style.opacity=0;
+  // controller (tv): visible with the TV, buttons light up when pressed
+  const PADV=$('pad'); PADV.style.opacity = DEV==='tv' ? 1-out : 0;
+  if (DEV==='tv'){ PADV.style.transform=`translateY(${Math.sin(t*1.3)*4}px) rotate(${Math.sin(t*0.9)*1.5}deg)`;
+    for (const k of Object.keys(PADB)){ const el=$('pb-'+k); const on=BTNS.some(e=>e.b===k && t>=e.t-0.02 && t<e.t+0.22);
+      el.setAttribute('fill', on ? '#ffd54a' : '#3a4766'); el.setAttribute('transform', on ? `translate(0 3)` : ''); } }
   // end card
   const ec=prog(t,OUT+0.25,0.5);
   $('endcard').style.opacity=ease(ec); $('endcard').style.transform=`translateY(${(1-easeOutBack(ec))*60}px)`;

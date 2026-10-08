@@ -6,6 +6,9 @@
      passcode {type:'passcode', title, prompt, reprompt, digits:6}
      lock     {type:'lock', date, time, badge}
      html     {type:'html', html:'<div data-id="x">…</div>', bg:'#fff'}   any custom mock; tap targets carry data-id
+   Laptop (device 'laptop'): desktop {icons, html, pops}, window {title, text, pops}   (text area = '<screen>:text', click target '<screen>:body')
+   TV/console (device 'tv'): tiles {tiles:[{id,label,color}], top:[{id,icon}], title}, menu {path, title, rows:[{id,label,icon,value,toggle}], note}
+   pops: {name: html} = overlays hidden until a {'show': name} action (e.g. the emoji panel)
    Every tappable element gets data-id="<screen>:<id>". */
 (function(){
 const ICONS = {
@@ -104,6 +107,38 @@ function html(name, s){
   return `<div class="scr custom" style="background:${s.bg||'#f2f2f7'}">${body}</div>`;
 }
 const BUILD = {home, list, passcode, lock, html};
+
+/* ---------- PC (device: 'laptop') and console/TV (device: 'tv') screens, 920x518 ---------- */
+const TASKBAR = `<div class="taskbar"><span class="tb-start"></span><span class="tb-search">⌕ Search</span><span class="tb-ic" style="background:#f4b400"></span><span class="tb-ic" style="background:#1a73e8"></span><span class="tb-ic" style="background:#34a853"></span><span class="tb-clock">10:08</span></div>`;
+function pops(name, s){
+  return Object.entries(s.pops||{}).map(([k,v])=>`<div class="pop" data-pop="${name}:${k}">${v.replace(/data-id="([^":]+)"/g,`data-id="${name}:$1"`)}</div>`).join('');
+}
+function desktop(name, s){
+  return `<div class="scr desk" style="background:${s.wallpaper||'linear-gradient(135deg,#1b3b8a 0%,#3f6fd8 55%,#9cc0ff 100%)'}">
+    ${(s.icons||[]).map((ic,i)=>`<div class="dicon" style="top:${20+i*86}px" data-id="${name}:${ic.id||'i'+i}"><i style="background:${ic.color||'#f4b400'}"></i>${esc(ic.label)}</div>`).join('')}
+    ${s.html?s.html.replace(/data-id="([^":]+)"/g,`data-id="${name}:$1"`):''}${pops(name,s)}${TASKBAR}</div>`;
+}
+function windowScr(name, s){
+  return `<div class="scr desk" style="background:${s.wallpaper||'linear-gradient(135deg,#1b3b8a 0%,#3f6fd8 55%,#9cc0ff 100%)'}">
+    <div class="win"><div class="win-bar"><span>${esc(s.title||'Notepad')}</span><span class="win-btns">—  ☐  ✕</span></div>
+      <div class="win-menu">File&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;View</div>
+      <div class="win-body" data-id="${name}:body"><span data-type="${name}:text">${esc(s.text||'')}</span><span class="caret"></span></div></div>
+    ${pops(name,s)}${TASKBAR}</div>`;
+}
+function menu(name, s){
+  const rows=(s.rows||[]).map(r=>`<div class="mrow" data-id="${name}:${r.id||r.label}"${r.toggle!==undefined?` data-toggle="${r.toggle?1:0}"`:''}>
+      ${r.icon?`<span class="mic" style="background:${r.color||'#3a4a6a'}">${ICONS[r.icon]||''}</span>`:''}<span class="lbl">${esc(r.label)}</span>
+      ${r.toggle!==undefined?'<span class="tog"><i></i></span>':(r.value!==undefined?`<span class="val">${esc(r.value)}</span>`:'')}</div>`).join('');
+  return `<div class="scr cmenu"><div class="cm-head">${s.path?`<span class="cm-path">${esc(s.path)}</span>`:''}<span class="cm-title">${esc(s.title||'')}</span></div>
+    <div class="cm-list">${rows}</div>${s.note?`<div class="cm-note">${esc(s.note)}</div>`:''}${pops(name,s)}</div>`;
+}
+function tiles(name, s){
+  return `<div class="scr chome"><div class="ch-top">${(s.top||[{id:'settings',icon:'gear'}]).map(x=>`<span class="ch-ic" data-id="${name}:${x.id}">${ICONS[x.icon]||''}</span>`).join('')}</div>
+    <div class="ch-row">${(s.tiles||[]).map(x=>`<div class="tile" data-id="${name}:${x.id}" style="background:${x.color}"><span>${esc(x.label)}</span></div>`).join('')}</div>
+    <div class="ch-title">${esc(s.title||'')}</div>${pops(name,s)}</div>`;
+}
+Object.assign(BUILD, {desktop, window: windowScr, menu, tiles});
+
 window.HostScreens = {
   ICONS,
   build(root, screens, time){
