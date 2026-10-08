@@ -21,6 +21,9 @@ Posting procedures: `REELS.md` (Facebook + Instagram, `reels.py`) and `TIKTOK.md
 - **Network access (Custom):** default package managers + `graph.facebook.com`, `rupload.facebook.com`,
   `*.tiktokapis.com`, `oauth2.googleapis.com`, `www.googleapis.com`. Each host must be allowed on its own; a missing one shows as a proxy 403
   (`CONNECT tunnel failed`).
+- **Host engine** (`bash host/setup.sh`, animated-presenter episodes) also downloads release files from `github.com` and
+  `release-assets.githubusercontent.com` (voices + Rhubarb lip-sync). If those are blocked, run `host/setup.sh` where they are
+  allowed and point `TW_HOST_MODELS` at the folder, or add the two hosts to the allowlist.
 - Changes apply to **new sessions** only.
 
 ## Security rules

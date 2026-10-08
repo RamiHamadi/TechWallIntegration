@@ -1,0 +1,309 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Tech Wall Host engine: animated presenter + phone demo. Deterministic render(t), driven by window.HOST
+     (built by host.py from the episode spec). Captured at 30 fps by host.py. Do not add timers/animations. -->
+<style>
+@font-face{font-family:Poppins;src:url(../fonts/poppins-latin-400-normal.woff2);font-weight:400}
+@font-face{font-family:Poppins;src:url(../fonts/poppins-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:Poppins;src:url(../fonts/poppins-latin-600-normal.woff2);font-weight:600}
+@font-face{font-family:Poppins;src:url(../fonts/poppins-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:Poppins;src:url(../fonts/poppins-latin-800-normal.woff2);font-weight:800}
+@font-face{font-family:Cairo;src:url(../fonts/cairo-arabic-600-normal.woff2);font-weight:600}
+@font-face{font-family:Cairo;src:url(../fonts/cairo-arabic-700-normal.woff2);font-weight:700}
+@font-face{font-family:Cairo;src:url(../fonts/cairo-arabic-800-normal.woff2);font-weight:800}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0a2f6b}
+body{font-family:Poppins,Cairo,sans-serif;color:#fff}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;
+  background:
+    linear-gradient(rgba(255,255,255,.06) 2px,transparent 2px) 0 0/120px 120px,
+    linear-gradient(90deg,rgba(255,255,255,.06) 2px,transparent 2px) 0 0/120px 120px,
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/24px 24px,
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/24px 24px,
+    radial-gradient(ellipse at 60% 30%,#1a5bc4 0%,#0f3f93 45%,#0a2b66 100%)}
+.abs{position:absolute}
+/* header: TW badge + wordmark + episode title */
+#logo{left:52px;top:44px;display:flex;align-items:center;gap:22px;transform-origin:60px 55px}
+#logo img{width:110px;height:110px;border-radius:22px;box-shadow:0 0 0 3px rgba(255,255,255,.85),0 10px 24px rgba(0,0,0,.4)}
+#logo .word{font-weight:800;font-size:44px;letter-spacing:4px;margin-top:-34px}
+#title{left:184px;top:112px;font-weight:700;font-size:30px;color:#bfe9ff;letter-spacing:.3px;white-space:nowrap}
+#chip{right:56px;top:66px;padding:12px 26px;border:3px dashed rgba(255,255,255,.7);border-radius:40px;font-weight:700;font-size:32px;letter-spacing:2px;opacity:0}
+#chip b{color:#ffd54a}
+/* phone */
+#phone{left:590px;top:260px;width:430px;height:860px;border-radius:66px;background:#111827;padding:16px;
+  box-shadow:0 0 0 4px #2b3a55,0 40px 80px rgba(0,0,0,.45),inset 0 0 0 2px #3c4a66;transform-origin:50% 60%}
+#screen{position:relative;width:398px;height:828px;border-radius:52px;overflow:hidden;background:#f2f2f7;color:#111;font-family:Poppins,sans-serif}
+#island{position:absolute;left:50%;top:14px;width:118px;height:34px;margin-left:-59px;background:#000;border-radius:20px;z-index:20}
+.scr{position:absolute;inset:0;background:#f2f2f7}
+.sb{height:62px;display:flex;justify-content:space-between;align-items:center;padding:8px 34px 0;font-weight:600;font-size:18px}
+.sb .bat{width:30px;height:14px;border:2px solid currentColor;border-radius:4px;position:relative}
+.sb .bat:after{content:"";position:absolute;inset:2px;right:6px;background:currentColor;border-radius:1px}
+.home{color:#fff}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);row-gap:26px;padding:26px 22px 0}
+.app{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:13px;font-weight:500}
+.ic{width:70px;height:70px;border-radius:18px;display:grid;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+.ic svg{width:40px;height:40px}
+.dock{position:absolute;left:16px;right:16px;bottom:22px;height:104px;border-radius:34px;background:rgba(255,255,255,.28);display:flex;justify-content:space-around;align-items:center}
+.nav{padding:4px 22px 0;font-size:19px;color:#0a7aff;height:34px}
+.big{font-size:38px;font-weight:700;padding:2px 22px 12px}
+.search{margin:0 18px 18px;height:42px;border-radius:12px;background:#e3e3e9;color:#8a8a8e;font-size:18px;display:flex;align-items:center;padding:0 14px}
+.group{margin:0 16px 22px;background:#fff;border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;min-height:56px;padding:0 14px;font-size:19px;position:relative;background:#fff}
+.row+.row:before{content:"";position:absolute;left:62px;right:0;top:0;height:1px;background:#e3e3e8}
+.row .sq{position:relative;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
+.row .sq svg{width:20px;height:20px}
+.row .lbl{position:relative;flex:1}
+.row .chev{color:#c4c4c8;font-size:24px;position:relative}
+.row .val{color:#8a8a8e;position:relative}
+.row .flash{position:absolute;inset:0;background:#d1d1d6;opacity:0}
+.tog{position:relative;width:52px;height:32px;border-radius:16px;background:#e3e3e8;flex:none}
+.tog i{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.blue{color:#0a7aff}.grey{color:#b5b5ba}.red{color:#ff3b30}
+.sect{font-size:14px;color:#6d6d72;padding:6px 32px 8px;letter-spacing:.4px;text-transform:uppercase}
+.foot{font-size:14px;color:#6d6d72;padding:0 32px 18px;line-height:1.35;margin-top:-14px}
+.ptitle{text-align:center;font-size:20px;font-weight:600;margin-top:4px}
+.plabel{text-align:center;font-size:22px;margin-top:70px;height:30px}
+.dots{display:flex;justify-content:center;gap:20px;margin-top:30px}
+.dots i{width:18px;height:18px;border-radius:50%;border:2px solid #111;display:block}
+.dots i.on{background:#111}
+.popts{text-align:center;color:#0a7aff;font-size:17px;margin-top:40px}
+.pad{position:absolute;left:0;right:0;bottom:40px;display:grid;grid-template-columns:repeat(3,96px);gap:14px 30px;justify-content:center}
+.k{width:96px;height:96px;border-radius:50%;background:#e1e1e6;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:38px;line-height:1}
+.k small{font-size:11px;letter-spacing:2px;font-weight:600;margin-top:2px}
+.k.on{background:#a9a9b0}.k.blank{background:none}
+.lockscr{background:radial-gradient(ellipse at 50% 20%,#4b6cff 0%,#3a2a9c 50%,#170f45 100%);color:#fff;text-align:center}
+.padlock{width:64px;margin:6px auto 0;display:block}
+.ltime{font-size:112px;font-weight:600;line-height:1;margin-top:10px;letter-spacing:-2px}
+.ldate{font-size:22px;font-weight:500;opacity:.9;margin-top:6px}
+.lbadge{position:absolute;left:50%;top:430px;transform:translateX(-50%);background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);padding:14px 26px;border-radius:30px;font-weight:700;font-size:22px;white-space:nowrap}
+.lbtn{position:absolute;bottom:56px;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.22)}
+#tap{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(10,122,255,.25);border:4px solid rgba(255,255,255,.95);box-shadow:0 0 0 3px rgba(10,122,255,.6);z-index:30;opacity:0}
+#ripple{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:5px solid #fff;z-index:30;opacity:0}
+/* end card */
+#endcard{left:560px;top:330px;width:490px;text-align:center;opacity:0}
+#endlogo{position:relative;width:440px;height:440px;margin:0 auto 6px}
+#endlogo img{position:absolute}
+#endring{left:0;top:0;width:440px;height:440px;transform-origin:50% 47.4%}
+#endmark{left:100px;top:118px;width:269px}
+#endcard p{font-size:34px;color:#bfe9ff;margin-top:14px;font-weight:600}
+#follow{display:inline-block;margin-top:44px;background:#ffd54a;color:#0a2b66;font-weight:800;font-size:44px;padding:22px 54px;border-radius:60px;box-shadow:0 12px 0 #c99a12}
+/* captions (karaoke: said = white, current word = yellow) */
+#cap{left:40px;right:40px;top:1560px;text-align:center;z-index:50}
+#capbox{display:inline-block;background:rgba(6,20,52,.82);border:3px solid rgba(92,225,255,.55);border-radius:30px;padding:22px 34px;font-weight:800;font-size:54px;line-height:1.18;max-width:1000px}
+#capbox .w{display:inline-block;margin:0 .14em;opacity:.38}
+#capbox .w.said{opacity:1}
+#capbox .w.now{color:#ffd54a;opacity:1}
+.rtl #capbox{font-family:Cairo,Poppins,sans-serif;direction:rtl;line-height:1.35}
+.rtl #title{font-family:Cairo,Poppins,sans-serif}
+</style></head>
+<body>
+<div id="stage">
+  <svg class="abs" style="left:0;top:0" width="1080" height="1920">
+    <g stroke="rgba(255,255,255,.28)" stroke-width="2" fill="none">
+      <line x1="560" y1="1180" x2="1050" y2="1180"/><line x1="560" y1="1165" x2="560" y2="1195"/><line x1="1050" y1="1165" x2="1050" y2="1195"/>
+      <line x1="1052" y1="250" x2="1052" y2="1130" stroke-dasharray="6 8"/>
+      <circle cx="140" cy="430" r="70" stroke-dasharray="4 8"/><line x1="70" y1="430" x2="210" y2="430"/><line x1="140" y1="360" x2="140" y2="500"/>
+    </g>
+    <text id="tag" x="805" y="1215" fill="rgba(255,255,255,.4)" font-size="20" text-anchor="middle" font-family="Poppins" letter-spacing="3"></text>
+    <text id="tip" x="140" y="540" fill="rgba(255,255,255,.4)" font-size="18" text-anchor="middle" font-family="Poppins" letter-spacing="3"></text>
+  </svg>
+  <div id="logo" class="abs"><img src="assets/brand/tw_badge.png"><div class="word">TECH WALL</div></div>
+  <div id="title" class="abs"></div>
+  <div id="chip" class="abs">STEP <b id="stepn">1</b> / <span id="stepN">3</span></div>
+  <div id="phone" class="abs"><div id="screen"><div id="island"></div><div id="tap"></div><div id="ripple"></div></div></div>
+  <div id="endcard" class="abs">
+    <div id="endlogo"><img id="endring" src="assets/brand/tw_ring.png"><img id="endmark" src="assets/brand/tw_mark.png"></div>
+    <p id="endline">Quick tech tips, every week</p>
+    <div id="follow">FOLLOW ＋</div>
+  </div>
+  <canvas id="confetti" class="abs" width="1080" height="1920" style="left:0;top:0"></canvas>
+  <canvas id="charCanvas" class="abs" width="1080" height="1920" style="left:0;top:0;z-index:40"></canvas>
+  <img id="thumbSticker" class="abs" src="assets/poses/thumb.png" style="width:190px;left:400px;top:860px;z-index:44;opacity:0">
+  <div id="cap" class="abs"><div id="capbox"></div></div>
+</div>
+<script src="screens.js"></script>
+<script src="mouth.js"></script>
+<script>
+const H = window.HOST, FPS = H.fps, B = H.beats, EV = H.events;
+const $ = id => document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), lerp=(a,b,k)=>a+(b-a)*k, prog=(t,a,d)=>clamp((t-a)/d);
+const ease=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;};
+const easeOutBack=x=>{x=clamp(x);const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+const ev = k => EV.filter(e=>e.k===k);
+if (H.lang === 'ar') document.body.classList.add('rtl');
+$('title').textContent = H.title || ''; $('tag').textContent = H.tag || ''; $('tip').textContent = H.tip || '';
+if (H.endline) $('endline').textContent = H.endline;
+if (H.follow) $('follow').textContent = H.follow;
+
+/* ---------- screens ---------- */
+const SCR = HostScreens.build($('screen'), H.screens, H.clock || '10:08');
+const NAV = [{t:-1, to:H.start, style:'none'}].concat(ev('nav'));      // every screen change
+const TAPS = ev('tap'), KEYS = ev('key'), RESETS = ev('passreset'), FX = ev('fx');
+const OUT = (ev('phone_out')[0]||{t:1e9}).t;
+// tap target positions, measured once with every screen at rest
+const POS = {};
+for (const [name, el] of Object.entries(SCR)){
+  el.style.display=''; el.style.transform='none';
+  const s=$('screen').getBoundingClientRect();
+  el.querySelectorAll('[data-id]').forEach(n=>{ const r=n.getBoundingClientRect();
+    POS[n.dataset.id]=[r.left-s.left+r.width/2, r.top-s.top+r.height/2, r.width, n]; });
+  el.style.display='none';
+}
+function renderPhone(t){
+  // current navigation step
+  let i=0; while (i+1<NAV.length && t>=NAV[i+1].t) i++;
+  const cur=NAV[i], prev=i>0?NAV[i-1]:null, k=ease(prog(t,cur.t,0.35));
+  for (const el of Object.values(SCR)){ el.style.display='none'; el.style.transform='none'; el.style.opacity=1; el.style.zIndex=1; }
+  const a=SCR[cur.to];
+  a.style.display=''; a.style.zIndex=3;
+  if (prev && k<1){
+    const b=SCR[prev.to]; b.style.display=''; b.style.zIndex=2;
+    if (cur.style==='push'){ a.style.transform=`translateX(${(1-k)*100}%)`; b.style.transform=`translateX(${-30*k}%)`; }
+    else if (cur.style==='pop'){ a.style.transform=`translateX(${-30*(1-k)}%)`; b.style.transform=`translateX(${100*k}%)`; b.style.zIndex=4; }
+    else if (cur.style==='zoom'){ a.style.transform=`scale(${1.15-0.15*k})`; a.style.opacity=k; }
+    else { a.style.opacity=k; }
+  }
+  // row/app highlight + toggles
+  document.querySelectorAll('#screen .flash').forEach(f=>f.style.opacity=0);
+  document.querySelectorAll('#screen .ic').forEach(f=>f.style.transform='scale(1)');
+  for (const tp of TAPS){
+    const P=POS[tp.target]; if(!P) continue;
+    const n=P[3], until = tp.t + (tp.hold||0.55);
+    if (t>tp.t-0.05 && t<until){ const f=n.querySelector('.flash'); if(f) f.style.opacity=1; const ic=n.querySelector('.ic'); if(ic) ic.style.transform='scale(.9)'; }
+  }
+  document.querySelectorAll('#screen [data-toggle]').forEach(n=>{
+    const id=n.dataset.id; let on=n.dataset.toggle==='1', kk=1;
+    for (const tp of TAPS) if (tp.target===id && t>=tp.t){ on=!on; kk=ease(prog(t,tp.t,0.25)); }
+    const knob=n.querySelector('.tog i'), tog=n.querySelector('.tog');
+    const x = on ? 20*kk : 20*(1-kk);
+    knob.style.transform=`translateX(${x}px)`; tog.style.background = (x>10) ? '#34c759' : '#e3e3e8';
+  });
+  // tap cursor + ripple
+  let shown=false;
+  for (const tp of TAPS){
+    if (t>tp.t-0.55 && t<tp.t+0.45 && POS[tp.target]){
+      let [x,y,w]=POS[tp.target]; if (w>200) x = 30 + w*(tp.fx||0.62);
+      const a2=prog(t,tp.t-0.55,0.3), d=prog(t,tp.t+0.15,0.3);
+      const T=$('tap'); T.style.left=x+'px'; T.style.top=(y+(1-ease(a2))*60)+'px'; T.style.opacity=ease(a2)*(1-d);
+      T.style.transform=`scale(${(t>tp.t-0.06&&t<tp.t+0.1)?0.8:1})`;
+      const R=$('ripple'), r=prog(t,tp.t,0.45); R.style.left=x+'px'; R.style.top=y+'px';
+      R.style.opacity=(r>0&&r<1)?(1-r):0; R.style.transform=`scale(${1+r*1.8})`; shown=true;
+    }
+  }
+  if (!shown){ $('tap').style.opacity=0; $('ripple').style.opacity=0; }
+  // passcode screens: digits since the last reset
+  for (const [name, el] of Object.entries(SCR)){
+    if (H.screens[name].type!=='passcode') continue;
+    const S=H.screens[name]; let lastReset=null; for (const r of RESETS) if (r.t<=t && (!r.screen||r.screen===name)) lastReset=r;
+    const from = lastReset?lastReset.t:-1, mine = KEYS.filter(kx=>(!kx.screen||kx.screen===name));
+    const n = mine.filter(kx=>kx.t>from && kx.t<=t).length;
+    const lab=el.querySelector('.plabel'); lab.textContent = lastReset ? (S.reprompt||'Re-enter your new passcode') : (S.prompt||'Enter a passcode');
+    lab.style.opacity = lastReset ? prog(t,lastReset.t,0.2) : 1;
+    const dots=el.querySelector('.dots'); [...dots.children].forEach((d,j)=>d.className=j<n?'on':'');
+    const next = RESETS.find(r=>r.t>t && (!r.screen||r.screen===name));
+    dots.style.transform = lastReset ? `translateX(${(1-ease(prog(t,lastReset.t,0.3)))*400}px)`
+                         : (next && n>=(S.digits||6) ? `translateX(${-prog(t,next.t-0.4,0.4)*400}px)` : 'none');
+    el.querySelectorAll('.k').forEach(kk=>kk.classList.remove('on'));
+    for (const kx of mine) if (t>=kx.t && t<kx.t+0.14){ const kk=el.querySelector(`.k[data-k="${kx.d}"]`); kk&&kk.classList.add('on'); }
+  }
+  // lock screens: shackle open until a lock_close fx after the screen appeared
+  for (const [name, el] of Object.entries(SCR)){
+    if (H.screens[name].type!=='lock') continue;
+    let enter=-1; for (const n of NAV) if (n.to===name && n.t<=t) enter=n.t;
+    const leave=(NAV.find(n=>n.t>enter && n.to!==name)||{t:1e9}).t;      // close only within this visit
+    const close = FX.find(f=>f.fx==='lock_close' && f.t>=enter && f.t<leave);
+    const lc = close ? easeOutBack(prog(t,close.t,0.3)) : 1;
+    el.querySelector('.shackle').setAttribute('transform',`translate(${(1-lc)*18} ${-(1-lc)*14})`);
+    el.querySelector('.padlock').style.transform = close ? `scale(${1+Math.max(0,Math.sin(prog(t,close.t,0.4)*Math.PI))*0.25})` : 'none';
+    const bd=el.querySelector('.lbadge'); if (bd){ const bp = close ? easeOutBack(prog(t,close.t+0.25,0.4)) : 1;
+      bd.style.transform=`translateX(-50%) scale(${bp})`; bd.style.opacity=clamp(bp); }
+  }
+  // phone body: present from frame 0 (result-first), leaves for the end card
+  const out=prog(t,OUT,0.55), ph=$('phone');
+  ph.style.opacity = 1-out;
+  ph.style.transform=`translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`;
+  // end card
+  const ec=prog(t,OUT+0.25,0.5);
+  $('endcard').style.opacity=ease(ec); $('endcard').style.transform=`translateY(${(1-easeOutBack(ec))*60}px)`;
+  $('endring').style.transform=`rotate(${(t-OUT)*14}deg) scale(${0.85+0.15*easeOutBack(prog(t,OUT+0.25,0.6))})`;
+  $('endmark').style.transform=`scale(${easeOutBack(prog(t,OUT+0.4,0.5))})`;
+  $('follow').style.transform=`scale(${1+Math.max(0,Math.sin((t-OUT)*5))*0.06*ec})`;
+}
+
+/* ---------- step chip ---------- */
+const STEPS = B.filter(b=>b.step).map(b=>[b.start-0.1,b.step]);
+$('stepN').textContent = Math.max(0,...STEPS.map(s=>s[1]));
+function renderChip(t){
+  const c=$('chip'); if(!STEPS.length) return;
+  let n=0; for (const [st,v] of STEPS) if (t>=st) n=v;
+  $('stepn').textContent=n||1;
+  c.style.opacity = (n && t<OUT) ? 1 : 0;
+  const pop = STEPS.map(s=>Math.max(0,Math.sin(prog(t,s[0],0.35)*Math.PI))).reduce((a,b)=>a+b,0);
+  c.style.transform=`scale(${1+pop*0.15})`;
+}
+
+/* ---------- captions: per-beat karaoke, auto-shrinks to max 2 lines ---------- */
+let capIdx=-1;
+function renderCaption(t){
+  let idx=-1; for (let i=0;i<B.length;i++){ const nx=i+1<B.length?B[i+1].start-0.15:H.total; if (t>=B[i].start-0.15-(i===0?9:0) && t<nx) idx=i; }
+  const box=$('capbox'), cap=$('cap');
+  if (idx<0){ cap.style.opacity=0; return; }
+  const b=B[idx], words=b.cap.split(' ');
+  if (idx!==capIdx){
+    box.style.fontSize='54px'; box.innerHTML=words.map(w=>`<span class="w">${w}</span>`).join(' ');
+    let fs=54; while (box.getBoundingClientRect().height > (H.lang==='ar'?2*54*1.35:2*54*1.18)+56 && fs>44){ fs-=2; box.style.fontSize=fs+'px'; }
+    capIdx=idx;
+  }
+  const lens=words.map(w=>w.length+2), tot=lens.reduce((a,c)=>a+c,0), p=(t-b.start)/(b.end-b.start);
+  let acc=0; [...box.children].forEach((w,i)=>{ const a=acc/tot; acc+=lens[i]; const e=acc/tot;
+    w.className='w'+((b.hook&&idx===0) || t>b.end || p>=e ? ' said' : (p>=a?' now':'')); });
+  const pin = idx===0 ? 1 : prog(t,b.start-0.15,0.22);
+  cap.style.opacity=1; box.style.transform=`translateY(${(1-easeOutBack(pin))*40}px) scale(${0.9+0.1*easeOutBack(pin)})`;
+}
+
+/* ---------- presenter (raster poses + mouth warp) ---------- */
+const SC=0.72, FEET_Y=2010, HEAD_X=290;
+const PDEF={front:{headcx:360,bottom:1590},talk:{headcx:336,bottom:1589},point:{headcx:311,bottom:1589},welcome:{headcx:448,bottom:1588}};
+const IMG={};
+window.assetsReady=Promise.all(Object.keys(PDEF).map(k=>new Promise(res=>{const im=new Image(); im.onload=()=>{IMG[k]=im;res();}; im.src=`assets/poses/${k}.png`;})))
+  .then(()=>document.fonts.ready);
+const POSE_TL=[[0,B[0].pose||'welcome']];
+for (let i=1;i<B.length;i++) if (B[i].pose) POSE_TL.push([B[i].start-0.1,B[i].pose]);
+POSE_TL.push([H.total-0.5,'front']);
+const off=document.createElement('canvas'), offc=off.getContext('2d');
+function speaking(t){ return B.some(b=>t>=b.start&&t<=b.end); }
+function renderChar(t){
+  const c=$('charCanvas').getContext('2d'); c.clearRect(0,0,1080,1920); if(!IMG.front) return;
+  const f=Math.min(H.env.length-1,Math.round(t*FPS)), e=(H.env[f]||0)*0.6+(H.env[f-1]||0)*0.25+(H.env[f+1]||0)*0.15;
+  const vis=Mouth.visemeAt(H.cues,t); vis.o*=0.85+0.25*clamp(e);
+  let i=0; while(i+1<POSE_TL.length && t>=POSE_TL[i+1][0]) i++;
+  const name=POSE_TL[i][1], prev=i>0?POSE_TL[i-1][1]:name, since=t-POSE_TL[i][0], k=clamp(since/0.14);
+  const pop=i>0?1+Math.sin(clamp(since/0.32)*Math.PI)*0.035:1, breathe=1+Math.sin(t*2*Math.PI*0.45)*0.006;
+  const bob=Math.sin(t*2*Math.PI*0.9)*3*(speaking(t)?1:0.4), sway=Math.sin(t*1.1)*0.6*Math.PI/180;
+  const draw=(pn,alpha)=>{ const P=PDEF[pn], im=IMG[pn];
+    off.width=im.width; off.height=im.height; offc.clearRect(0,0,im.width,im.height); offc.drawImage(im,0,0);
+    Mouth.applyMouth(offc,pn,im,vis);
+    c.save(); c.globalAlpha=alpha; c.translate(HEAD_X,FEET_Y); c.rotate(sway); c.scale(pop*(2-breathe),pop*breathe); c.translate(0,bob);
+    c.fillStyle='rgba(0,0,0,.22)'; c.beginPath(); c.ellipse(10,-8,230,26,0,0,Math.PI*2); c.fill();
+    c.drawImage(off,-P.headcx*SC,-P.bottom*SC,off.width*SC,off.height*SC); c.restore(); };
+  if (k<1 && prev!==name) draw(prev,1-k);
+  draw(name,(k<1&&prev!==name)?k:1);
+  const th=FX.find(x=>x.fx==='thumb'), st=$('thumbSticker');
+  if (th){ const sp=easeOutBack(prog(t,th.t,0.4)), so=prog(t,th.t+(th.dur||3),0.25);
+    st.style.opacity=clamp(sp)*(1-so); st.style.transform=`scale(${sp*(1-so*0.4)}) rotate(${-12+Math.sin(t*6)*6}deg)`; }
+}
+
+/* ---------- confetti (deterministic) ---------- */
+const CONF=Array.from({length:70},(_,i)=>{const r=n=>{const x=Math.sin(i*99.13+n*17.7)*43758.5453;return x-Math.floor(x);};
+  return {x:600+r(1)*440,vx:(r(2)-.5)*520,vy:-650-r(3)*650,rot:r(4)*6,vr:(r(5)-.5)*14,c:['#ffd54a','#5ce1ff','#ff7a45','#7CFC9A','#ffffff'][i%5],w:10+r(6)*12,h:6+r(7)*8};});
+function renderConfetti(t){
+  const c=$('confetti').getContext('2d'); c.clearRect(0,0,1080,1920);
+  for (const fx of FX.filter(x=>x.fx==='confetti')){ const dt=t-fx.t; if(dt<0||dt>2.6) continue;
+    for (const p of CONF){ const x=p.x+p.vx*dt, y=560+p.vy*dt+900*dt*dt;
+      c.save(); c.translate(x,y); c.rotate(p.rot+p.vr*dt); c.globalAlpha=clamp(1-(dt-1.8)/0.8); c.fillStyle=p.c; c.fillRect(-p.w/2,-p.h/2,p.w,p.h); c.restore(); } }
+}
+
+window.render=function(t){ renderPhone(t); renderChip(t); renderChar(t); renderCaption(t); renderConfetti(t); };
+window.assetsReady.then(()=>{ window.render(0); window.READY=true; });
+</script>
+</body></html>

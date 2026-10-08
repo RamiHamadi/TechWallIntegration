@@ -32,6 +32,7 @@ python3 brand.py                         # page cover + profile pictures -> out/
 | `sharewifi.py` | Share Wi-Fi with a QR code | Android | 43 s |
 | `trackpad.py` | Keyboard trackpad: hold the spacebar to move the cursor | iPhone | 43 s |
 | `emoji.py` | Emoji panel (WIN + .): emoji, GIFs, kaomoji, symbols. Needs the system font Noto Color Emoji (`fonts-noto-color-emoji`) | Windows PC | 46 s |
+| `hostlock.py` | **Host format** (animated presenter on `host.py`): lock your iPhone with a passcode, result-first, English voice + lip-sync. First Host episode | iPhone | 22 s |
 | `movie.py` | Back Tap in the *original* kraft-paper style (not used for posting) | iPhone | 47 s |
 | `themes.py` | Style frames for the 3 tech themes (A Circuit, **B Blueprint**, C Neon) | n/a | stills |
 | `brand.py` | Facebook cover 1640×624 + profile 720×720 | n/a | stills |
@@ -90,7 +91,8 @@ battery.py     first motion-graphics episode (template for future ones)
 camera18.py + camera18/scene.html
                PREMIUM motion graphics: a deterministic render(t) on an HTML canvas (cinematic dark navy,
                Inter + JetBrains Mono, Tech Wall yellow accents, TW chrome + progress bar), captured at
-               30 fps with Playwright/Chromium, cinematic synthesized score. Use for product/feature explainers.
+               30 fps with Playwright/Chromium, cinematic synthesized score. Use for product/feature explainers.host.py + host/   HOST engine (30 fps): the Tech Wall host character talks the viewer through the tip
+               (TTS voice, Rhubarb lip-sync, poses, karaoke captions) next to a phone demo. Episode = SPEC dict.
 ```
 
 ### Motion-graphics episodes (`mgfx.py`)
@@ -103,6 +105,21 @@ Same Blueprint look (navy grid, chalk dims, paper cut-outs, taped captions, pape
 - Hook rule (tested with `wifi_short.py`, standard for every engine since `rf_demo.py`): the payoff/graphic must be on screen at **frame 0**, no separate title card; aim for 20–35 s.
 
 Each episode file has the same 5 parts: **(1) custom screens**, **(2) `build()` timeline**, **(3) `fig_head()` caption headers**, **(4) `init_props()` title + end-card sprites**, **(5) `draw_title()`**, plus the standard `__main__` (renders with a 2-process pool, then `make_audio`).
+
+### Host engine (`host.py`, animated presenter)
+The Tech Wall **host** (2-D cartoon: beard, glasses, black T-shirt with the TW logo) stands bottom-left and speaks the tip while a phone on the right shows every tap. Header = TW badge + `TECH WALL` + title; karaoke captions at the bottom (said words white, current word yellow, auto-shrink to 2 lines, RTL for Arabic); STEP n / N chip; end card = full TW logo (rotating ring) + FOLLOW; confetti / thumbs-up / padlock fx. Voice + SFX, no music. Result-first: frame 0 = result screen + hook caption + host (the cover).
+
+| Part | What it is |
+|---|---|
+| `host.py` | Driver: TTS per beat → silence trim → timeline → Rhubarb Lip Sync (mouth shapes A–H, X) → loudness envelope → events (taps, keys, screen changes, fx) → SFX mix → `out/audio_<id>.wav` + `out/meta_<id>` (FR=30, CF=0) → captures `host/scene.html` frames with Playwright (3 workers). TTS/lip-sync cached in `out/host_<id>/` |
+| `host/scene.html` | Deterministic `render(t)`: background, header, phone + screen transitions, tap ring, toggles, passcode dots, lock-screen fx, presenter (pose cross-fades, breathing, talk bob), captions, end card |
+| `host/screens.js` | Screen builders: `home`, `list`, `passcode`, `lock`, `html` (custom). Icon set in `ICONS` |
+| `host/mouth.js` | Lip-sync: warps the real lip/jaw pixels of each pose per mouth shape (`POSE_MOUTH` = lip centre, half-width, angle) and paints the mouth cavity, teeth, tongue |
+| `host/assets/` | `poses/` welcome, talk, point, front (+ thumb sticker), hand-cleaned from the user's character sheet · `brand/` TW badge, ring, mark |
+| `host/setup.sh` | One-time download (~450 MB to `~/.cache/techwall-host`, override with `TW_HOST_MODELS`): Kokoro-82M (English TTS, Apache-2.0), Piper `ar_JO-kareem` via sherpa-onnx (Arabic TTS, CC BY-NC-SA), Rhubarb Lip Sync 1.14 (MIT) |
+
+**SPEC** (see `hostlock.py`): `lang` (`en`/`ar`), `voice`, `speed`, `title`, `tag` (chalk label under the phone), `tip` (`TIP #nn`), `start` (result screen at frame 0), `screens` {name: screen}, `beats` [...]. Beat = `say` (spoken; write numbers as words; Arabic with tashkeel), `cap` (caption), `pose` (`welcome` / `talk` / `point` / `front`), `hook`, `step`, `screen` (+`style`), `end`, `gap`, `do` = actions at a fraction of the line: `tap` (+`nav`, `back`, `fx` = x fraction for wide rows), `nav` (`fade`/`zoom`/`push`/`pop`), `type` digits (`from`/`to`), `reprompt`, `fx` (`confetti`, `thumb` (+`dur`), `lock_close`).
+**Voices:** English (Kokoro): `am_puck` (current host voice), `am_michael`, `am_fenrir`, `am_eric`, `am_liam`, `am_onyx`, `bm_george`, `bm_lewis`, `bm_fable`; Arabic: `kareem`. Commands: `python3 hostlock.py 0 150 400` (preview), `./build.sh hostlock` (~7–8 min for 22 s).
 
 ### Timeline API (`movie.TL`, 12 fps; every call appends frames)
 
@@ -176,6 +193,8 @@ Posting is automated after the video is approved: **Facebook + Instagram** Reels
 ## 7. Episode log & idea backlog
 
 **Done:** Back Tap (iPhone) · Win+V clipboard history (PC) · Saved Wi-Fi password (iPhone) · Notification history (Android) · Share Wi-Fi QR (Android) · Keyboard trackpad (iPhone, `trackpad.py`, Reel posted 2026-10-01) · Emoji panel WIN + . (PC, `emoji.py`, Reel posted 2026-10-01) · PS5 Rest Mode charging (console, `restmode.py`, Reel posted 2026-10-02 on Facebook + Instagram) · Android animation scale 0.5x (Android, `animscale.py`, result-first, posted 2026-10-05 on Facebook + Instagram + YouTube Shorts, TikTok draft) · Stop AI training on your chats (laptop, `aitrain.py`, AI tip, posted 2026-10-06 on Facebook + Instagram + YouTube Shorts, TikTok draft) · Lock an app with Face ID (iPhone, `lockapp.py`, short-form loop, posted 2026-10-07 on Facebook + Instagram + YouTube Shorts, TikTok draft) · Battery drain / Background App Refresh (iPhone, `battery.py`, first **motion-graphics** episode, 31.7 s @ 30 fps, built 2026-10-04, awaiting review) · Wi-Fi password short cut (iPhone, `wifi_short.py`, 18 s result-first test) · Result-first opening test (`rf_demo.py`, dummy Back Tap topic, 21 s, approved 2026-10-03: the standard opening for every episode since) · iPhone 18 Pro variable aperture explainer (`camera18.py`, premium HTML-canvas motion graphics, 37 s @ 30 fps, built 2026-10-04, awaiting review)
+
+**Host format:** Lock your iPhone with a passcode (`hostlock.py`, first animated-presenter episode, 22 s @ 30 fps, built 2026-10-08; Arabic voice tested).
 
 **Backlog:** the full ordered idea list (100 ideas, with status and publish dates) lives in [`VIDEO_LIBRARY.md`](VIDEO_LIBRARY.md). The table below is the original short list; those ideas are already in the library.
 
