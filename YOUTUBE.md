@@ -71,7 +71,12 @@ Input: VIDEO = `out/<id>.mp4` (vertical, under 3 min = a Short), CAPTION = the a
    - `thumbnail: not set` is not fatal (see limits); the user picks the title-card frame in the YouTube app.
 3. `python3 youtube.py status <video_id>` if processing is not finished.
 4. Report: video id, privacy, link `https://youtube.com/shorts/<id>`, and whether the user must switch it to
-   Public. If YouTube fails after the other platforms succeeded, retry YouTube alone.
+   Public. If YouTube fails after the other platforms succeeded, retry YouTube alone, **but never blindly**:
+   an upload error (e.g. `410 Gone`) can arrive after YouTube already stored the file, so a video may exist.
+   `youtube.py` now looks for a video with the same title from the last 20 minutes, names it and refuses to upload
+   a duplicate (2026-10-08: a blind retry left an empty 0-second "video" next to the real Short). If it names
+   one: `youtube.py status <id>`; a `processed` 33 s video is the Short, done; an `uploaded` 0 s one is broken:
+   the user deletes it in YouTube Studio, then re-run with `--force`.
 
 ## Rules and limits
 - **Private lock:** videos uploaded by an unverified API project created after 28 July 2020 are private until

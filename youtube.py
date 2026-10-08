@@ -143,7 +143,7 @@ def tags_from(caption):
     return [w.lstrip('#') for w in caption.split() if w.startswith('#') and len(w) > 1][:15]
 
 
-def put_video(url, path, size):
+def put_video(url, path, size, title=''):
     with open(path, 'rb') as f:
         data = f.read()
     for attempt in range(4):
@@ -153,7 +153,32 @@ def put_video(url, path, size):
         if code not in (500, 502, 503, 504):
             break
         time.sleep(2 ** attempt)
-    die(f'video upload failed ({code}): {err_text(r)}')
+    # YouTube may answer 410/4xx AFTER the bytes were stored: the video then exists anyway (2026-10-08: a 410 followed
+    # by a blind retry left an empty duplicate "video" next to the real Short). Never retry blindly: look it up first.
+    dup = recent_upload(title)
+    if dup:
+        die(f'video upload failed ({code}): {err_text(r)} -- BUT a video with this title was created {dup[1]} '
+            f'(id {dup[0]}, {dup[2]}). Do NOT upload again: check it with `youtube.py status {dup[0]}` and delete it in '
+            'YouTube Studio if it is broken, then re-run.')
+    die(f'video upload failed ({code}): {err_text(r)}. No video with this title was created; it is safe to re-run.')
+
+
+def recent_upload(title, minutes=20):
+    """-> (id, publishedAt, uploadStatus) of a video with this exact title uploaded in the last `minutes`, else None."""
+    try:
+        code, r, _ = api('GET', '/search', {'part': 'id', 'forMine': 'true', 'type': 'video', 'order': 'date', 'maxResults': 5})
+        ids = [i['id']['videoId'] for i in (r.get('items') or [])] if code == 200 else []
+        if not ids:
+            return None
+        code, r, _ = api('GET', '/videos', {'part': 'snippet,status', 'id': ','.join(ids)})
+        for v in (r.get('items') or []) if code == 200 else []:
+            pub = v['snippet'].get('publishedAt', '')
+            age = (time.time() - time.mktime(time.strptime(pub[:19], '%Y-%m-%dT%H:%M:%S')) + time.timezone) / 60
+            if v['snippet'].get('title') == title and age < minutes:
+                return v['id'], pub, v.get('status', {}).get('uploadStatus')
+    except Exception:
+        pass
+    return None
 
 
 # ---------- commands ----------
@@ -177,13 +202,17 @@ def cmd_upload(a):
                'tags': tags_from(caption), 'categoryId': CATEGORY}
     status = {'privacyStatus': a.privacy, 'selfDeclaredMadeForKids': False, 'embeddable': True}
     size = os.path.getsize(a.video)
+    dup = recent_upload(snippet['title'])
+    if dup and not a.force:
+        die(f'a video with this title was already uploaded {dup[1]} (id {dup[0]}, {dup[2]}). Not uploading a duplicate: '
+            f'check it with `youtube.py status {dup[0]}`; pass --force only if that one was deleted.')
     code, r, h = api('POST', '/videos', {'uploadType': 'resumable', 'part': 'snippet,status'},
                      {'snippet': snippet, 'status': status}, base=UPLOAD,
                      headers={'X-Upload-Content-Length': str(size), 'X-Upload-Content-Type': 'video/mp4'})
     if code != 200 or not h.get('Location'):
         die(f'starting the upload failed ({code}): {err_text(r)}')
     print(f'title: {snippet["title"]}')
-    v = put_video(h['Location'], a.video, size)
+    v = put_video(h['Location'], a.video, size, snippet['title'])
     vid = v.get('id') or die(f'upload finished without a video id: {v}')
     got = v.get('status', {}).get('privacyStatus')
     print(f'uploaded: video id {vid}, privacy {got}')
@@ -251,7 +280,9 @@ def main():
     s = sp.add_parser('upload'); s.add_argument('video')
     s.add_argument('--caption-file'); s.add_argument('--caption'); s.add_argument('--title')
     s.add_argument('--privacy', default='private', choices=['private', 'unlisted', 'public'])
-    s.add_argument('--thumbnail'); s.set_defaults(f=cmd_upload)
+    s.add_argument('--thumbnail')
+    s.add_argument('--force', action='store_true', help='upload even if a video with the same title was uploaded in the last 20 min')
+    s.set_defaults(f=cmd_upload)
     s = sp.add_parser('status'); s.add_argument('video_id'); s.set_defaults(f=cmd_status)
     sp.add_parser('login-url').set_defaults(f=cmd_login_url)
     s = sp.add_parser('exchange'); s.add_argument('redirect'); s.add_argument('--show', action='store_true')
