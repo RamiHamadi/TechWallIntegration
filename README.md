@@ -1,6 +1,6 @@
 # Tech Wall: Video Kit
 
-The engine behind the **Tech Wall** Facebook page's videos: short, vertical, **Blueprint-style stop-motion** tech tips.
+The engine behind the **Tech Wall** Facebook page's videos: short, vertical tech tips. **Default format: Host** (animated presenter, `host.py`, since 2026-10-08); Blueprint-style stop-motion and motion graphics on request.
 Everything needed to rebuild the existing 5 episodes or make new ones that look exactly the same.
 
 ---
@@ -154,7 +154,8 @@ The Tech Wall **host** (2-D cartoon: beard, glasses, black T-shirt with the TW l
 ## 5. Recipe: new episode
 
 1. **Pick & verify the tip.** Check the exact menu path on the vendor's official support page (Apple / Google / Samsung / Microsoft) plus one recent guide. Note OS version limits and brand differences (put the Samsung path on the end card).
-2. **Copy the closest episode:** result-first templates: iPhone → `rf_demo.py` / `wifi_short.py`, motion graphics → `battery.py`. Screens/props: Android → `sharewifi.py` (or `android.py`); PC → `emoji.py`; console → `restmode.py` (give them the result-first opening when copying). Rename (e.g. `circle.py`); the output auto-names to `out/frames_circle`, `out/audio_circle.wav`.
+2. **Default format = Host** (since 2026-10-08): copy `hostlock.py` and follow "Host engine" in §4 / the Host section of `CLAUDE.md`. The steps below are for **Blueprint** episodes (on request, or for PC / console tips that don't fit a phone).
+   **Copy the closest episode:** result-first templates: iPhone → `rf_demo.py` / `wifi_short.py`, motion graphics → `battery.py`. Screens/props: Android → `sharewifi.py` (or `android.py`); PC → `emoji.py`; console → `restmode.py` (give them the result-first opening when copying). Rename (e.g. `circle.py`); the output auto-names to `out/frames_circle`, `out/audio_circle.wav`.
 3. **Screens:** build only the screens on the path; row ids for everything the hand taps. Use fictional data (network "Home", password "SunnyDays2024", contacts "Mom"/"Sam", domain example.com).
 4. **Timeline (`build()`), result-first (standard since `rf_demo.py`):** the payoff is on screen at **frame 0**: `mb.result_first(t, spec(<result screen>), 'H', '<HOOK>')` (phone already in place, hook caption settled, pop; no title card, no home screen, no "Open Settings" tap) → mini-scene that proves it (≤ 2 s) → `hold(~14–20)` → "Here's how" caption + `t.navigate(spec(<first screen>), back=True)` → one caption per step (`hold(3–5)` before each tap, `n_move=4–5`) → result caption (hold ≥ 18 f) → bonus → `mb.end_card(t)` (phone out + fast end card, everything in within ~1.4 s, `hold(40)`). 12 fps, **20–35 s**. Caption headers come from `fig_head()` (`'H'` → `TECH WALL / iPHONE TIP`, steps → `HERE'S HOW / STEP n OF N`). The `__main__` is just `mb.finish(t, EP, init_props)` (renders, soundtrack, and writes `out/meta_<id>` with `CF=0` so `build.sh` takes frame 0 as the Reel cover). Old opening (title card `fx (title, 0, 86)` + `hold(92)` → phone in → problem caption) is kept in `wifi.py`, `sharewifi.py`, `emoji.py`, `restmode.py` for reference only.
 5. **Captions:** test wrapping before rendering:
