@@ -52,41 +52,45 @@ def _resample(s, sr_in, sr_out=SR):
     return np.interp(np.linspace(0, len(s) - 1, n), np.arange(len(s)), s).astype(np.float32)
 
 
-def _gaps(c, hop=240, min_len=0.04):
-    """Silent runs inside a clip (natural breaths): [(start_sample, end_sample)], edges excluded."""
-    n = len(c) // hop
-    if n < 3:
-        return []
-    rms = np.sqrt(np.mean(c[:n * hop].reshape(n, hop) ** 2, axis=1))
-    quiet = rms < max(0.004, 0.06 * np.percentile(rms, 95))
-    runs, i = [], 0
-    while i < n:
-        if quiet[i]:
-            j = i
-            while j < n and quiet[j]: j += 1
-            if i > 0 and j < n and (j - i) * hop >= min_len * SR: runs.append((i * hop, j * hop))
-            i = j
-        else:
-            i += 1
-    return runs
+_STOP = re.compile(r'(?<=[.!?…؟])\s+')
+_COMMA = re.compile(r'[,;:،؛](?=\s+\S)')
+
+
+def _quietest(c, t_est, win=(-0.16, 0.1), hop=120, w=480):
+    """Sample index of the quietest 20 ms window near t_est (s): where the voice breathes at a comma."""
+    lo, hi = int(max(0, t_est + win[0]) * SR), int(min(len(c) / SR, t_est + win[1]) * SR)
+    best, bi = 1e9, int(t_est * SR)
+    for i in range(lo, max(lo + 1, hi - w), hop):
+        e = float(np.mean(c[i:i + w] ** 2))
+        if e < best: best, bi = e, i + w // 2
+    return min(max(bi, 0), len(c))
 
 
 def speak(lines, lang, voice, speed, pause_comma, pause_stop):
-    """TTS each whole line (keeps the natural sentence melody), then widen the breaths the voice already takes
-    at punctuation to at least pause_comma / pause_stop. Returns [(clip, [[pause_start, pause_end] s, ...])]."""
+    """Natural-sounding lines with real pauses. Each sentence is voiced whole (keeps its melody) and sentences are
+    joined by pause_stop. A comma's position is measured by voicing the sentence up to that comma; pause_comma of
+    silence goes in at the quietest point there (never a gap inside a word like 'PS5').
+    Returns [(clip, [[pause_start, pause_end] s, ...])]."""
+    plan = []
+    for ln in lines:
+        sents = [x.strip() for x in _STOP.split(ln.strip()) if x.strip()]
+        plan.append([(x, [x[:m.end()] for m in _COMMA.finditer(x)]) for x in sents])
+    texts = [t for pl in plan for x, pre in pl for t in [x] + pre]
+    clips = iter(tts(texts, lang, voice, speed))
     out = []
-    for ln, c in zip(lines, tts(lines, lang, voice, speed)):
-        marks = re.findall(r'[.!?…,;:،؛؟](?=\s+\S)', ln.strip())          # punctuation inside the line
-        kinds = ['stop' if m in '.!?…؟' else 'comma' for m in marks]
-        gaps = sorted(sorted(_gaps(c), key=lambda g: g[0] - g[1])[:len(kinds)])   # the longest breaths, in order
-        kinds = kinds[:len(gaps)] if len(gaps) < len(kinds) else kinds
-        pieces, pauses, last, shift = [], [], 0, 0
-        for (g0, g1), kind in zip(gaps, kinds):
-            want = int((pause_stop if kind == 'stop' else pause_comma) * SR)
-            add = max(0, want - (g1 - g0)); mid = (g0 + g1) // 2
-            pieces += [c[last:mid], np.zeros(add, np.float32)]; last = mid
-            pauses.append([round((g0 + shift) / SR, 3), round((g1 + shift + add) / SR, 3)]); shift += add
-        pieces.append(c[last:])
+    for pl in plan:
+        pieces, pauses, t = [], [], 0.0
+        for si, (x, pre) in enumerate(pl):
+            c = next(clips); cuts = []
+            for p in pre:
+                cuts.append(_quietest(c, len(next(clips)) / SR))
+            last = 0
+            for k in sorted(set(cuts)):
+                pieces.append(c[last:k]); t += (k - last) / SR; last = k
+                pieces.append(np.zeros(int(pause_comma * SR), np.float32)); pauses.append([round(t, 3), round(t + pause_comma, 3)]); t += pause_comma
+            pieces.append(c[last:]); t += (len(c) - last) / SR
+            if si < len(pl) - 1:
+                pieces.append(np.zeros(int(pause_stop * SR), np.float32)); pauses.append([round(t, 3), round(t + pause_stop, 3)]); t += pause_stop
         out.append((np.concatenate(pieces).astype(np.float32), pauses))
     return out
 
@@ -159,7 +163,7 @@ def build(ep, spec):
     says = [b['say'] for b in beats]
     cache = _dir(f'host_{ep}')
     pc, ps = spec.get('pause_comma', PAUSE_COMMA), spec.get('pause_stop', PAUSE_STOP)
-    key = hashlib.sha1(json.dumps([lang, voice, speed, says, 'breaths', pc, ps]).encode()).hexdigest()[:12]
+    key = hashlib.sha1(json.dumps([lang, voice, speed, says, 'sentences+commas', pc, ps]).encode()).hexdigest()[:12]
     cpath = f'{cache}/voice_{key}.npz'
     if os.path.exists(cpath):
         z = np.load(cpath, allow_pickle=True); clips, pauses = list(z['clips']), [list(p) for p in z['pauses']]
