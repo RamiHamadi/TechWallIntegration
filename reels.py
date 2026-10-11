@@ -123,6 +123,8 @@ def rupload(url, path, what):
                                            'Content-Type': 'application/octet-stream'}, timeout=900)
         if code == 200 and isinstance(r, dict) and r.get('success'):
             return
+        if attempt and 'not in the status to upload' in err_text(r):
+            return        # an earlier attempt did arrive (its reply was lost); the processing wait verifies it
         time.sleep(2 ** attempt)
     die(f'{what} upload failed ({code}): {err_text(r)}')
 
@@ -212,8 +214,13 @@ def facebook(video, caption, cover, draft):
     if not r.get('success'):
         die(f'finishing the Facebook Reel failed: {r}')
 
+    t_fin = time.time()
+
     def check():
-        st = fb_status(vid)
+        code, r = graph('GET', vid, {'fields': 'status'})
+        if code != 200 and time.time() - t_fin < 90:     # right after 'finish' the id can briefly read as missing
+            return False, {'note': f'status not readable yet ({code})'}
+        st = ok(code, r, 'status check').get('status', {})
         bad = [k for k, x in st.items() if isinstance(x, dict) and x.get('status') == 'error']
         if bad or st.get('video_status') == 'error':
             die(f'Facebook processing error: {json.dumps(st)}')

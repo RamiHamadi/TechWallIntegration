@@ -53,6 +53,8 @@ One platform alone: `python3 reels.py facebook ...` or `python3 reels.py instagr
 | `... upload failed` after 3 tries | upload interrupted | run the same command again (for Instagram only: `reels.py instagram`) |
 | `Instagram container ERROR` | format rejected | check the `video:` line; the script converts anything off-spec |
 | `cover not set` | thumbnail endpoint refused | retry step 7 of the manual fallback for that video id; never repost |
+| `status check failed (400) ... does not exist [code 100/33]` right after publishing | the new video id is briefly unreadable | fixed in `reels.py` (waits up to 90 s); if seen, the Reel exists: `reels.py status <id>`, then set the cover on that id; never repost |
+| Instagram `The ig container is not in the status to upload a video` | an earlier upload attempt arrived but its reply was lost | fixed in `reels.py` (treated as uploaded, then the processing wait verifies); if seen, run `reels.py instagram` again (unpublished containers just expire) |
 
 ---
 
