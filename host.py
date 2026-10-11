@@ -42,7 +42,7 @@ def _dir(name):
 # ----------------------------------------------------------------------------- TTS
 def _trim(s, thr=0.012):
     idx = np.where(np.abs(s) > thr)[0]
-    return s if not len(idx) else s[max(0, idx[0] - 240): idx[-1] + 600]
+    return s if not len(idx) else s[max(0, idx[0] - 480): idx[-1] + 2400]   # keep soft onsets and the natural decay
 
 
 def _resample(s, sr_in, sr_out=SR):
@@ -53,21 +53,7 @@ def _resample(s, sr_in, sr_out=SR):
 
 
 _STOP = re.compile(r'(?<=[.!?…؟])\s+')
-_COMMA = re.compile(r'[,;:،؛](?=\s+\S)')
-
-
-def _silent_spot(c, t_est, win=(-0.22, 0.16), hop=120, w=240, rel=0.035):
-    """Sample index of a truly silent 10 ms window near t_est (s), or None if the voice runs through there."""
-    n = len(c) // hop
-    if n < 4:
-        return None
-    ref = np.percentile([np.sqrt(np.mean(c[i * hop:i * hop + w] ** 2)) for i in range(0, n - 2, 2)], 95)
-    lo, hi = int(max(0.05, t_est + win[0]) * SR), int(min(len(c) / SR - 0.05, t_est + win[1]) * SR)
-    best, bi = 1e9, None
-    for i in range(lo, max(lo, hi - w), hop):
-        e = float(np.sqrt(np.mean(c[i:i + w] ** 2)))
-        if e < best: best, bi = e, i + w // 2
-    return bi if bi is not None and best < rel * ref else None
+_COMMA_SPLIT = re.compile(r'(?<=[,;:،؛])\s+')
 
 
 def _fade(x, ms_in=4, ms_out=6):
@@ -78,44 +64,26 @@ def _fade(x, ms_in=4, ms_out=6):
 
 
 def speak(lines, lang, voice, speed, pause_comma, pause_stop):
-    """Natural-sounding lines with real pauses and no cuts through a word.
-    Each sentence is voiced whole (keeps its melody); sentences are joined by pause_stop. For each comma, the text up
-    to it is voiced to find when the comma happens: if the whole-sentence take is truly silent there, pause_comma goes
-    in at that spot; if the voice runs the words together, the sentence is voiced in two parts at that comma instead
-    (the first part ends on the comma, so it keeps the 'continuing' tone). Every edge gets a few ms of fade.
+    """Natural-sounding lines with real pauses and never a cut inside a word.
+    A line is split into sentences (joined by pause_stop) and each sentence into its comma clauses (joined by
+    pause_comma); every clause is voiced on its own, keeping its punctuation (a clause ending in ',' gets the
+    'continuing' tone), and only trimmed at its natural start/end with a few ms of fade. The voice is never cut
+    mid-take: silence inside a take can be a consonant (the 'p' in 'open'), not a breath.
     Returns [(clip, [[pause_start, pause_end] s, ...])]."""
-    memo = {}
-    def say(texts):
-        need = [t for t in dict.fromkeys(texts) if t not in memo]
-        for t, c in zip(need, tts(need, lang, voice, speed) if need else []): memo[t] = c
-        return [memo[t] for t in texts]
-
-    def sentence(x):                                   # -> list of clip pieces separated by comma pauses
-        marks = [m.end() for m in _COMMA.finditer(x)]
-        if not marks:
-            return [say([x])[0]]
-        c, *pre = say([x] + [x[:e] for e in marks])
-        cuts = [_silent_spot(c, len(p) / SR) for p in pre]
-        bad = [i for i, k in enumerate(cuts) if k is None or (i and cuts[i - 1] is not None and k <= cuts[i - 1])]
-        if bad:                                        # split at the first comma the voice runs through
-            e = marks[bad[0]]
-            return sentence(x[:e].strip()) + sentence(x[e:].strip())
-        out, last = [], 0
-        for k in cuts:
-            out.append(c[last:k]); last = k
-        return out + [c[last:]]
-
     out = []
     for ln in lines:
-        pieces, pauses, t = [], [], 0.0
+        units = []                                     # (text, pause after: 'comma' | 'stop' | None)
         sents = [x.strip() for x in _STOP.split(ln.strip()) if x.strip()]
         for si, x in enumerate(sents):
-            parts = sentence(x)
-            for pi, part in enumerate(parts):
-                pieces.append(_fade(part)); t += len(part) / SR
-                if pi < len(parts) - 1 or si < len(sents) - 1:
-                    d = pause_comma if pi < len(parts) - 1 else pause_stop
-                    pieces.append(np.zeros(int(d * SR), np.float32)); pauses.append([round(t, 3), round(t + d, 3)]); t += d
+            cl = [c.strip() for c in _COMMA_SPLIT.split(x) if c.strip()]
+            units += [(c, 'comma' if ci < len(cl) - 1 else ('stop' if si < len(sents) - 1 else None)) for ci, c in enumerate(cl)]
+        clips = tts([u for u, _ in units], lang, voice, speed)
+        pieces, pauses, t = [], [], 0.0
+        for (u, kind), c in zip(units, clips):
+            pieces.append(_fade(c)); t += len(c) / SR
+            if kind:
+                d = pause_comma if kind == 'comma' else pause_stop
+                pieces.append(np.zeros(int(d * SR), np.float32)); pauses.append([round(t, 3), round(t + d, 3)]); t += d
         out.append((np.concatenate(pieces).astype(np.float32), pauses))
     return out
 
@@ -189,7 +157,7 @@ def build(ep, spec):
     says = [b['say'] for b in beats]
     cache = _dir(f'host_{ep}')
     pc, ps = spec.get('pause_comma', PAUSE_COMMA), spec.get('pause_stop', PAUSE_STOP)
-    key = hashlib.sha1(json.dumps([lang, voice, speed, says, 'clean-commas', pc, ps]).encode()).hexdigest()[:12]
+    key = hashlib.sha1(json.dumps([lang, voice, speed, says, 'clauses', pc, ps]).encode()).hexdigest()[:12]
     cpath = f'{cache}/voice_{key}.npz'
     if os.path.exists(cpath):
         z = np.load(cpath, allow_pickle=True); clips, pauses = list(z['clips']), [list(p) for p in z['pauses']]
