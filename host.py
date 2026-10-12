@@ -150,12 +150,12 @@ def sfx_chime():
     return out
 
 
-# ----------------------------------------------------------------------------- timeline
-def build(ep, spec):
-    lang, voice, speed = spec.get('lang', 'en'), spec.get('voice', 'am_puck' if spec.get('lang', 'en') == 'en' else 'kareem'), spec.get('speed', 1.0 if spec.get('lang', 'en') == 'en' else 1.3)
-    beats = spec['beats']
-    says = [b['say'] for b in beats]
-    cache = _dir(f'host_{ep}')
+def _beat(b, start, end, pauses):
+    return {'start': round(start, 3), 'end': round(end, 3), 'cap': b.get('cap', b['say']), 'pose': b.get('pose'),
+            'hook': bool(b.get('hook')), 'step': b.get('step'), 'pauses': pauses}
+
+
+def _tts_voice(spec, beats, says, cache, lang, voice, speed):
     pc, ps = spec.get('pause_comma', PAUSE_COMMA), spec.get('pause_stop', PAUSE_STOP)
     key = hashlib.sha1(json.dumps([lang, voice, speed, says, 'clauses', pc, ps]).encode()).hexdigest()[:12]
     cpath = f'{cache}/voice_{key}.npz'
@@ -165,18 +165,62 @@ def build(ep, spec):
         print(f'[host] TTS {len(says)} lines ({lang}/{voice}, speed {speed}) ...', flush=True)
         res = speak(says, lang, voice, speed, pc, ps); clips, pauses = [r[0] for r in res], [r[1] for r in res]
         np.savez(cpath, clips=np.array(clips, dtype=object), pauses=np.array(pauses, dtype=object))
-    # layout
     t = LEAD; B = []
     for b, c, pz in zip(beats, clips, pauses):
         d = len(c) / SR
-        B.append({'start': round(t, 3), 'end': round(t + d, 3), 'cap': b.get('cap', b['say']),
-                  'pose': b.get('pose'), 'hook': bool(b.get('hook')), 'step': b.get('step'),
-                  'pauses': [[round(t + a, 3), round(t + e, 3)] for a, e in pz]})
+        B.append(_beat(b, t, t + d, [[round(t + a, 3), round(t + e, 3)] for a, e in pz]))
         t += d + b.get('gap', spec.get('gap', GAP))
     total = B[-1]['end'] + END_HOLD
-    N = int(np.ceil(total * SR)); voice_track = np.zeros(N, np.float32)
+    voice_track = np.zeros(int(np.ceil(total * SR)), np.float32)
     for bb, c in zip(B, clips):
-        a = int(bb['start'] * SR); voice_track[a:a + len(c)] += c
+        i = int(bb['start'] * SR); voice_track[i:i + len(c)] += c
+    return voice_track, B, total, key
+
+
+def _silences(v, s, e, min_len=0.2, hop=480):
+    """Pauses inside [s, e] of a recorded voice (for the karaoke): [[a, b], ...] in s."""
+    seg = v[int(s * SR):int(e * SR)]; n = len(seg) // hop
+    if n < 3:
+        return []
+    r = np.sqrt(np.mean(seg[:n * hop].reshape(n, hop) ** 2, axis=1)); q = r < max(0.004, 0.06 * np.percentile(r, 95))
+    out, i = [], 0
+    while i < n:
+        if q[i]:
+            j = i
+            while j < n and q[j]: j += 1
+            if i > 0 and j < n and (j - i) * hop / SR >= min_len: out.append([round(s + i * hop / SR, 3), round(s + j * hop / SR, 3)])
+            i = j
+        else:
+            i += 1
+    return out
+
+
+def _external_voice(spec, beats):
+    """spec 'audio' = a voice-over file (any rate, mono or stereo) placed at t = 0; each beat's 't' = [start, end] (s)
+    in that file. The host lip-syncs to it; frame 0 stays the cover (the file's own lead-in silence)."""
+    import soundfile as sf
+    path = spec['audio'] if os.path.isabs(spec['audio']) else os.path.join(HERE, spec['audio'])
+    a, sr0 = sf.read(path, always_2d=True)
+    v = _resample(a.mean(axis=1).astype(np.float32), sr0)
+    B = [_beat(b, *b['t'], _silences(v, *b['t'])) for b in beats]
+    total = max(B[-1]['end'] + END_HOLD, len(v) / SR + 0.3)
+    voice_track = np.zeros(int(np.ceil(total * SR)), np.float32); voice_track[:len(v)] = v
+    key = hashlib.sha1(open(path, 'rb').read() + json.dumps([[b['say'], b['t']] for b in beats]).encode()).hexdigest()[:12]
+    return voice_track, B, total, key
+
+
+# ----------------------------------------------------------------------------- timeline
+def build(ep, spec):
+    lang, voice, speed = spec.get('lang', 'en'), spec.get('voice', 'am_puck' if spec.get('lang', 'en') == 'en' else 'kareem'), spec.get('speed', 1.0 if spec.get('lang', 'en') == 'en' else 1.3)
+    beats = spec['beats']
+    says = [b['say'] for b in beats]
+    cache = _dir(f'host_{ep}')
+    if spec.get('audio'):                              # a voice-over supplied as a file (beats carry 't': [start, end])
+        voice_track, B, total, key = _external_voice(spec, beats)
+        N = len(voice_track)
+    else:
+        voice_track, B, total, key = _tts_voice(spec, beats, says, cache, lang, voice, speed)
+        N = len(voice_track)
     # lip-sync
     import soundfile as sf
     vwav = f'{cache}/voice_{key}.wav'

@@ -5,7 +5,7 @@
                groups:[{header?, footer?, rows:[{id,label,icon?,color?,chev?,value?,toggle?:true|false,style?:'blue'|'grey'|'red'}]}]}
      passcode {type:'passcode', title, prompt, reprompt, digits:6}
      lock     {type:'lock', date, time, badge}
-     html     {type:'html', html:'<div data-id="x">…</div>', bg:'#fff'}   any custom mock; tap targets carry data-id
+     html     {type:'html', html:'<div data-id="x">…</div>', bg:'#fff', pops:{name: html}}   any custom mock; tap targets carry data-id; text typed by 'typetext' goes into data-type="<screen>:<id>"
    Laptop (device 'laptop'): desktop {icons, html, pops}, window {title, text, pops}   (text area = '<screen>:text', click target '<screen>:body')
    TV/console (device 'tv'): tiles {tiles:[{id,label,color}], top:[{id,icon}], title}, menu {path, title, rows:[{id,label,icon,value,toggle}], note}
    pops: {name: html} = overlays hidden until a {'show': name} action (e.g. the emoji panel)
@@ -45,6 +45,8 @@ const ICONS = {
   person:'<svg viewBox="0 0 20 20"><circle cx="10" cy="7" r="3.2" fill="#fff"/><path d="M4 17c0-4 3-6 6-6s6 2 6 6z" fill="#fff"/></svg>',
   star:'<svg viewBox="0 0 20 20"><path d="M10 2l2.4 5 5.6.6-4.2 3.8 1.2 5.6L10 14.2 5 17l1.2-5.6L2 7.6 7.6 7z" fill="#fff"/></svg>',
   dot:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="#fff"/></svg>',
+  key:'<svg viewBox="0 0 20 20"><circle cx="7" cy="10" r="3.6" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M10.5 10h7M15 10v3M17.5 10v2" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  storage:'<svg viewBox="0 0 20 20"><path d="M10 3v10M6 9l4 4 4-4M4 16h12" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>',
 };
 const DEFAULT_APPS = [
   {id:'photos',label:'Photos',icon:'photos',bg:'linear-gradient(#fff,#f0f0f0)'},
@@ -104,7 +106,7 @@ function lock(name, s){
 }
 function html(name, s){
   const body = s.html.replace(/data-id="([^":]+)"/g, `data-id="${name}:$1"`);
-  return `<div class="scr custom" style="background:${s.bg||'#f2f2f7'}">${body}</div>`;
+  return `<div class="scr custom" style="background:${s.bg||'#f2f2f7'}">${body}${pops(name,s)}</div>`;
 }
 const BUILD = {home, list, passcode, lock, html};
 
