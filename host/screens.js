@@ -72,7 +72,7 @@ function home(name, s, time){
   const apps = s.apps || DEFAULT_APPS, dock = s.dock || DEFAULT_DOCK;
   return `<div class="scr home" style="background:${s.wallpaper||'linear-gradient(160deg,#ff9a62 0%,#e8507a 45%,#5b4bd6 100%)'}">${sb(true,time)}
     <div class="grid">${apps.map(a=>`<div class="app" data-id="${name}:${a.id}"><div class="ic" style="background:${a.bg}">${ICONS[a.icon]||''}</div>${esc(a.label)}</div>`).join('')}</div>
-    <div class="dock">${dock.map(d=>`<div class="ic" style="background:${d.bg}">${ICONS[d.icon]||''}</div>`).join('')}</div></div>`;
+    <div class="dock">${dock.map(d=>`<div class="ic" style="background:${d.bg}">${ICONS[d.icon]||''}</div>`).join('')}</div>${pops(name,s)}</div>`;
 }
 function row(name, r){
   const cls = ['row']; if (r.style) cls.push(r.style);
