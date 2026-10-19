@@ -14,6 +14,8 @@ SX, SY, SW, SH = 234, 54, 532, 332             # the display's screen area insid
 
 
 def at(win, x, y, w, h, inner, extra=''):
+    if (x, y, w, h) == (SX, SY, SW, SH):
+        extra += 'overflow:hidden;border-radius:18px;'
     return (f'<div data-in="{win}" style="position:absolute;left:{x}px;top:{y}px;width:{w}px;height:{h}px;{extra}">{inner}</div>')
 
 
@@ -41,15 +43,16 @@ DEVICE = (f'<div style="position:absolute;left:220px;top:40px;width:560px;height
 
 
 def widget(icon, title, val, col):
-    return (f'<div style="background:rgba(255,255,255,.12);border-radius:18px;padding:12px 14px;color:#fff">'
-            f'<div style="font-size:30px">{icon}</div><div style="font-size:19px;opacity:.85;margin-top:2px">{title}</div>'
-            f'<div style="font-size:28px;font-weight:800;color:{col}">{val}</div></div>')
+    return (f'<div style="background:rgba(255,255,255,.12);border-radius:18px;padding:10px 14px;color:#fff;display:flex;'
+            f'align-items:center;gap:12px;height:98px"><div style="font-size:40px">{icon}</div><div>'
+            f'<div style="font-size:19px;opacity:.85">{title}</div>'
+            f'<div style="font-size:28px;font-weight:800;color:{col};line-height:1.15">{val}</div></div></div>')
 
 
 DASH = at('-1,9.3', SX, SY, SW, SH,
           '<div style="padding:16px 20px;color:#fff"><div style="display:flex;justify-content:space-between;align-items:baseline">'
           '<b style="font-size:30px">Good evening</b><span style="font-size:24px;opacity:.85">10:08</span></div>'
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">'
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">'
           + widget('💡', 'Lights', '3 on', YEL) + widget('🔒', 'Front Door', 'Locked', GRN)
           + widget('🌡️', 'Thermostat', '72°F', CYAN) + widget('📷', 'Cameras', '9 live', RED) + '</div></div>')
 
@@ -132,7 +135,7 @@ SPEC = {
         {'t': [13.70, 22.46], 'say': "Here's the interesting part: you can view up to nine security camera feeds at once, control smart locks and thermostats, and use voice commands to automate your home.",
          'cap': '9 camera feeds at once, smart locks, thermostats & voice automations', 'pose': 'point'},
         {'t': [23.05, 26.08], 'say': 'But at two hundred and ninety-nine dollars, is it worth it?',
-         'cap': 'But at $299… is it worth it? 🤔', 'pose': 'front', 'screen': 'price', 'style': 'fade'},
+         'cap': 'But at $299… is it worth it? 🤔', 'pose': 'talk', 'screen': 'price', 'style': 'fade'},
         {'t': [26.73, 28.92], 'say': 'Follow Tech Wall for more tech explained!',
          'cap': 'Follow Tech Wall for more tech explained! 🚀', 'pose': 'point', 'end': True},
     ],
