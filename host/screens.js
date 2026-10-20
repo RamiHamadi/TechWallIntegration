@@ -88,7 +88,7 @@ function list(name, s, time){
     (g.footer?`<div class="foot">${esc(g.footer)}</div>`:'')).join('');
   return `<div class="scr list">${sb(false,time)}${s.back?`<div class="nav">‹ ${esc(s.back)}</div>`:''}
     <div class="big"${s.title&&s.title.length>16?' style="font-size:32px"':''}>${esc(s.title||'')}</div>
-    ${s.search?'<div class="search">⌕ Search</div>':''}${groups}</div>`;
+    ${s.search?'<div class="search">⌕ Search</div>':''}${groups}${pops(name,s)}</div>`;
 }
 function passcode(name, s, time){
   const n = s.digits||6, L = ['','ABC','DEF','GHI','JKL','MNO','PQRS','TUV','WXYZ'];

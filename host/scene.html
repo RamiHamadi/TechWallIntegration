@@ -36,6 +36,26 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
   box-shadow:0 0 0 4px #2b3a55,0 40px 80px rgba(0,0,0,.45),inset 0 0 0 2px #3c4a66}
 .dev-phone .screen{position:relative;width:398px;height:828px;border-radius:52px;overflow:hidden;background:#f2f2f7;color:#111;font-family:Poppins,sans-serif}
 .dev-laptop{left:62px;top:236px;width:956px}
+/* Samsung Galaxy (One UI look-alike): flat sides, centred punch-hole camera, big One UI headers, rounded cards, blue toggles */
+.dev-galaxy{left:592px;top:258px;width:426px;height:864px;border-radius:46px;background:#0d0d10;padding:11px;
+  box-shadow:0 0 0 3px #3a3f4a,0 40px 80px rgba(0,0,0,.45),inset 0 0 0 2px #2a2e37}
+.dev-galaxy .screen{position:relative;width:404px;height:842px;border-radius:36px;overflow:hidden;background:#f4f4f6;color:#111;font-family:Poppins,sans-serif}
+.punch{position:absolute;left:50%;top:16px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:#050505;box-shadow:0 0 0 2px #1a1a1a;z-index:20}
+.dev-galaxy .scr{background:#f4f4f6}
+.dev-galaxy .sb{padding:8px 26px 0;font-size:16px}
+.dev-galaxy .nav{font-size:0;height:30px;padding:0 18px}
+.dev-galaxy .nav:before{content:"‹";font-size:38px;line-height:24px;color:#222}
+.dev-galaxy .big{font-size:38px;font-weight:600;padding:56px 26px 34px;letter-spacing:-.3px}
+.dev-galaxy .group{margin:0 12px 14px;border-radius:26px}
+.dev-galaxy .row{min-height:64px;padding:0 20px;font-size:19px}
+.dev-galaxy .row+.row:before{display:none}
+.dev-galaxy .row .chev{display:none}
+.dev-galaxy .row .sq{width:34px;height:34px;border-radius:50%}
+.dev-galaxy .row .val{color:#5a6b8c}
+.dev-galaxy .sect{color:#3e91ff;text-transform:none;font-size:15px;font-weight:600;padding:4px 32px 8px}
+.dev-galaxy .tog{width:50px;height:28px;border-radius:14px}
+.dev-galaxy .tog i{width:22px;height:22px;top:3px;left:3px}
+.dev-galaxy .ic{border-radius:24px}
 .dev-laptop .lid{width:956px;padding:18px;background:#111827;border-radius:26px 26px 6px 6px;box-shadow:0 0 0 4px #2b3a55,0 30px 60px rgba(0,0,0,.45)}
 .dev-laptop .base{width:1010px;margin-left:-27px;height:26px;background:linear-gradient(#d9dfea,#8c96a8);border-radius:0 0 30px 30px;position:relative}
 .dev-laptop .base:after{content:"";position:absolute;left:50%;top:0;width:150px;height:9px;margin-left:-75px;background:#7b8597;border-radius:0 0 10px 10px}
@@ -198,10 +218,10 @@ const DEVS = H.devices || [H.device || 'phone'], DEV = DEVS[0];
 const devOf = name => (H.screens[name] && H.screens[name].dev) || DEV;
 const RIG = {};
 for (const d of DEVS){
-  const SH = '<div class="screen">' + (d==='phone'?'<div class="island"></div>':'') +
+  const SH = '<div class="screen">' + (d==='phone'?'<div class="island"></div>':d==='galaxy'?'<div class="punch"></div>':'') +
     '<div class="tap"></div><div class="ripple"></div><svg class="cursor" viewBox="0 0 34 46"><path d="M3 2v36l9-8 6 13 7-3-6-13h12z" fill="#fff" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg></div>';
   const el = document.createElement('div'); el.className = 'abs rig dev-' + d;
-  el.innerHTML = (d==='phone' || d==='stage') ? SH : d==='laptop' ? `<div class="lid">${SH}</div><div class="base"></div>` : `<div class="lid">${SH}</div><div class="stand"></div>`;
+  el.innerHTML = (d==='phone' || d==='galaxy' || d==='stage') ? SH : d==='laptop' ? `<div class="lid">${SH}</div><div class="base"></div>` : `<div class="lid">${SH}</div><div class="stand"></div>`;
   $('device').appendChild(el);
   RIG[d] = {el, scr:el.querySelector('.screen'), tap:el.querySelector('.tap'), ripple:el.querySelector('.ripple'), cursor:el.querySelector('.cursor')};
 }
@@ -297,7 +317,8 @@ function renderPhone(t){
     for (const e of evs) if (t>=e.t){ on = e.k==='set' ? !!e.toggle : !on; kk = e.k==='set' ? 1 : ease(prog(t,e.t,0.25)); }
     const knob=n.querySelector('.tog i'), tog=n.querySelector('.tog');
     const x = on ? 20*kk : 20*(1-kk);
-    knob.style.transform=`translateX(${x}px)`; tog.style.background = (x>10) ? '#34c759' : '#e3e3e8';
+    const gx=!!n.closest('.dev-galaxy'), w=gx?22:20, xx=x*w/20;
+    knob.style.transform=`translateX(${xx}px)`; tog.style.background = (x>10) ? (gx?'#3e91ff':'#34c759') : (gx?'#cfd3da':'#e3e3e8');
   });
   // value labels set by {'set': id, 'value': ...}
   for (const e of SETS) if (e.value!==undefined && POS[e.target]){ const v=POS[e.target][3].querySelector('.val');
@@ -339,7 +360,7 @@ function renderPhone(t){
       R.style.opacity=(r>0&&r<1)?(1-r):0; R.style.transform=`scale(${1+r*1.8})`;
     }
   }
-  for (const dv of DEVS) if (dv!=='phone'){   // PC: mouse arrow glides between click targets; no finger ring
+  for (const dv of DEVS) if (dv!=='phone' && dv!=='galaxy'){   // PC: mouse arrow glides between click targets; no finger ring
     RIG[dv].tap.style.opacity=0;
     const C=RIG[dv].cursor; const pts=TAPS.filter(e=>POS[e.target] && POS[e.target][4]===dv);
     if (pts.length && dv==='laptop'){
@@ -382,7 +403,7 @@ function renderPhone(t){
   const out=prog(t,OUT,0.55), SW={};
   for (const d of DEVS){ const ph=RIG[d].el, sw=SW[d]=rigSwap(d,t);
     ph.style.opacity = (1-out)*sw.o;
-    ph.style.transform = (sw.o<1 ? sw.tf+' ' : '') + (d==='phone' ? `translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`
+    ph.style.transform = (sw.o<1 ? sw.tf+' ' : '') + ((d==='phone' || d==='galaxy') ? `translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`
                                      : `translate(${ease(out)*40}px, ${Math.sin(t*1.6)*4 - ease(out)*700}px) scale(${1-0.2*ease(out)})`); }
   // shortcut keycaps (laptop): pop in 0.35 s before the press, keys go down one after another, hold ~1.6 s
   let ch=null; for (const e of CHORDS) if (t>=e.t-0.35 && t<e.t+(e.hold||1.6)) ch=e;
