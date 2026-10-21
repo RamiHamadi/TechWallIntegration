@@ -203,10 +203,24 @@ def _external_voice(spec, beats):
     a, sr0 = sf.read(path, always_2d=True)
     v = _resample(a.mean(axis=1).astype(np.float32), sr0)
     B = [_beat(b, *b['t'], _silences(v, *b['t'])) for b in beats]
+    extra, key_extra = None, b''
+    ins = spec.get('insert')        # {'at': s in the voice file, 'audio': clip}: the clip plays there, the rest moves later
+    if ins:
+        ip = ins['audio'] if os.path.isabs(ins['audio']) else os.path.join(HERE, ins['audio'])
+        c, csr = sf.read(ip, always_2d=True); c = _resample(c.mean(axis=1).astype(np.float32), csr)
+        i, d = int(ins['at'] * SR), len(c) / SR
+        v = np.concatenate([v[:i], np.zeros(len(c), np.float32), v[i:]])          # the host stays silent during the clip
+        extra = np.zeros(len(v), np.float32); extra[i:i + len(c)] = c
+        sh = lambda x: round(x + d, 3) if x >= ins['at'] else x
+        for bb in B:
+            bb['start'], bb['end'] = sh(bb['start']), sh(bb['end']); bb['pauses'] = [[sh(a), sh(e)] for a, e in bb['pauses']]
+        key_extra = open(ip, 'rb').read() + str(ins['at']).encode()
     total = max(B[-1]['end'] + END_HOLD, len(v) / SR + 0.3)
     voice_track = np.zeros(int(np.ceil(total * SR)), np.float32); voice_track[:len(v)] = v
-    key = hashlib.sha1(open(path, 'rb').read() + json.dumps([[b['say'], b['t']] for b in beats]).encode()).hexdigest()[:12]
-    return voice_track, B, total, key
+    if extra is not None:
+        e2 = np.zeros_like(voice_track); e2[:len(extra)] = extra; extra = e2
+    key = hashlib.sha1(open(path, 'rb').read() + key_extra + json.dumps([[b['say'], b['t']] for b in beats]).encode()).hexdigest()[:12]
+    return voice_track, B, total, key, extra
 
 
 # ----------------------------------------------------------------------------- timeline
@@ -216,10 +230,10 @@ def build(ep, spec):
     says = [b['say'] for b in beats]
     cache = _dir(f'host_{ep}')
     if spec.get('audio'):                              # a voice-over supplied as a file (beats carry 't': [start, end])
-        voice_track, B, total, key = _external_voice(spec, beats)
+        voice_track, B, total, key, extra = _external_voice(spec, beats)
         N = len(voice_track)
     else:
-        voice_track, B, total, key = _tts_voice(spec, beats, says, cache, lang, voice, speed)
+        voice_track, B, total, key = _tts_voice(spec, beats, says, cache, lang, voice, speed); extra = None
         N = len(voice_track)
     # lip-sync
     import soundfile as sf
@@ -301,7 +315,7 @@ def build(ep, spec):
     for kind, tt, g in sfx:
         sig = lib_sfx[kind](); a = int(max(0, tt) * SR); bnd = min(N, a + len(sig))
         fx[a:bnd] += (sig[:bnd - a] * g).astype(np.float32)
-    mix = voice_track + fx * 0.45
+    mix = voice_track + fx * 0.45 + (extra if extra is not None else 0)
     mix = mix / max(1.0, np.max(np.abs(mix)) / 0.95)
     sf.write(lib.out(f'audio_{ep}.wav'), mix, SR)
     with open(lib.out(f'meta_{ep}'), 'w') as f:
