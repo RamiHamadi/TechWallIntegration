@@ -250,7 +250,14 @@ for (const d of DEVS){
   if (!L.length || L[0].t>-1) L.unshift({t:-1, to:L.length?L[0].to:Object.keys(H.screens).find(n=>devOf(n)===d), style:'none'});
   RNAV[d] = L;
 }
+const RP = H.rig_pos || {};
+for (const [d,p] of Object.entries(RP)) if (RIG[d]){ const e=RIG[d].el;
+  if (p.left!==undefined) e.style.left=p.left+'px'; if (p.top!==undefined) e.style.top=p.top+'px'; e.style.transformOrigin='0 0'; }
+if (H.overlay){ const o=document.createElement('div'); o.className='screen overlay';
+  o.style.cssText='position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:6;pointer-events:none;color:#fff;font-family:Poppins,sans-serif';
+  o.innerHTML=H.overlay; $('device').appendChild(o); }
 function rigSwap(d,t){        // on-stage amount of a rig: {o: opacity, tf: transform prefix}
+  if (H.together) return {o:1, tf:''};
   let on = devOf(H.start)===d, at = -9;
   for (const s of SWAPS) if (s.t<=t){ if (s.to===d){ on=true; at=s.t; } else if (s.from===d){ on=false; at=s.t; } }
   if (on){ const k=prog(t,at+0.12,0.45), b=easeOutBack(k);
@@ -403,8 +410,10 @@ function renderPhone(t){
   const out=prog(t,OUT,0.55), SW={};
   for (const d of DEVS){ const ph=RIG[d].el, sw=SW[d]=rigSwap(d,t);
     ph.style.opacity = (1-out)*sw.o;
+    const sc = RP[d] && RP[d].scale ? ` scale(${RP[d].scale})` : '';
     ph.style.transform = (sw.o<1 ? sw.tf+' ' : '') + ((d==='phone' || d==='galaxy') ? `translate(${ease(out)*520}px, ${Math.sin(t*1.6)*5}px) rotate(${ease(out)*18}deg)`
-                                     : `translate(${ease(out)*40}px, ${Math.sin(t*1.6)*4 - ease(out)*700}px) scale(${1-0.2*ease(out)})`); }
+                                     : `translate(${ease(out)*40}px, ${Math.sin(t*1.6)*4 - ease(out)*700}px) scale(${1-0.2*ease(out)})`) + sc; }
+  const OV=document.querySelector('.overlay'); if (OV) OV.style.opacity=1-out;
   // shortcut keycaps (laptop): pop in 0.35 s before the press, keys go down one after another, hold ~1.6 s
   let ch=null; for (const e of CHORDS) if (t>=e.t-0.35 && t<e.t+(e.hold||1.6)) ch=e;
   const K=$('keys');

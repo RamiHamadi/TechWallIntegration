@@ -264,7 +264,7 @@ def build(ep, spec):
                 ev.append({'k': 'tap', 't': tt, 'target': f"{cur}:{a['tap']}", 'fx': a.get('fx', 0.62),
                            'hold': a.get('hold', 0.55 if a.get('nav') else 0.35)}); sfx.append(('tap', tt, 1))
                 if a.get('nav'):
-                    ev.append({'k': 'nav', 't': tt + 0.22, 'to': a['nav'], 'style': 'pop' if a.get('back') else 'push'})
+                    ev.append({'k': 'nav', 't': tt + 0.22, 'to': a['nav'], 'style': a.get('style', 'pop' if a.get('back') else 'push')})
                     sfx.append(('whoosh', tt + 0.2, 0.6)); cur = a['nav']
             elif 'nav' in a:
                 tt = at(a.get('at', 0)); ev.append({'k': 'nav', 't': tt, 'to': a['nav'], 'style': a.get('style', 'fade')})
@@ -285,7 +285,7 @@ def build(ep, spec):
             elif 'button' in a:                                 # tv: controller press (+ optional screen change)
                 tt = at(a.get('at', 0.5)); ev.append({'k': 'button', 't': tt, 'b': a['button']}); sfx.append(('tap', tt, 1))
                 if a.get('nav'):
-                    ev.append({'k': 'nav', 't': tt + 0.2, 'to': a['nav'], 'style': 'pop' if a.get('back') else 'push'})
+                    ev.append({'k': 'nav', 't': tt + 0.2, 'to': a['nav'], 'style': a.get('style', 'pop' if a.get('back') else 'push')})
                     sfx.append(('whoosh', tt + 0.18, 0.6)); cur = a['nav']
             elif 'show' in a or 'hide' in a:                    # overlays declared in a screen's 'pops'
                 nm = a.get('show') or a.get('hide'); tt = at(a.get('at', 0.5))
@@ -320,7 +320,8 @@ def build(ep, spec):
     sf.write(lib.out(f'audio_{ep}.wav'), mix, SR)
     with open(lib.out(f'meta_{ep}'), 'w') as f:
         f.write(f'FR={FPS}\nCF=0\n')
-    keep = ('title', 'tag', 'tip', 'endline', 'follow', 'clock', 'start', 'screens', 'device', 'devices', 'start_pops')
+    keep = ('title', 'tag', 'tip', 'endline', 'follow', 'clock', 'start', 'screens', 'device', 'devices', 'start_pops',
+            'together', 'rig_pos', 'overlay')
     host = {k: spec[k] for k in keep if k in spec}
     host.update({'fps': FPS, 'total': total, 'lang': lang, 'beats': B, 'events': ev,
                  'env': [round(float(x), 3) for x in env], 'cues': cues})
