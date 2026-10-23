@@ -456,8 +456,9 @@ function renderCaption(t){
   if (idx<0){ cap.style.opacity=0; return; }
   const b=B[idx], words=b.cap.split(' ');
   if (idx!==capIdx){
-    box.style.fontSize='54px'; box.innerHTML=words.map(w=>`<span class="w">${w}</span>`).join(' ');
-    let fs=54; while (box.getBoundingClientRect().height > (H.lang==='ar'?2*54*1.35:2*54*1.18)+56 && fs>44){ fs-=2; box.style.fontSize=fs+'px'; }
+    const base=b.capsize||54, lh=H.lang==='ar'?1.35:1.18;      // capsize: a bigger caption (e.g. a massive hook on frame 0)
+    box.style.fontSize=base+'px'; box.innerHTML=words.map(w=>`<span class="w">${w}</span>`).join(' ');
+    let fs=base; while (box.getBoundingClientRect().height > 2*(b.capsize?fs:54)*lh+56 && fs>44){ fs-=2; box.style.fontSize=fs+'px'; }
     capIdx=idx;
   }
   // progress = share of voiced time so far (punctuation pauses hold the karaoke still)

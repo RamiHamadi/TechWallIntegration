@@ -152,7 +152,8 @@ def sfx_chime():
 
 def _beat(b, start, end, pauses):
     return {'start': round(start, 3), 'end': round(end, 3), 'cap': b.get('cap', b['say']), 'pose': b.get('pose'),
-            'hook': bool(b.get('hook')), 'step': b.get('step'), 'pauses': pauses}
+            'hook': bool(b.get('hook')), 'step': b.get('step'), 'pauses': pauses,
+            'capsize': b.get('capsize')}
 
 
 def _tts_voice(spec, beats, says, cache, lang, voice, speed):
