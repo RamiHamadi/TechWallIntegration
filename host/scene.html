@@ -149,6 +149,8 @@ body{font-family:Poppins,Cairo,sans-serif;color:#fff}
 /* keyboard shortcut panel (laptop) + generic controller (tv) */
 #keys{left:600px;top:1010px;width:440px;height:300px;display:flex;align-items:center;justify-content:center;gap:14px;z-index:30;font-family:Poppins,sans-serif}
 .kc{min-width:120px;height:120px;padding:0 22px;border-radius:20px;background:linear-gradient(#ffffff,#dfe5f0);color:#0a2b66;font-weight:800;font-size:46px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 0 #8e9bb5,0 18px 30px rgba(0,0,0,.35)}
+#keys.wide{left:570px;top:1150px;width:490px;gap:8px}
+#keys.wide .kc{min-width:0;height:96px;padding:0 14px;font-size:30px;border-radius:16px}
 .kc.down{transform:translateY(8px);box-shadow:0 2px 0 #8e9bb5,0 8px 16px rgba(0,0,0,.35);background:linear-gradient(#fff3c2,#ffd54a)}
 .kplus{font-size:54px;font-weight:800;color:#ffd54a}
 #pad{left:610px;top:1000px;width:430px;height:300px;z-index:30}
@@ -418,7 +420,8 @@ function renderPhone(t){
   let ch=null; for (const e of CHORDS) if (t>=e.t-0.35 && t<e.t+(e.hold||1.6)) ch=e;
   const K=$('keys');
   if (ch){ if (K.dataset.id!==String(ch.t)){ K.dataset.id=String(ch.t);
-      K.innerHTML=ch.keys.map((k,i)=>`${i?'<span class="kplus">+</span>':''}<span class="kc">${k}</span>`).join(''); }
+      K.innerHTML=ch.keys.map((k,i)=>`${i?'<span class="kplus">+</span>':''}<span class="kc">${k}</span>`).join('');
+      K.classList.toggle('wide', ch.keys.join('').length>7); }
     const a3=easeOutBack(prog(t,ch.t-0.35,0.3)), d3=prog(t,ch.t+(ch.hold||1.6)-0.25,0.25);
     K.style.opacity=clamp(a3)*(1-d3); K.style.transform=`scale(${0.8+0.2*a3})`;
     [...K.querySelectorAll('.kc')].forEach((kc,i)=>kc.classList.toggle('down', t>=ch.t+i*0.09 && t<ch.t+0.55));
