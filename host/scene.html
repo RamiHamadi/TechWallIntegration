@@ -361,7 +361,8 @@ function renderPhone(t){
   for (const g of Object.values(RIG)){ g.tap.style.opacity=0; g.ripple.style.opacity=0; g.cursor.style.opacity=0; }
   for (const tp of TAPS){
     if (t>tp.t-0.55 && t<tp.t+0.45 && POS[tp.target]){
-      let [x,y,w]=POS[tp.target]; if (w>200) x = 30 + w*(tp.fx||0.62);
+      let [x,y,w]=POS[tp.target]; const ph=['phone','galaxy'].includes(POS[tp.target][4]);
+      if (w>200 && ph) x = 30 + w*(tp.fx||0.62);       // wide phone rows: tap towards the label; PC clicks stay on the cursor
       const a2=prog(t,tp.t-0.55,0.3), d=prog(t,tp.t+0.15,0.3), g=RIG[POS[tp.target][4]];
       const T=g.tap; T.style.left=x+'px'; T.style.top=(y+(1-ease(a2))*60)+'px'; T.style.opacity=ease(a2)*(1-d);
       T.style.transform=`scale(${(t>tp.t-0.06&&t<tp.t+0.1)?0.8:1})`;
