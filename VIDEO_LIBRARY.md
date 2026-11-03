@@ -21,7 +21,7 @@ Already made before this library: Back Tap (iPhone) · Win + V clipboard history
 | 7 | Stop AI from training on your chats | Laptop (ChatGPT, Claude, Gemini) | "Your chats may train the AI: turn this off": ChatGPT › Settings › Data controls › Improve the model for everyone; Claude › Settings › Privacy › Help improve Claude; Gemini › Settings & help › Activity › Turn off. AI. | 2026-10-06 | ✅ Published |
 | 8 | Copy text from any photo (Live Text) | iPhone | "Your camera can copy text": point the camera or open a photo, tap the Live Text icon, then Copy. iOS 15+. | | ❌ Rejected |
 | 9 | Snip any area (Win + Shift + S) | Windows | "The fastest screenshot on PC": WIN + Shift + S › drag › paste anywhere. | | ⏭️ Skipped |
-| 10 | Quick Resume | Xbox | "Jump back into your games instantly": Xbox Series X\|S keeps several games suspended; pin them in the Quick Resume group. | | 💡 Idea |
+| 10 | Quick Resume | Xbox | "Jump back into your games instantly": Xbox Series X\|S keeps several games suspended; pin them in the Quick Resume group. | | ⏳ Awaiting idea approval |
 | 11 | Circle to Search | Android | "Search anything by circling it": long-press the home handle / nav bar, then circle. Newer Pixel & Galaxy phones. | | 💡 Idea |
 | 12 | Undo-send in Gmail | Web & Apps | "Unsend an email": Gmail Settings › Undo Send › 30 seconds. | | 💡 Idea |
 | 13 | Lift the subject out of a photo | iPhone | "Instant cut-out sticker": touch & hold the subject in Photos, then Copy / Add Sticker. iOS 16+. | | 💡 Idea |
