@@ -3,10 +3,11 @@
 Voice: the user's Lebanese-Arabic generated audio, pauses between phrases shortened to 0.2 s (host/voices/igsafe.flac);
 beat 't' = [start, end] s in it; script transcribed with the multilingual Whisper turbo model (template flashlight.py).
 Facts (Instagram Help Center "About Sensitive Content Control" + iPhone app article; about.instagram.com updates):
-Profile > menu (top right) > Suggested content > Sensitive content > More / Standard (default) / Less ("More" is not
+Profile > menu (top right) > What you see > Content preferences > Sensitive content > More / Standard (default) / Less ("More" is not
 available under 18); it applies to recommendations (Explore, Reels, Search, suggested posts) from accounts you DON'T
-follow; Suggested content also has Specific words and phrases (hide suggested posts with those words) and Reset
-suggested content; "Not interested" in a post's ... menu. Newer app versions name the page "Content preferences".
+follow; Content preferences also has Specific words and phrases (hide suggested posts with those words) and Reset
+suggested content; "Not interested" in a post's ... menu. (Older app versions call the page "Suggested content".)
+Second take (2026-11-28): the user re-recorded the script with the current names; it replaced the first voice-over.
 Generic look-alike screens (no logo, no real accounts), fictional data. Chalk cards on the left: spec 'overlay'."""
 import host
 
@@ -14,11 +15,11 @@ EP = 'igsafe'
 YEL, CY, GRN, RED = '#ffd54a', '#5ce1ff', '#34d399', '#ff6b6b'
 AR = 'font-family:Cairo,Poppins,sans-serif'
 BLUE = '#0095f6'
-T_LESS = 20.84                                   # "Less" radio tapped
+T_LESS = 20.0                                   # "Less" radio tapped
 T_W = (31.4, 32.2, 33.0)                          # word chips typed
-T_DOTS, T_NI = 42.37, 44.56                       # "..." tapped, "Not interested" tapped
-T_RESET, T_RESET2 = 54.84, 57.35                  # "Reset suggested content" row, then the dialog's Reset button
-T_UNF = 67.58                                     # "Following" tapped -> unfollow
+T_DOTS, T_NI = 38.3, 40.1                       # "..." tapped, "Not interested" tapped
+T_RESET, T_RESET2 = 50.9, 53.6                  # "Reset suggested content" row, then the dialog's Reset button
+T_UNF = 63.2                                     # "Following" tapped -> unfollow
 
 
 def sb(col='#111'):
@@ -95,9 +96,9 @@ PROFILE = ('<div style="position:absolute;inset:0;background:#fff">' + sb()
 MENU = ('<div style="position:absolute;inset:0;background:#f2f2f2">' + sb() + top('Settings and activity')
         + '<div style="margin:8px 0">' + section('How you use Instagram')
         + row('Saved', icon='🔖') + row('Archive', icon='🕘') + row('Your activity', icon='📊') + row('Notifications', icon='🔔')
-        + row('Time management', icon='⏱️') + '</div><div>' + section('What you see')
+        + row('Time management', icon='⏱️') + '</div><div style="position:relative">' + section('What you see') + '<div data-in="13.45,15.5" style="position:absolute;left:6px;right:6px;top:6px;height:34px;border:3px solid #ffd54a;border-radius:10px"></div>'
         + row('Favorites', icon='☆') + row('Muted accounts', icon='🔕')
-        + row('Suggested content', 'sugg', icon='📋') + row('Like and share counts', icon='♡') + '</div></div>')
+        + row('Content preferences', 'sugg', icon='📋') + row('Like and share counts', icon='♡') + '</div></div>')
 
 
 def sugg_html():
@@ -112,7 +113,7 @@ def sugg_html():
               '<div style="border-top:1px solid #e6e6e6;padding:14px;font-size:17px">Cancel</div></div></div>')
     toast = (f'<div data-in="{T_RESET2 + .3:.2f}" style="position:absolute;left:24px;right:24px;bottom:40px;background:#262626;color:#fff;'
              'border-radius:12px;padding:14px 16px;font-size:15px;z-index:6">✓ Suggested content reset</div>')
-    return ('<div style="position:absolute;inset:0;background:#f2f2f2">' + sb() + top('Suggested content')
+    return ('<div style="position:absolute;inset:0;background:#f2f2f2">' + sb() + top('Content preferences')
             + '<div style="padding:12px 18px;font-size:13px;color:#737373;background:#fff">Choose what you see in Explore, Reels, Search and suggested posts.</div>'
             + row('Sensitive content', 'sens', value=sens_val)
             + row('Political content', value='Limit')
@@ -120,7 +121,7 @@ def sugg_html():
             + row('Snooze suggested posts in feed', chev=False, value='<span style="display:inline-block;width:46px;height:28px;border-radius:14px;background:#d1d1d6"></span>')
             + '<div style="height:12px"></div>'
             + row('Reset suggested content', 'reset', col='#ed4956', chev=False)
-            + '<div style="padding:12px 18px;font-size:12px;color:#8e8e8e">Some app versions: Settings › Content preferences</div></div>'
+            + '</div>'
             + dialog + toast)
 
 
@@ -201,21 +202,21 @@ def step(n, title, path, col=YEL):
 
 
 OVERLAY = (
-    card('-1,4.7', 250, f'<div style="font-size:46px;font-weight:900;color:{YEL};line-height:1.3">⚠️ فيديو مش لائق</div>'
+    card('-1,5.3', 250, f'<div style="font-size:46px;font-weight:900;color:{YEL};line-height:1.3">⚠️ فيديو مش لائق</div>'
                         '<div style="font-size:32px;font-weight:800">… والولاد حدّك! 👨‍👩‍👧</div>', RED)
-    + card('4.9,9.7', 250, f'<div style="font-size:44px;font-weight:900;color:{YEL}">⏱️ أقلّ من دقيقة</div>'
+    + card('5.3,9.6', 250, f'<div style="font-size:44px;font-weight:900;color:{YEL}">⏱️ أقلّ من دقيقة</div>'
                            '<div style="font-size:28px;font-weight:800">وبتخفّف هالنوع من المحتوى</div>', CY)
-    + card('10.1,27.2', 250, step('① حساسيّة المحتوى', 'Sensitive content › Less', '☰ › Suggested content › Sensitive content'), YEL)
-    + card('21.8,27.2', 540, '<div style="font-size:26px;font-weight:800;line-height:1.5">بيخفّف بالاقتراحات:<br>'
+    + card('9.65,26.2', 250, step('① حساسيّة المحتوى', 'Sensitive content › Less', '☰ › What you see › Content preferences'), YEL)
+    + card('20.9,26.2', 540, '<div style="font-size:26px;font-weight:800;line-height:1.5">بيخفّف بالاقتراحات:<br>'
                              '<span dir="ltr">Explore · Reels · Search</span></div>', CY)
-    + card('27.6,38.7', 250, step('② كلمات بعينها', 'Specific words and phrases', 'اكتب الكلمات اللي ما بدّك تشوفها'), YEL)
-    + card('38.85,50.0', 250, step('③ ما عجبك؟', '⋯ › Not interested', 'بيفهم إنستغرام شو ما بدّك'), YEL)
-    + card('50.15,58.7', 250, step('④ صفحة جديدة', 'Reset suggested content', 'الاقتراحات بترجع من الأوّل'), YEL)
-    + card('58.85,65.0', 250, '<div style="font-size:36px;font-weight:900;color:' + YEL + '">⚠️ انتبه</div>'
+    + card('26.25,34.2', 250, step('② كلمات بعينها', 'Specific words and phrases', 'اكتب الكلمات اللي ما بدّك تشوفها'), YEL)
+    + card('34.25,46.3', 250, step('③ ما عجبك؟', '⋯ › Not interested', 'بيفهم إنستغرام شو ما بدّك'), YEL)
+    + card('46.4,54.9', 250, step('④ صفحة جديدة', 'Reset suggested content', 'الاقتراحات بترجع من الأوّل'), YEL)
+    + card('55.0,60.0', 250, '<div style="font-size:36px;font-weight:900;color:' + YEL + '">⚠️ انتبه</div>'
                               '<div style="font-size:28px;font-weight:800;line-height:1.45">هالإعدادات بتأثّر على الاقتراحات<br>من حسابات <u>مش متابعها</u></div>', RED)
-    + card('65.15,70.1', 250, '<div style="font-size:30px;font-weight:800;line-height:1.45">حساب إنت متابعه<br>وعم ينزّل هالمحتوى؟</div>'
+    + card('60.0,64.0', 250, '<div style="font-size:30px;font-weight:800;line-height:1.45">حساب إنت متابعه<br>وعم ينزّل هالمحتوى؟</div>'
                               f'<div style="font-size:44px;font-weight:900;color:{YEL};direction:ltr;text-align:right">Unfollow</div>', RED)
-    + card('70.3,76.0', 250, f'<div style="font-size:42px;font-weight:900;color:{GRN};line-height:1.3">✅ إنستغرام أنضف</div>'
+    + card('64.05,67.3', 250, f'<div style="font-size:42px;font-weight:900;color:{GRN};line-height:1.3">✅ إنستغرام أنضف</div>'
                              '<div style="font-size:30px;font-weight:800">وأنسب إلك ولعيلتك 👨‍👩‍👧‍👦</div>', GRN))
 
 SPEC = {
@@ -234,41 +235,39 @@ SPEC = {
         'clean': {'type': 'html', 'bg': '#fff', 'html': CLEAN},
     },
     'beats': [
-        {'t': [0.24, 4.62], 'say': 'فتحت إنستغرام، وفجأة طلعلك فيديو مش لائق، وولادك قاعدين حدّك؟',
+        {'t': [0.05, 5.20], 'say': 'فاتح إنستغرام، وفجأة طلعلك فيديو مش لايق، وولادك قاعدين حدّك؟',
          'cap': 'فيديو مش لائق على إنستغرام… والولاد حدّك؟ 😳', 'capsize': 84, 'pose': 'welcome', 'hook': True},
-        {'t': [5.00, 9.62], 'say': 'تعا خلّيني فرجيك كيف بتخفّف ظهور هالنوع من المحتوى، بأقلّ من دقيقة.',
-         'cap': 'تعا فرجيك كيف بتخفّفه بأقلّ من دقيقة ⏱️', 'pose': 'talk'},
-        {'t': [10.24, 17.69], 'say': 'أوّل شي، فوت عالبروفايل تبعك، واكبس عالتلات خطوط اللي فوق عاليمين. نزال شوي، وفوت على Suggested content.',
-         'cap': 'افتح البروفايل، اكبس ☰ وفوت على Suggested\u00a0content', 'pose': 'point', 'step': 1, 'screen': 'profile', 'style': 'fade',
-         'do': [{'tap': 'menu', 'at': .45, 'nav': 'menu'}, {'tap': 'sugg', 'at': .88, 'nav': 'sugg'}]},
-        {'t': [17.93, 21.57], 'say': 'هلّق اكبس على Sensitive content، واختار Less.',
+        {'t': [5.37, 9.52], 'say': 'طيّب، خلّيني فرجيك كيف بتخفّف ظهور هالنوع من الفيديوهات، بأقلّ من دقيقة.',
+         'cap': 'خلّيني فرجيك كيف بتخفّفه بأقلّ من دقيقة ⏱️', 'pose': 'talk'},
+        {'t': [9.72, 17.59], 'say': 'أوّل شي، فوت عالبروفايل تبعك، واكبس عالتلات خطوط اللي فوق عاليمين. نزال لتحت عند What you see، وفوت على Content preferences.',
+         'cap': 'البروفايل، اكبس ☰ ونزال لـ What\u00a0you\u00a0see › Content\u00a0preferences', 'pose': 'point', 'step': 1, 'screen': 'profile', 'style': 'fade',
+         'do': [{'tap': 'menu', 'at': (12.6 - 9.72) / 7.87, 'nav': 'menu'}, {'tap': 'sugg', 'at': (16.6 - 9.72) / 7.87, 'nav': 'sugg'}]},
+        {'t': [17.79, 20.78], 'say': 'هلّق اكبس على Sensitive content، واختار Less.',
          'cap': 'اكبس على Sensitive\u00a0content واختار Less ✅', 'pose': 'point',
-         'do': [{'tap': 'sens', 'at': .3, 'nav': 'sens'}, {'tap': 'less', 'at': (T_LESS - 17.93) / 3.64}]},
-        {'t': [21.83, 27.15], 'say': 'هيك إنستغرام بيخفّفلك ظهور هالنوع من المحتوى بالـExplore والـReels والـSearch.',
+         'do': [{'tap': 'sens', 'at': (18.4 - 17.79) / 2.99, 'nav': 'sens'}, {'tap': 'less', 'at': (T_LESS - 17.79) / 2.99}]},
+        {'t': [20.98, 26.11], 'say': 'هيك إنستغرام بيخفّفلك ظهور هالنوع من المحتوى بالـExplore والـReels والـSearch.',
          'cap': 'بيخفّفلك هالمحتوى بالـExplore والـReels والـSearch', 'pose': 'talk'},
-        {'t': [27.69, 34.33], 'say': 'تاني خطوة، بنفس الصفحة، فوت على Specific words and phrases، واكتب الكلمات اللي ما بدّك تشوف محتوى عنها.',
+        {'t': [26.31, 34.12], 'say': 'تاني شي، بنفس الصفحة، فوت على Specific words and phrases، واكتب الكلمات اللي ما بدّك تشوفها بالمحتوى المقترح عندك.',
          'cap': 'فوت على Specific\u00a0words\u00a0and\u00a0phrases واكتب الكلمات اللي ما بدّك تشوفها', 'pose': 'point', 'step': 2,
-         'do': [{'nav': 'sugg', 'style': 'pop', 'at': 0}, {'tap': 'words', 'at': .38, 'nav': 'words'}]},
-        {'t': [34.61, 38.59], 'say': 'هيك إنستغرام بيخفّفلك المنشورات المقترحة اللي فيها هالكلمات.',
-         'cap': 'وبيخفّف المنشورات المقترحة اللي فيها هالكلمات', 'pose': 'talk'},
-        {'t': [38.94, 45.18], 'say': 'تالت خطوة، إذا طلعلك فيديو أو بوست ما عجبك، اكبس عالتلات نقاط واختار Not interested.',
-         'cap': 'بوست ما عجبك؟ اكبس ⋯ واختار Not\u00a0interested', 'pose': 'point', 'step': 3, 'screen': 'post', 'style': 'fade',
-         'do': [{'tap': 'dots', 'at': (T_DOTS - 38.94) / 6.24}, {'tap': 'notint', 'at': (T_NI - 38.94) / 6.24}]},
-        {'t': [45.60, 49.92], 'say': 'وكل ما تعمل هيك، بتساعد إنستغرام يفهم شو المحتوى اللي ما بدّك ياه.',
-         'cap': 'وكل مرّة بتساعد إنستغرام يفهم شو ما بدّك 🧠', 'pose': 'talk'},
-        {'t': [50.24, 58.60], 'say': 'وإذا حسّيت إنّو الاقتراحات كلّها صارت بعيدة عن اهتماماتك، فيك تفوت على Reset suggested content، وترجع الاقتراحات من الأوّل.',
-         'cap': 'الاقتراحات بعيدة عنك؟ اكبس Reset\u00a0suggested\u00a0content 🔄', 'pose': 'point', 'step': 4, 'screen': 'sugg', 'style': 'fade',
-         'do': [{'tap': 'reset', 'at': (T_RESET - 50.24) / 8.36}, {'tap': 'resetbtn', 'at': (T_RESET2 - 50.24) / 8.36}]},
-        {'t': [58.88, 64.90], 'say': 'بس انتبه، هالإعدادات بتأثّر بشكل أساسي عالمحتوى المقترح من حسابات مش متابعها.',
-         'cap': 'انتبه: بتأثّر على المقترح من حسابات مش متابعها ⚠️', 'pose': 'talk'},
-        {'t': [65.21, 69.95], 'say': 'أمّا إذا في حساب إنت متابعه وعم ينزّل هالنوع من المحتوى، لازم تعمله Unfollow.',
-         'cap': 'حساب متابعه وعم ينزّل هالمحتوى؟ اعمله Unfollow', 'pose': 'point', 'screen': 'acct', 'style': 'fade',
-         'do': [{'tap': 'following', 'at': (T_UNF - 65.21) / 4.74}]},
-        {'t': [70.50, 75.56], 'say': 'هيك بتكون أخدت خطوات بسيطة، لتخلّي إنستغرام أنضف وأنسب إلك ولعيلتك.',
-         'cap': 'خطوات بسيطة: إنستغرام أنضف وأنسب إلك ولعيلتك ✅', 'pose': 'welcome', 'screen': 'clean', 'style': 'fade',
-         'do': [{'fx': 'thumb', 'at': .05, 'dur': 3}, {'fx': 'confetti', 'at': .1}]},
-        {'t': [75.85, 78.89], 'say': 'تابعونا على Tech Wall للمزيد من أسرار التكنولوجيا.',
-         'cap': 'تابعونا على Tech Wall للمزيد من أسرار التكنولوجيا 🚀', 'pose': 'point', 'end': True},
+         'do': [{'nav': 'sugg', 'style': 'pop', 'at': 0}, {'tap': 'words', 'at': (29.3 - 26.31) / 7.81, 'nav': 'words'}]},
+        {'t': [34.32, 40.66], 'say': 'تالت شي، إذا طلعلك فيديو أو بوست مش عاجبك، اكبس عالتلات نقاط واختار Not interested.',
+         'cap': 'بوست مش عاجبك؟ اكبس ⋯ واختار Not\u00a0interested', 'pose': 'point', 'step': 3, 'screen': 'post', 'style': 'fade',
+         'do': [{'tap': 'dots', 'at': (T_DOTS - 34.32) / 6.34}, {'tap': 'notint', 'at': (T_NI - 34.32) / 6.34}]},
+        {'t': [41.06, 46.20], 'say': 'وكل ما تعمل هيك، بتساعد إنستغرام يعرف شو بتحب تشوف، وشو ما بدّك تشوف.',
+         'cap': 'وكل مرّة بتساعد إنستغرام يعرف شو بتحب وشو لأ 🧠', 'pose': 'talk'},
+        {'t': [46.49, 54.84], 'say': 'وإذا حسّيت إنّو الاقتراحات عندك صارت كلّها ملخبطة، بنفس القائمة في Reset suggested content، بترجعلك الاقتراحات من الصفر.',
+         'cap': 'الاقتراحات ملخبطة؟ Reset\u00a0suggested\u00a0content 🔄', 'pose': 'point', 'step': 4, 'screen': 'sugg', 'style': 'fade',
+         'do': [{'tap': 'reset', 'at': (T_RESET - 46.49) / 8.35}, {'tap': 'resetbtn', 'at': (T_RESET2 - 46.49) / 8.35}]},
+        {'t': [55.04, 59.86], 'say': 'بس انتبه، هالإعدادات بتخفّف المحتوى المقترح من حسابات مش متابعها.',
+         'cap': 'انتبه: بتخفّف المقترح من حسابات مش متابعها ⚠️', 'pose': 'talk'},
+        {'t': [60.06, 63.91], 'say': 'أمّا إذا إنت متابع حساب وعم ينزّل هيك محتوى، اعمله Unfollow.',
+         'cap': 'متابع حساب وعم ينزّل هيك محتوى؟ اعمله Unfollow', 'pose': 'point', 'screen': 'acct', 'style': 'fade',
+         'do': [{'tap': 'following', 'at': (T_UNF - 60.06) / 3.85}]},
+        {'t': [64.11, 67.21], 'say': 'يعني كم كبسة، وبتخلّي إنستغرام أرتب وأنضف.',
+         'cap': 'كم كبسة، وإنستغرام أرتب وأنضف ✅', 'pose': 'welcome', 'screen': 'clean', 'style': 'fade',
+         'do': [{'fx': 'thumb', 'at': .05, 'dur': 2.6}, {'fx': 'confetti', 'at': .1}]},
+        {'t': [67.41, 71.37], 'say': 'تابعونا على Tech Wall لحتّى ما يفوتكن شي بعالم التكنولوجيا.',
+         'cap': 'تابعونا على Tech\u00a0Wall لحتّى ما يفوتكن شي 🚀', 'pose': 'point', 'end': True},
     ],
 }
 
